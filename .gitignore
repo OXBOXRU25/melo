@@ -1,5 +1,7 @@
-# Сборочные артефакты — пересобираются из wordpress/melo/
+# Сборочные артефакты — пересобираются из исходников
 wordpress/melo.zip
+melo-peredacha.zip
+*.standalone.html
 
 # Служебное
 node_modules/
