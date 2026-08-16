@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MELO — архитектурно-строительное бюро</title>
+  <meta name="description" content="">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+
+<!-- ============ SVG-спрайт ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 12h15M13 6l6 6-6 6"/>
+  </symbol>
+  <symbol id="i-chev-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 5l-7 7 7 7"/>
+  </symbol>
+  <symbol id="i-chev-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 5l7 7-7 7"/>
+  </symbol>
+</svg>
+
+<!-- ============ Шапка ============ -->
+<header class="site-header" id="top">
+  <div class="container site-header__inner">
+    <a class="logo" href="index.html" aria-label="MELO — на главную">
+      <img class="logo__mark" src="assets/img/logo.png" alt="" width="196" height="54">
+    </a>
+
+    <nav class="nav" aria-label="Основное меню">
+      <a class="nav__link" href="index.html#directions">Направления</a>
+      <a class="nav__link" href="index.html#about">О нас</a>
+      <a class="nav__link" href="index.html#projects">Портфолио</a>
+      <a class="nav__link" href="index.html#pricing">Цены</a>
+      <a class="nav__link" href="index.html#contacts">Контакты</a>
+    </nav>
+
+    <a class="site-header__phone" href="tel:+79000000000">+7 900 000 00 00</a>
+
+    <button class="burger" type="button" aria-expanded="false" aria-label="Меню"><span></span></button>
+  </div>
+</header>
+
+<main>
+  <!-- ==================================================== -->
+  <!--  СЮДА — содержимое внутренней страницы               -->
+  <!-- ==================================================== -->
+</main>
+
+<!-- ============ Футер ============ -->
+<footer class="site-footer" id="contacts">
+  <div class="container">
+    <div class="site-footer__grid">
+      <p class="site-footer__claim">Всегда открыт для новых проектов и сотрудничества.</p>
+
+      <div class="footer-contacts">
+        <a class="footer-contacts__major" href="tel:88000000000">8 800 000 00 00</a>
+        <a class="footer-contacts__major" href="mailto:info@name.ru">info@name.ru</a>
+        <span class="footer-contacts__gap"></span>
+        <a class="footer-contacts__major" href="#" rel="noopener">Telegram</a>
+        <a class="footer-contacts__major" href="#" rel="noopener">MAX</a>
+        <p class="footer-contacts__address">г. Казань, ул. Ленина 00</p>
+      </div>
+
+      <nav class="footer-nav" aria-label="Меню в подвале">
+        <a href="index.html#about">О нас</a>
+        <a href="index.html#directions">Направления</a>
+        <a href="index.html#projects">Портфолио</a>
+        <a href="index.html#pricing">Цены</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+
+      <a class="footer-top-link" href="#top">Наверх</a>
+    </div>
+
+    <div class="site-footer__bottom">
+      <span>2026 MELO</span>
+      <a href="#">Политика конфиденциальности</a>
+      <span>Разработано в OXBOX</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

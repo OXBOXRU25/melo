@@ -1,0 +1,15 @@
+# Сборочные артефакты — пересобираются из wordpress/melo/
+wordpress/melo.zip
+
+# Служебное
+node_modules/
+.cache/
+*.log
+
+# Windows / macOS
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Временные файлы проверок
+_test-*.html
