@@ -120,8 +120,8 @@ h3 { font-size: var(--fs-h3); }
    .reveal-failsafe — аварийный показ, если main.js не поднялся. */
 .js [data-reveal] {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  transform: translateY(24px);
+  transition: opacity var(--dur-lux) var(--ease-lux), transform var(--dur-lux) var(--ease-lux);
 }
 
 .js [data-reveal].is-visible,
@@ -129,6 +129,29 @@ h3 { font-size: var(--fs-h3); }
   opacity: 1;
   transform: none;
 }
+
+/* Фотографии не всплывают вместе с блоком, а открываются шторкой снизу
+   вверх. Сам переход объявлен в components.css одним списком рядом с
+   карточкой — разбивать его нельзя, шорткат затрёт соседние свойства. */
+.js .card[data-reveal] .card__media,
+.js .project[data-reveal] .project__media { clip-path: inset(0 0 100% 0); }
+
+.js .card[data-reveal].is-visible .card__media,
+.js .project[data-reveal].is-visible .project__media,
+.js.reveal-failsafe .card[data-reveal] .card__media,
+.js.reveal-failsafe .project[data-reveal] .project__media { clip-path: inset(0 0 0 0); }
+
+/* золотая точка эйбрау раскрывается следом за заголовком секции */
+.js [data-reveal] .eyebrow::before { transform: scale(0); }
+
+.js [data-reveal].is-visible .eyebrow::before,
+.js.reveal-failsafe .eyebrow::before { transform: scale(1); }
+
+/* вертикальные линии этапов прочерчиваются сверху вниз */
+.js .flow__item[data-reveal]::before { transform: scaleY(0); }
+
+.js .flow__item[data-reveal].is-visible::before,
+.js.reveal-failsafe .flow__item::before { transform: scaleY(1); }
 
 :where(a, button, [tabindex]):focus-visible {
   outline: 2px solid var(--gold);
@@ -144,5 +167,8 @@ h3 { font-size: var(--fs-h3); }
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+    /* без этого каскад первого экрана всё равно отсчитывает свои 0.78 с */
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
   }
 }
