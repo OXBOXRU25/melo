@@ -731,7 +731,9 @@
   display: grid;
   grid-template-columns: 1fr 1.05fr;
   gap: clamp(28px, 4.2vw, 80px);
-  align-items: center;
+  /* картинка тянется на высоту списка: при пяти позициях центрирование
+     оставляло бы над ней и под ней пустые поля */
+  align-items: stretch;
 }
 
 .service__list {
@@ -776,7 +778,7 @@
 }
 
 .service__media {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 3;  /* работает, пока блок в одну колонку */
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--line);
@@ -787,6 +789,14 @@
 .service__media img {
   width: 100%; height: 100%;
   object-fit: cover;
+}
+
+/* В две колонки высоту диктует список, и пропорцию надо снять: иначе
+   aspect-ratio считает от растянутой высоты ШИРИНУ и раздувает колонку —
+   блок вылезал за экран на 30px. Правило обязано идти после объявления
+   выше: специфичность у них одинаковая, решает порядок. */
+@media (min-width: 861px) {
+  .service__media { aspect-ratio: auto; }
 }
 
 /* ---------- 12. Этапы работ ---------------------------------- */
