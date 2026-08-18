@@ -53,7 +53,7 @@ function melo_enqueue_assets() {
 	// Шрифты. Для российского хостинга их лучше положить локально — см. README.
 	wp_enqueue_style(
 		'melo-fonts',
-		'https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Playfair+Display:wght@400;500&display=swap',
+		'https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap',
 		array(),
 		null
 	);

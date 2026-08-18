@@ -205,13 +205,13 @@
 
 .dash-list {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .dash-list li {
   display: grid;
-  grid-template-columns: 26px 1fr;
-  gap: 14px;
+  grid-template-columns: var(--card-indent) 1fr;
+  gap: 0;
   font-size: var(--fs-list);
   line-height: var(--lh-body);
 }
@@ -219,6 +219,7 @@
 .dash-list li::before {
   content: "";
   margin-top: .68em;
+  width: 22px;
   height: 1px;
   background: var(--gold);
 }
@@ -240,7 +241,7 @@
 }
 
 .card__media {
-  aspect-ratio: 592 / 413;
+  aspect-ratio: 590 / 409;
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--line);
@@ -256,10 +257,10 @@
 
 .card__head {
   display: grid;
-  grid-template-columns: 40px 1fr;
-  align-items: baseline;
-  gap: 8px;
-  margin-block: clamp(20px, 1.7vw, 32px) clamp(16px, 1.5vw, 28px);
+  grid-template-columns: var(--card-indent) 1fr;
+  align-items: start;
+  gap: 0;
+  margin-block: clamp(20px, 1.67vw, 32px) clamp(16px, 1.3vw, 25px);
 }
 
 .card__num {
@@ -267,6 +268,16 @@
   font-size: var(--fs-list);
   line-height: var(--lh-head);
 }
+
+/* вводная строка карточки: идёт между заголовком и списком услуг */
+.card__lead {
+  padding-left: var(--card-indent);
+  font-size: var(--fs-list);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+.card__lead + .dash-list { margin-top: 16px; }
 
 /* упрощённая карточка: фото → заголовок → короткое описание */
 .card__title {
@@ -354,7 +365,7 @@
 .slider-track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: calc((100% - var(--grid-gap)) / 2);  /* 2 карточки в кадре */
+  grid-auto-columns: calc((100% - var(--grid-gap) * 2) / 3);  /* 3 карточки в кадре */
   gap: var(--grid-gap);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -388,22 +399,36 @@
 
 .slider-nav {
   display: flex;
-  gap: 18px;
+  gap: 16px;
   flex: none;
 }
 
+/* белый кружок с небольшой стрелкой внутри */
 .slider-btn {
-  width: 40px; height: 40px;
+  width: 52px; height: 52px;
   display: grid;
   place-items: center;
-  background: none;
+  padding: 0;
   border: 0;
+  border-radius: 50%;
+  background: #fff;
   color: var(--navy);
-  transition: color var(--dur) var(--ease), opacity var(--dur) var(--ease);
+  transition: background-color var(--dur) var(--ease),
+              color var(--dur) var(--ease),
+              opacity var(--dur) var(--ease);
 }
 
-.slider-btn:disabled { opacity: .35; cursor: default; }
-.slider-btn:not(:disabled):hover { color: var(--gold); }
+.slider-btn svg { width: 18px; height: 18px; }
+
+/* левая кнопка — та же стрелка, отражённая по горизонтали */
+.slider-btn[data-slider-prev] svg { transform: scaleX(-1); }
+
+.slider-btn:disabled { opacity: .4; cursor: default; }
+
+.slider-btn:not(:disabled):hover {
+  background: var(--navy);
+  color: #fff;
+}
 
 /* ---------- 9. Карточка проекта ------------------------------ */
 
@@ -434,21 +459,28 @@
   font-size: var(--fs-micro);
   color: var(--text-muted);
   margin-right: 6px;
+  /* выравниваем верх цифры по верху прописной в заголовке: они разного
+     кегля и по умолчанию сидят на одной базовой линии, из-за чего верх
+     меньшего текста проваливается. Сдвиг = разница высот прописных. */
+  vertical-align: .37em;
 }
 
 .project__title {
   display: inline;
   font-size: var(--fs-body);
   font-weight: var(--fw-regular);
-  color: #14508c;
+  /* в макете тот же navy, что у прочих заголовков — замер по сердцевине
+     штрихов даёт #032447. Прежний #14508c был поставлен на глаз. */
+  color: var(--navy-heading);
 }
 
-.project:hover .project__title { color: var(--navy); }
+/* Цвет заголовка проекта не меняется и при наведении — решение заказчика.
+   Отклик на наведение даёт увеличение фотографии выше. */
 
 .project__tag {
   margin-top: 4px;
   font-size: var(--fs-small);
-  color: var(--text-muted);
+  color: var(--text);
 }
 
 .project__area {
@@ -687,7 +719,7 @@
   margin-top: clamp(8px, .7vw, 14px);
   font-size: var(--fs-list);
   line-height: var(--lh-body);
-  color: var(--text-muted);
+  color: var(--text);
 }
 
 /* ---------- 13. Кладка примеров реализации ------------------- */

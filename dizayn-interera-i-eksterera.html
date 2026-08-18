@@ -8,7 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="assets/css/tokens.css">
   <link rel="stylesheet" href="assets/css/base.css">
@@ -50,7 +50,7 @@
     </a>
 
     <nav class="nav" aria-label="Основное меню">
-      <a class="nav__link" href="index.html#directions" aria-current="page">Направления</a>
+      <a class="nav__link" href="index.html#directions">Направления</a>
       <a class="nav__link" href="index.html#about">О нас</a>
       <a class="nav__link" href="index.html#projects">Портфолио</a>
       <a class="nav__link" href="index.html#pricing">Цены</a>
@@ -92,9 +92,8 @@
   <!-- ============ 2. Что мы делаем ============ -->
   <section class="section section--gray" id="what">
     <div class="container">
-      <div class="section__head section__head--center" data-reveal>
-        <span class="eyebrow">Направления</span>
-        <h2>Что мы делаем</h2>
+      <div class="section__head" data-reveal>
+        <span class="eyebrow">Направления деятельности</span>
       </div>
 
       <div class="slider" data-slider>
@@ -102,38 +101,89 @@
 
         <article class="card" data-reveal>
           <div class="card__media">
-            <img src="assets/img/project-2.jpg" alt="Гостиная с панорамным остеклением и дизайнерским светом" width="904" height="644" loading="lazy">
+            <img src="assets/img/dir-1.jpg" alt="Архитектурный макет и рабочие чертежи здания" width="590" height="409" loading="lazy">
           </div>
-          <h3 class="card__title">Дизайн-проект интерьера</h3>
-          <p class="card__text">Планировка, концепция и подбор материалов. С 3D-визуализацией каждого помещения.</p>
+          <div class="card__head">
+            <span class="card__num">01</span>
+            <h3>Архитектурное проектирование<br>и планирование</h3>
+          </div>
+          <p class="card__lead">Сюда входят услуги по:</p>
+          <ul class="dash-list">
+            <li>Консультация дизайнера по подбору недвижимости (помощь в выборе правильного «исходника» участка).</li>
+            <li>Проектирование домов (архитектурный раздел).</li>
+            <li>Планирование участка и ситуационный план.</li>
+          </ul>
         </article>
 
         <article class="card" data-reveal>
           <div class="card__media">
-            <img src="assets/img/dir-3.jpg" alt="Фасад современного загородного дома" width="592" height="410" loading="lazy">
+            <img src="assets/img/dir-3.jpg" alt="Фасад современного загородного дома" width="590" height="409" loading="lazy">
           </div>
-          <h3 class="card__title">Дизайн экстерьера и фасадов</h3>
-          <p class="card__text">Облик здания, фасадные решения, входные группы и наружное освещение.</p>
+          <div class="card__head">
+            <span class="card__num">02</span>
+            <h3>Дизайн интерьера и экстерьера</h3>
+          </div>
+          <p class="card__lead">Всё, что касается визуального облика и стиля самого здания.</p>
+          <ul class="dash-list">
+            <li>Дизайн-проект интерьера дома.</li>
+            <li>Дизайн экстерьера (фасады, заборы, входные группы).</li>
+          </ul>
         </article>
 
         <article class="card" data-reveal>
           <div class="card__media">
-            <img src="assets/img/dir-1.jpg" alt="Рабочие чертежи и макет здания" width="592" height="410" loading="lazy">
+            <img src="assets/img/dir-2.jpg" alt="Благоустроенная территория вокруг загородного дома" width="590" height="409" loading="lazy">
           </div>
-          <h3 class="card__title">Документация и сопровождение</h3>
-          <p class="card__text">Рабочие чертежи, сметы, комплектация объекта и авторский надзор до сдачи.</p>
+          <div class="card__head">
+            <span class="card__num">03</span>
+            <h3>Ландшафт и малые архитектурные<br>формы (МАФ)</h3>
+          </div>
+          <p class="card__lead">Благоустройство территории вокруг дома.</p>
+          <ul class="dash-list">
+            <li>Ландшафтная архитектура (генплан, зонирование).</li>
+            <li>Проектирование малых сооружений (бани, беседки, навесы, бассейны, зоны отдыха).</li>
+          </ul>
         </article>
 
+        <article class="card" data-reveal>
+          <div class="card__media">
+            <img src="assets/img/project-6.jpg" alt="Готовая кухня-гостиная после реализации проекта" width="590" height="409" loading="lazy">
+          </div>
+          <div class="card__head">
+            <span class="card__num">04</span>
+            <h3>Реализация и строительство</h3>
+          </div>
+          <p class="card__lead">Переход от чертежей к физическому воплощению.</p>
+          <ul class="dash-list">
+            <li>Строительство и ремонт (реализация объекта под ключ).</li>
+            <li>Комплектация объектов (подбор мебели, материалов, оборудования).</li>
+          </ul>
+        </article>
+
+        <article class="card" data-reveal>
+          <div class="card__media">
+            <img src="assets/img/project-2.jpg" alt="Интерьер гостиной, сданной под ключ" width="590" height="409" loading="lazy">
+          </div>
+          <div class="card__head">
+            <span class="card__num">05</span>
+            <h3>Сопровождение и управление</h3>
+          </div>
+          <p class="card__lead">Сервис, который снимает головную боль с заказчика.</p>
+          <ul class="dash-list">
+            <li>Управление объектом (комплексное сопровождение всех процессов).</li>
+            <li>Авторский надзор (обычно идёт в связке с управлением).</li>
+          </ul>
+        </article>
         </div>
 
         <div class="slider-foot">
           <div class="slider-progress"><span class="slider-progress__bar"></span></div>
           <div class="slider-nav">
             <button class="slider-btn" type="button" data-slider-prev aria-label="Предыдущее направление">
-              <svg width="24" height="24" aria-hidden="true"><use href="#i-chev-left"></use></svg>
+              <svg width="24" height="24" aria-hidden="true"><use href="#i-arrow"></use></svg>
             </button>
             <button class="slider-btn" type="button" data-slider-next aria-label="Следующее направление">
-              <svg width="24" height="24" aria-hidden="true"><use href="#i-chev-right"></use></svg>
+              <svg width="24" height="24" aria-hidden="true"><use href="#i-arrow"></use></svg>
             </button>
           </div>
         </div>
@@ -190,66 +240,66 @@
       <div class="works-grid">
 
         <article class="project" data-reveal>
-          <a class="project__media" href="#">
+          <a class="project__media" href="#" tabindex="-1" aria-hidden="true">
             <img src="assets/img/project-1.jpg" alt="Интерьер квартиры-студии в светлых тонах" width="903" height="1004" loading="lazy">
           </a>
           <div class="project__meta">
-            <p><span class="project__num">01.</span><span class="project__title">Квартира-студия</span></p>
+            <p><span class="project__num">01.</span><a class="project__title" href="#">Квартира-студия</a></p>
             <span class="project__area">27 <sup>м2</sup></span>
             <p class="project__tag">Интерьеры квартир</p>
           </div>
         </article>
 
         <article class="project" data-reveal>
-          <a class="project__media" href="#">
+          <a class="project__media" href="#" tabindex="-1" aria-hidden="true">
             <img src="assets/img/project-2.jpg" alt="Гостиная однокомнатной квартиры с каменной стеной" width="904" height="644" loading="lazy">
           </a>
           <div class="project__meta">
-            <p><span class="project__num">02.</span><span class="project__title">Однокомнатная квартира</span></p>
+            <p><span class="project__num">02.</span><a class="project__title" href="#">Однокомнатная квартира</a></p>
             <span class="project__area">34 <sup>м2</sup></span>
             <p class="project__tag">Интерьеры квартир</p>
           </div>
         </article>
 
         <article class="project" data-reveal>
-          <a class="project__media" href="#">
+          <a class="project__media" href="#" tabindex="-1" aria-hidden="true">
             <img src="assets/img/project-3.jpg" alt="Интерьер гостиной загородного дома" width="903" height="746" loading="lazy">
           </a>
           <div class="project__meta">
-            <p><span class="project__num">03.</span><span class="project__title">Загородный дом</span></p>
+            <p><span class="project__num">03.</span><a class="project__title" href="#">Загородный дом</a></p>
             <span class="project__area">70 <sup>м2</sup></span>
             <p class="project__tag">Интерьер загородного дома</p>
           </div>
         </article>
 
         <article class="project" data-reveal>
-          <a class="project__media" href="#">
+          <a class="project__media" href="#" tabindex="-1" aria-hidden="true">
             <img src="assets/img/project-4.jpg" alt="Летняя кухня с панорамными окнами" width="904" height="1004" loading="lazy">
           </a>
           <div class="project__meta">
-            <p><span class="project__num">04.</span><span class="project__title">Летняя кухня</span></p>
+            <p><span class="project__num">04.</span><a class="project__title" href="#">Летняя кухня</a></p>
             <span class="project__area">34 <sup>м2</sup></span>
             <p class="project__tag">Архитектурные проекты</p>
           </div>
         </article>
 
         <article class="project" data-reveal>
-          <a class="project__media" href="#">
+          <a class="project__media" href="#" tabindex="-1" aria-hidden="true">
             <img src="assets/img/project-5.jpg" alt="Гостиная студии с мягкой мебелью" width="903" height="827" loading="lazy">
           </a>
           <div class="project__meta">
-            <p><span class="project__num">05.</span><span class="project__title">Студия</span></p>
+            <p><span class="project__num">05.</span><a class="project__title" href="#">Студия</a></p>
             <span class="project__area">27 <sup>м2</sup></span>
             <p class="project__tag">Интерьеры квартир</p>
           </div>
         </article>
 
         <article class="project" data-reveal>
-          <a class="project__media" href="#">
+          <a class="project__media" href="#" tabindex="-1" aria-hidden="true">
             <img src="assets/img/project-6.jpg" alt="Кухня-гостиная с тёплым освещением" width="904" height="578" loading="lazy">
           </a>
           <div class="project__meta">
-            <p><span class="project__num">06.</span><span class="project__title">Однокомнатная квартира</span></p>
+            <p><span class="project__num">06.</span><a class="project__title" href="#">Однокомнатная квартира</a></p>
             <span class="project__area">34 <sup>м2</sup></span>
             <p class="project__tag">Интерьеры квартир</p>
           </div>

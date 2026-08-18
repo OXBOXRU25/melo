@@ -56,8 +56,9 @@ ul, ol {
 h1, h2, h3, h4, p, figure { margin: 0; }
 
 h1, h2, h3, h4 {
+  font-family: var(--font-display);
   color: var(--navy-heading);
-  font-weight: var(--fw-medium);
+  font-weight: var(--fw-regular);
   line-height: var(--lh-head);
   letter-spacing: var(--ls-head);
 }
@@ -65,7 +66,8 @@ h1, h2, h3, h4 {
 h1 {
   font-size: var(--fs-h1);
   line-height: var(--lh-tight);
-  text-transform: uppercase;
+  /* капс убран 18.08.2026 по решению заказчика: с антиквой Merriweather
+     набор идёт с заглавной, как обычное предложение */
 }
 
 h2 { font-size: var(--fs-h2); }
