@@ -134,12 +134,20 @@ h3 { font-size: var(--fs-h3); }
    вверх. Сам переход объявлен в components.css одним списком рядом с
    карточкой — разбивать его нельзя, шорткат затрёт соседние свойства. */
 .js .card[data-reveal] .card__media,
-.js .project[data-reveal] .project__media { clip-path: inset(0 0 100% 0); }
+.js .project[data-reveal] .project__media,
+.js .service__media[data-reveal] { clip-path: inset(0 0 100% 0); }
 
 .js .card[data-reveal].is-visible .card__media,
 .js .project[data-reveal].is-visible .project__media,
+.js .service__media[data-reveal].is-visible,
 .js.reveal-failsafe .card[data-reveal] .card__media,
-.js.reveal-failsafe .project[data-reveal] .project__media { clip-path: inset(0 0 0 0); }
+.js.reveal-failsafe .project[data-reveal] .project__media,
+.js.reveal-failsafe .service__media[data-reveal] { clip-path: inset(0 0 0 0); }
+
+/* У картинки блока услуги появление даёт только шторка: всплывание вместе
+   с ней читается как двойное движение. Правило идёт после общего, поэтому
+   opacity и transform от [data-reveal] здесь перебиваются. */
+.js .service__media[data-reveal] { opacity: 1; transform: none; }
 
 /* золотая точка эйбрау раскрывается следом за заголовком секции */
 .js [data-reveal] .eyebrow::before { transform: scale(0); }

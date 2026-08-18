@@ -131,6 +131,12 @@
   margin-bottom: var(--section-head-mb);
 }
 
+/* заголовок секции без эйбрау — один, по центру полосы */
+.section__head--solo {
+  display: block;
+  text-align: center;
+}
+
 /* эйбрау слева, заголовок по центру полосы — как в блоке «Наши последние работы» */
 .section__head--center {
   display: grid;
@@ -719,6 +725,70 @@
   animation-delay: .78s;
 }
 
+/* ---------- 11б. Что входит в услугу: список + картинка ------ */
+
+.service {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: clamp(28px, 4.2vw, 80px);
+  align-items: center;
+}
+
+.service__list {
+  display: grid;
+  gap: clamp(26px, 2.8vw, 54px);
+}
+
+.service__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(16px, 1.5vw, 28px);
+  align-items: start;
+}
+
+/* тонкий золотой круг с линейной иконкой внутри — как на референсе */
+.service__icon {
+  width: clamp(48px, 3.65vw, 70px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--gold);
+  color: var(--gold);
+}
+
+.service__icon svg {
+  width: 46%;
+  height: 46%;
+}
+
+.service__title {
+  font-size: var(--fs-h3);
+  line-height: var(--lh-head);
+  color: var(--navy-heading);
+}
+
+.service__text {
+  margin-top: clamp(8px, .75vw, 15px);
+  font-size: var(--fs-list);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+.service__media {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--line);
+  /* один список transition — см. комментарий у .card__media */
+  transition: clip-path var(--dur-wipe) var(--ease-lux) .12s;
+}
+
+.service__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
 /* ---------- 12. Этапы работ ---------------------------------- */
 
 .steps { border-top: 1px solid var(--line); }
@@ -966,6 +1036,12 @@
   .flow {
     grid-template-columns: repeat(2, 1fr);
     row-gap: clamp(28px, 4vw, 48px);
+  }
+
+  /* картинка уезжает под список: рядом они становятся слишком узкими */
+  .service {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 4vw, 48px);
   }
 
   .works-grid { grid-template-columns: repeat(2, 1fr); }

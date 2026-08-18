@@ -33,6 +33,24 @@
   <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M4 12h15M13 6l6 6-6 6"/>
   </symbol>
+  <symbol id="i-plot-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 4h13v9"/>
+    <path d="M3 4v16h9"/>
+    <path d="M3 12h6"/>
+    <circle cx="17" cy="17" r="4"/>
+    <path d="M20 20l1.6 1.6"/>
+  </symbol>
+  <symbol id="i-house-plan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2.5 10.5 12 3l9.5 7.5"/>
+    <path d="M5 12.5V21h14v-8.5"/>
+    <path d="M10 21v-5h4v5"/>
+  </symbol>
+  <symbol id="i-site-plan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 3.5h18v17H3z"/>
+    <path d="M3 13h8v7.5"/>
+    <path d="M11 13V8h10"/>
+    <circle cx="16.5" cy="17" r="2.2"/>
+  </symbol>
 
 </svg>
 
@@ -83,103 +101,48 @@
     </div>
   </section>
 
-  <!-- ============ 2. Что мы делаем ============ -->
+  <!-- ============ 2. Что входит в услугу ============ -->
   <section class="section section--gray" id="what">
     <div class="container">
-      <div class="section__head" data-reveal>
-        <h2 class="eyebrow">Направления деятельности</h2>
+      <div class="section__head section__head--solo" data-reveal>
+        <h2>Что входит в услугу</h2>
       </div>
 
-      <div data-slider>
-        <div class="slider-track" data-slider-track>
+      <div class="service">
+        <ul class="service__list">
+          <li class="service__item" data-reveal>
+            <span class="service__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#i-plot-search"></use></svg>
+            </span>
+            <div>
+              <h3 class="service__title">Консультация по подбору недвижимости</h3>
+              <p class="service__text">Помогаем выбрать правильный «исходник» — участок, на котором проект вообще получится: рельеф, подъезды, ориентация по сторонам света и ограничения застройки.</p>
+            </div>
+          </li>
 
-        <article class="card" data-reveal>
-          <div class="card__media">
-            <img src="assets/img/dir-1.jpg" alt="Архитектурный макет и рабочие чертежи здания" width="590" height="409" loading="lazy">
-          </div>
-          <div class="card__head">
-            <span class="card__num">01</span>
-            <h3>Архитектурное проектирование<br>и планирование</h3>
-          </div>
-          <p class="card__lead">Сюда входят услуги по:</p>
-          <ul class="dash-list">
-            <li>Консультация дизайнера по подбору недвижимости (помощь в выборе правильного «исходника» участка).</li>
-            <li>Проектирование домов (архитектурный раздел).</li>
-            <li>Планирование участка и ситуационный план.</li>
-          </ul>
-        </article>
+          <li class="service__item" data-reveal>
+            <span class="service__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#i-house-plan"></use></svg>
+            </span>
+            <div>
+              <h3 class="service__title">Проектирование домов</h3>
+              <p class="service__text">Архитектурный раздел целиком: планировки этажей, фасады, разрезы, узлы и посадка здания на участке.</p>
+            </div>
+          </li>
 
-        <article class="card" data-reveal>
-          <div class="card__media">
-            <img src="assets/img/dir-3.jpg" alt="Фасад современного загородного дома" width="590" height="409" loading="lazy">
-          </div>
-          <div class="card__head">
-            <span class="card__num">02</span>
-            <h3>Дизайн интерьера и экстерьера</h3>
-          </div>
-          <p class="card__lead">Всё, что касается визуального облика и стиля самого здания.</p>
-          <ul class="dash-list">
-            <li>Дизайн-проект интерьера дома.</li>
-            <li>Дизайн экстерьера (фасады, заборы, входные группы).</li>
-          </ul>
-        </article>
+          <li class="service__item" data-reveal>
+            <span class="service__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><use href="#i-site-plan"></use></svg>
+            </span>
+            <div>
+              <h3 class="service__title">Планирование участка и ситуационный план</h3>
+              <p class="service__text">Генплан участка: расположение дома и построек, подъезды, дорожки, зоны и трассировка инженерных сетей.</p>
+            </div>
+          </li>
+        </ul>
 
-        <article class="card" data-reveal>
-          <div class="card__media">
-            <img src="assets/img/dir-2.jpg" alt="Благоустроенная территория вокруг загородного дома" width="590" height="409" loading="lazy">
-          </div>
-          <div class="card__head">
-            <span class="card__num">03</span>
-            <h3>Ландшафт и малые архитектурные<br>формы (МАФ)</h3>
-          </div>
-          <p class="card__lead">Благоустройство территории вокруг дома.</p>
-          <ul class="dash-list">
-            <li>Ландшафтная архитектура (генплан, зонирование).</li>
-            <li>Проектирование малых сооружений (бани, беседки, навесы, бассейны, зоны отдыха).</li>
-          </ul>
-        </article>
-
-        <article class="card" data-reveal>
-          <div class="card__media">
-            <img src="assets/img/project-6.jpg" alt="Готовая кухня-гостиная после реализации проекта" width="590" height="409" loading="lazy">
-          </div>
-          <div class="card__head">
-            <span class="card__num">04</span>
-            <h3>Реализация и строительство</h3>
-          </div>
-          <p class="card__lead">Переход от чертежей к физическому воплощению.</p>
-          <ul class="dash-list">
-            <li>Строительство и ремонт (реализация объекта под ключ).</li>
-            <li>Комплектация объектов (подбор мебели, материалов, оборудования).</li>
-          </ul>
-        </article>
-
-        <article class="card" data-reveal>
-          <div class="card__media">
-            <img src="assets/img/project-2.jpg" alt="Интерьер гостиной, сданной под ключ" width="590" height="409" loading="lazy">
-          </div>
-          <div class="card__head">
-            <span class="card__num">05</span>
-            <h3>Сопровождение и управление</h3>
-          </div>
-          <p class="card__lead">Сервис, который снимает головную боль с заказчика.</p>
-          <ul class="dash-list">
-            <li>Управление объектом (комплексное сопровождение всех процессов).</li>
-            <li>Авторский надзор (обычно идёт в связке с управлением).</li>
-          </ul>
-        </article>
-        </div>
-
-        <div class="slider-foot">
-          <div class="slider-progress"><span class="slider-progress__bar"></span></div>
-          <div class="slider-nav">
-            <button class="slider-btn" type="button" data-slider-prev aria-label="Предыдущее направление">
-              <svg width="24" height="24" aria-hidden="true"><use href="#i-arrow"></use></svg>
-            </button>
-            <button class="slider-btn" type="button" data-slider-next aria-label="Следующее направление">
-              <svg width="24" height="24" aria-hidden="true"><use href="#i-arrow"></use></svg>
-            </button>
-          </div>
+        <div class="service__media" data-reveal>
+          <img src="assets/img/dir-1.jpg" alt="Архитектурный макет дома и рабочие чертежи" width="590" height="409" loading="lazy">
         </div>
       </div>
     </div>
