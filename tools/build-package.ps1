@@ -65,11 +65,19 @@ New-Zip -SourceDir $themeSrc -ZipPath (Join-Path $dist 'melo.zip') -Prefix 'melo
 Write-Host 'Собираю пакет передачи:'
 New-Item -ItemType Directory -Path $stage | Out-Null
 try {
-    $page = 'dizayn-interera-i-eksterera.html'
+    # Все страницы из корня. Пропускаем index.html (собирается ниже),
+    # служебные файлы с подчёркиванием и standalone-сборки в один файл.
+    $pages = Get-ChildItem -Path $root -Filter '*.html' -File |
+        Where-Object { $_.Name -ne 'index.html' -and $_.Name -notlike '_*' -and $_.Name -notlike '*.standalone.html' }
 
-    Copy-Item (Join-Path $root $page) (Join-Path $stage $page)
-    # index.html - копия страницы, чтобы архив открывался двойным кликом
-    Copy-Item (Join-Path $root $page) (Join-Path $stage 'index.html')
+    foreach ($p in $pages) {
+        Copy-Item $p.FullName (Join-Path $stage $p.Name)
+    }
+    Write-Host ('  страниц: ' + $pages.Count)
+
+    # index.html - копия главной страницы, чтобы архив открывался двойным кликом
+    $main = 'dizayn-interera-i-eksterera.html'
+    Copy-Item (Join-Path $root $main) (Join-Path $stage 'index.html')
 
     Copy-Item (Join-Path $root 'assets') (Join-Path $stage 'assets') -Recurse
     Copy-Item (Join-Path $root 'PROJECT.md') (Join-Path $stage 'PROJECT.md')
