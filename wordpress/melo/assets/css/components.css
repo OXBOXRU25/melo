@@ -728,6 +728,13 @@
 /* ---------- 11б. Что входит в услугу: список + картинка ------ */
 
 .service {
+  /* Кегли позиций на 15% мельче общих ролей — решение заказчика 18.08.2026.
+     Держим их здесь двумя строками, а не по месту: менять придётся вместе.
+     У аннотации есть пол в 13px — без него на телефоне выходило 12.75, а
+     ниже 13 текст уже считается нечитаемым. */
+  --service-fs-title: calc(var(--fs-h3) * .85);
+  --service-fs-text:  max(13px, calc(var(--fs-list) * .85));
+
   display: grid;
   grid-template-columns: 1fr 1.05fr;
   gap: clamp(28px, 4.2vw, 80px);
@@ -765,14 +772,14 @@
 }
 
 .service__title {
-  font-size: var(--fs-h3);
+  font-size: var(--service-fs-title);
   line-height: var(--lh-head);
   color: var(--navy-heading);
 }
 
 .service__text {
   margin-top: clamp(8px, .75vw, 15px);
-  font-size: var(--fs-list);
+  font-size: var(--service-fs-text);
   line-height: var(--lh-body);
   color: var(--text);
 }
