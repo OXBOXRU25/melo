@@ -33,12 +33,6 @@
 	<symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
 		<path d="M4 12h15M13 6l6 6-6 6"/>
 	</symbol>
-	<symbol id="i-chev-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-		<path d="M15 5l-7 7 7 7"/>
-	</symbol>
-	<symbol id="i-chev-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-		<path d="M9 5l7 7-7 7"/>
-	</symbol>
 </svg>
 
 <!-- ============ Шапка ============ -->

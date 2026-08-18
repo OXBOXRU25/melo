@@ -1,4 +1,5 @@
-# Сборочные артефакты — пересобираются из исходников
+# Сборочные артефакты — пересобираются командой tools/build-package.ps1
+dist/
 wordpress/melo.zip
 melo-peredacha.zip
 *.standalone.html

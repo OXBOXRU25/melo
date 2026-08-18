@@ -3,12 +3,15 @@
  * Template Name: Направление деятельности
  * Template Post Type: page
  *
- * Внутренняя страница направления: интро, что мы делаем, как мы работаем,
- * примеры реализации. Выбирается в редакторе страницы, блок «Атрибуты
- * страницы» → «Шаблон».
+ * Внутренняя страница направления: интро, направления деятельности,
+ * как мы работаем, примеры реализации. Выбирается в редакторе страницы,
+ * блок «Атрибуты страницы» → «Шаблон».
  *
  * Содержимое блоков собрано в массивы в начале файла — правится здесь либо
  * заменяется на ACF/произвольный тип записи, циклы вывода при этом не меняются.
+ *
+ * Разметка один в один повторяет статическую страницу
+ * dizayn-interera-i-eksterera.html — при правке одного правьте и второе.
  *
  * @package melo
  */
@@ -44,32 +47,62 @@ while ( have_posts() ) :
 	}
 
 	/* ---------------------------------------------------------------
-	 * Что мы делаем — карточки слайдера
+	 * Направления деятельности — карточки слайдера
+	 *
+	 * В заголовке разрешён только <br> — им ловится перенос строки,
+	 * снятый с макета. Всё остальное экранируется.
 	 * ------------------------------------------------------------- */
 	$cards = array(
 		array(
-			'img'   => 'project-2.jpg',
-			'alt'   => 'Гостиная с панорамным остеклением и дизайнерским светом',
-			'w'     => 904,
-			'h'     => 644,
-			'title' => 'Дизайн-проект интерьера',
-			'text'  => 'Планировка, концепция и подбор материалов. С 3D-визуализацией каждого помещения.',
+			'img'   => 'dir-1.jpg',
+			'alt'   => 'Архитектурный макет и рабочие чертежи здания',
+			'title' => 'Архитектурное проектирование<br>и планирование',
+			'lead'  => 'Сюда входят услуги по:',
+			'items' => array(
+				'Консультация дизайнера по подбору недвижимости (помощь в выборе правильного «исходника» участка).',
+				'Проектирование домов (архитектурный раздел).',
+				'Планирование участка и ситуационный план.',
+			),
 		),
 		array(
 			'img'   => 'dir-3.jpg',
 			'alt'   => 'Фасад современного загородного дома',
-			'w'     => 592,
-			'h'     => 410,
-			'title' => 'Дизайн экстерьера и фасадов',
-			'text'  => 'Облик здания, фасадные решения, входные группы и наружное освещение.',
+			'title' => 'Дизайн интерьера и экстерьера',
+			'lead'  => 'Всё, что касается визуального облика и стиля самого здания.',
+			'items' => array(
+				'Дизайн-проект интерьера дома.',
+				'Дизайн экстерьера (фасады, заборы, входные группы).',
+			),
 		),
 		array(
-			'img'   => 'dir-1.jpg',
-			'alt'   => 'Рабочие чертежи и макет здания',
-			'w'     => 592,
-			'h'     => 410,
-			'title' => 'Документация и сопровождение',
-			'text'  => 'Рабочие чертежи, сметы, комплектация объекта и авторский надзор до сдачи.',
+			'img'   => 'dir-2.jpg',
+			'alt'   => 'Благоустроенная территория вокруг загородного дома',
+			'title' => 'Ландшафт и малые архитектурные<br>формы (МАФ)',
+			'lead'  => 'Благоустройство территории вокруг дома.',
+			'items' => array(
+				'Ландшафтная архитектура (генплан, зонирование).',
+				'Проектирование малых сооружений (бани, беседки, навесы, бассейны, зоны отдыха).',
+			),
+		),
+		array(
+			'img'   => 'project-6.jpg',
+			'alt'   => 'Готовая кухня-гостиная после реализации проекта',
+			'title' => 'Реализация и строительство',
+			'lead'  => 'Переход от чертежей к физическому воплощению.',
+			'items' => array(
+				'Строительство и ремонт (реализация объекта под ключ).',
+				'Комплектация объектов (подбор мебели, материалов, оборудования).',
+			),
+		),
+		array(
+			'img'   => 'project-2.jpg',
+			'alt'   => 'Интерьер гостиной, сданной под ключ',
+			'title' => 'Сопровождение и управление',
+			'lead'  => 'Сервис, который снимает головную боль с заказчика.',
+			'items' => array(
+				'Управление объектом (комплексное сопровождение всех процессов).',
+				'Авторский надзор (обычно идёт в связке с управлением).',
+			),
 		),
 	);
 
@@ -162,6 +195,8 @@ while ( have_posts() ) :
 			'url'   => '#',
 		),
 	);
+
+	$allow_br = array( 'br' => array() );
 	?>
 
 	<!-- ============ 1. Интро ============ -->
@@ -185,26 +220,32 @@ while ( have_posts() ) :
 		</div>
 	</section>
 
-	<!-- ============ 2. Что мы делаем ============ -->
+	<!-- ============ 2. Направления деятельности ============ -->
 	<section class="section section--gray" id="what">
 		<div class="container">
-			<div class="section__head section__head--center" data-reveal>
-				<span class="eyebrow"><?php esc_html_e( 'Направления', 'melo' ); ?></span>
-				<h2><?php esc_html_e( 'Что мы делаем', 'melo' ); ?></h2>
+			<div class="section__head" data-reveal>
+				<h2 class="eyebrow"><?php esc_html_e( 'Направления деятельности', 'melo' ); ?></h2>
 			</div>
 
-			<div class="slider" data-slider>
+			<div data-slider>
 				<div class="slider-track" data-slider-track>
-					<?php foreach ( $cards as $card ) : ?>
+					<?php foreach ( $cards as $i => $card ) : ?>
 						<article class="card" data-reveal>
 							<div class="card__media">
 								<img src="<?php echo esc_url( melo_img( $card['img'] ) ); ?>"
 									alt="<?php echo esc_attr( $card['alt'] ); ?>"
-									width="<?php echo esc_attr( $card['w'] ); ?>"
-									height="<?php echo esc_attr( $card['h'] ); ?>" loading="lazy">
+									width="590" height="409" loading="lazy">
 							</div>
-							<h3 class="card__title"><?php echo esc_html( $card['title'] ); ?></h3>
-							<p class="card__text"><?php echo esc_html( $card['text'] ); ?></p>
+							<div class="card__head">
+								<span class="card__num"><?php echo esc_html( sprintf( '%02d', $i + 1 ) ); ?></span>
+								<h3><?php echo wp_kses( $card['title'], $allow_br ); ?></h3>
+							</div>
+							<p class="card__lead"><?php echo esc_html( $card['lead'] ); ?></p>
+							<ul class="dash-list">
+								<?php foreach ( $card['items'] as $item ) : ?>
+									<li><?php echo esc_html( $item ); ?></li>
+								<?php endforeach; ?>
+							</ul>
 						</article>
 					<?php endforeach; ?>
 				</div>
@@ -213,10 +254,10 @@ while ( have_posts() ) :
 					<div class="slider-progress"><span class="slider-progress__bar"></span></div>
 					<div class="slider-nav">
 						<button class="slider-btn" type="button" data-slider-prev aria-label="<?php esc_attr_e( 'Предыдущее направление', 'melo' ); ?>">
-							<svg width="24" height="24" aria-hidden="true"><use href="#i-chev-left"></use></svg>
+							<svg width="24" height="24" aria-hidden="true"><use href="#i-arrow"></use></svg>
 						</button>
 						<button class="slider-btn" type="button" data-slider-next aria-label="<?php esc_attr_e( 'Следующее направление', 'melo' ); ?>">
-							<svg width="24" height="24" aria-hidden="true"><use href="#i-chev-right"></use></svg>
+							<svg width="24" height="24" aria-hidden="true"><use href="#i-arrow"></use></svg>
 						</button>
 					</div>
 				</div>
@@ -255,7 +296,12 @@ while ( have_posts() ) :
 			<div class="works-grid">
 				<?php foreach ( $projects as $i => $project ) : ?>
 					<article class="project" data-reveal>
-						<a class="project__media" href="<?php echo esc_url( $project['url'] ); ?>">
+						<?php
+						/* Картинка ведёт туда же, что и заголовок, но скрыта от
+						   скринридера и от табуляции: иначе одна и та же ссылка
+						   читалась бы дважды подряд. */
+						?>
+						<a class="project__media" href="<?php echo esc_url( $project['url'] ); ?>" tabindex="-1" aria-hidden="true">
 							<img src="<?php echo esc_url( melo_img( $project['img'] ) ); ?>"
 								alt="<?php echo esc_attr( $project['alt'] ); ?>"
 								width="<?php echo esc_attr( $project['w'] ); ?>"
@@ -263,8 +309,7 @@ while ( have_posts() ) :
 						</a>
 						<div class="project__meta">
 							<p>
-								<span class="project__num"><?php echo esc_html( sprintf( '%02d.', $i + 1 ) ); ?></span>
-								<span class="project__title"><?php echo esc_html( $project['title'] ); ?></span>
+								<span class="project__num"><?php echo esc_html( sprintf( '%02d.', $i + 1 ) ); ?></span><a class="project__title" href="<?php echo esc_url( $project['url'] ); ?>"><?php echo esc_html( $project['title'] ); ?></a>
 							</p>
 							<span class="project__area"><?php echo esc_html( $project['area'] ); ?> <sup>м2</sup></span>
 							<p class="project__tag"><?php echo esc_html( $project['tag'] ); ?></p>
