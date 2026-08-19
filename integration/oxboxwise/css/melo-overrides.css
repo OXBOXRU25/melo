@@ -258,4 +258,13 @@
   .project__list {
     row-gap: 56px;
   }
+
+  /* Фотография автора. Тема задаёт height: 83.33vw при ширине 100% —
+     на 390px это 357x325, почти квадрат, и портрет подрезается.
+     Переводим на пропорцию 4:5. */
+  .about .about__human img {
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
 }
