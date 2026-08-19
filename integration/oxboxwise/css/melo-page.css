@@ -1415,7 +1415,14 @@
 
 .melo-page .melo-works { grid-template-columns: 1fr; }
 
-.melo-page .melo-works-grid { grid-template-columns: 1fr; }
+/* Одна колонка. Зазор между карточками увеличиваем: при 20px
+     подпись оказывалась ближе к СЛЕДУЮЩЕЙ фотографии (20px), чем к
+     своей (26px), и читалась как подпись к ней. Делаем вдвое больше
+     внутреннего отступа, чтобы группировка читалась однозначно. */
+.melo-page .melo-works-grid {
+    grid-template-columns: 1fr;
+    row-gap: 56px;
+  }
 
 /* на телефоне тег стоял вплотную к заголовку проекта — разводим вдвое */
 .melo-page .melo-project__tag { margin-top: 8px; }
