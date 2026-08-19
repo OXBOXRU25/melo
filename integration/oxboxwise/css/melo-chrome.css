@@ -67,6 +67,36 @@
   transition: box-shadow var(--melo-dur) var(--melo-ease);
 }
 
+/* ---------- Гашение правил прежней шапки ----------------------
+   Класс .header нужен скриптам темы (см. content-header.php), но он
+   тянет за собой её оформление. Гасим ровно то, что мешает:
+
+   • padding сверху — от .header и media-правила, давал лишний отступ;
+   • border-bottom — светлая полоса под шапкой;
+   • .header.is-color — при прокрутке тема ставит светлый полупрозрачный
+     фон, из-за чего наша шапка «пропадала»;
+   • body.is-open .header { z-index: -1 } — уводит шапку под страницу,
+     пока открыта модалка. Модалка и так на z-index 2000, а обратное
+     переключение давало мелькание тени при закрытии. */
+
+.melo-site-header.header {
+  padding: 0;
+  border: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.melo-site-header.header.is-color {
+  background: var(--melo-navy);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* При открытой модалке шапка должна уйти ПОД неё, но не под страницу:
+   у темы стоял z-index -1, и обратное переключение давало мелькание.
+   Модалка на 2000, поэтому единицы достаточно. */
+body.is-open .melo-site-header.header { z-index: 1; }
+
 /* класс вешает скрипт после прокрутки от верха страницы */
 .melo-site-header.melo-is-scrolled { box-shadow: 0 8px 28px rgba(3, 36, 71, .3); }
 
