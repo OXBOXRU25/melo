@@ -38,7 +38,8 @@ $melo_phone = function_exists( 'get_field' ) ? get_field( 'opt_phone_site', 'opt
 $melo_home = ( is_front_page() || is_home() ) ? 'javascript:void(0);' : get_home_url();
 ?>
 
-<header class="melo-site-header" id="melo-top">
+<?php /* класс header — для скриптов темы, см. пояснение внизу файла */ ?>
+<header class="melo-site-header header" id="melo-top">
 	<div class="melo-container melo-site-header__inner">
 
 		<a class="melo-logo" href="<?php echo esc_url( $melo_home ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) . ' — на главную' ); ?>">
@@ -68,9 +69,32 @@ $melo_home = ( is_front_page() || is_home() ) ? 'javascript:void(0);' : get_home
 			<a class="melo-site-header__phone" href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $melo_phone ) ); ?>"><?php echo esc_html( $melo_phone ); ?></a>
 		<?php endif; ?>
 
-		<button class="melo-burger" type="button" aria-expanded="false" aria-label="Меню"><span></span></button>
+		<button class="melo-burger header__btn-burger" type="button" aria-expanded="false" aria-label="Меню">
+			<svg class="melo-burger__open" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<path d="M1 6H23M1 12H23M1 18H23" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+			</svg>
+			<svg class="melo-burger__close" width="24" height="24" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+				<path d="M13.3333 13.3333L2.66666 2.66667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+				<path d="M13.3333 2.66667L2.66666 13.3333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+			</svg>
+		</button>
 	</div>
 </header>
+
+<?php
+/* Заглушка прежнего офф-канвас меню.
+
+   headerMenu() из js/index.js ищет .header-menu и .header-menu__btn-close
+   и падает, если их нет, — а падение обрывает весь модуль, включая
+   createModal(), из-за чего не открывалась форма заявки.
+
+   Мобильное меню у нас своё: бургер раскрывает саму шапку. Поэтому здесь
+   только пустой блок, скрытый в css/melo-chrome.css. Удалять нельзя,
+   пока скрипты темы не станут устойчивы к его отсутствию. */
+?>
+<div class="header-menu melo-legacy-menu" aria-hidden="true">
+	<button class="header-menu__btn-close" type="button" tabindex="-1" aria-hidden="true"></button>
+</div>
 
 <?php
 /* Обёртки плавной прокрутки на главной — как было в прежней шапке.

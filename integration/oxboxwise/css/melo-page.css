@@ -1414,6 +1414,9 @@
 
 .melo-page .melo-works-grid { grid-template-columns: 1fr; }
 
+/* на телефоне тег стоял вплотную к заголовку проекта — разводим вдвое */
+.melo-page .melo-project__tag { margin-top: 8px; }
+
 .melo-page .melo-flow { grid-template-columns: 1fr; }
 
 /* воздух под цифрой существует ради выравнивания заголовков в ряду;

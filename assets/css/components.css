@@ -1095,6 +1095,9 @@
   .grid-3 { grid-template-columns: 1fr; }
   .works { grid-template-columns: 1fr; }
   .works-grid { grid-template-columns: 1fr; }
+
+  /* на телефоне тег стоял вплотную к заголовку проекта — разводим вдвое */
+  .project__tag { margin-top: 8px; }
   .flow { grid-template-columns: 1fr; }
 
   /* воздух под цифрой существует ради выравнивания заголовков в ряду;

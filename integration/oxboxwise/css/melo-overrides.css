@@ -171,3 +171,55 @@
   color: inherit;
   text-decoration: none;
 }
+
+/* ---------- Форма заявки --------------------------------------
+   Звёздочку обязательного поля нельзя покрасить внутри placeholder —
+   он красится только целиком. Поэтому выносим её отдельным узлом и
+   ставим в правом краю поля. */
+
+.melo-field { position: relative; }
+
+.melo-req {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%);
+  color: #e03131;
+  font-size: 18px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* у поля с многострочным вводом звезды нет, но если появится —
+   прижимаем к первой строке, а не к середине */
+.melo-field_area .melo-req {
+  top: 18px;
+  transform: none;
+}
+
+/* Многострочное поле темой не оформлялось — его в форме не было.
+   Повторяем вид обычного поля: та же рамка, радиус и внутренние
+   отступы, только скругление мягче — у высокого блока pill смотрелся
+   бы неуместно. */
+.melo-field_area textarea {
+  display: block;
+  width: 100%;
+  min-height: 96px;
+  /* размеры берём из правила темы для .form__label input, чтобы поле
+     не выбивалось из ряда: тот же кегль, те же отступы, та же рамка */
+  padding: .76vw 1.25vw;
+  border: 1px solid #e3e1e1;
+  border-radius: 18px;
+  background: transparent;
+  font-family: inherit;
+  font-weight: 300;
+  font-size: var(--s-16);
+  line-height: 140%;
+  color: #222;
+  resize: vertical;
+}
+
+.melo-field_area textarea:focus {
+  outline: none;
+  border-color: rgb(3, 36, 71);
+}

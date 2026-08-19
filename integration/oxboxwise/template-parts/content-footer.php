@@ -132,16 +132,31 @@ $melo_addr   = $melo_opt( 'opt_address_site', melo_contact( 'address' ) );
             </p>
             <fieldset class="form__col form__col_1">
               <legend>Поля формы</legend>
-              <div class="input textarea input-wrapper required form__label">
+              <div class="input textarea input-wrapper required form__label melo-field melo-field_req">
                 <label for="">
-                  <input type="text" class="focus-input input-field" required name="name" placeholder="Имя *">
-                  <!--<span class="form__label-placeholder">Имя *</span>-->
+                  <input type="text" class="focus-input input-field" required name="name" placeholder="Имя">
+                </label>
+                <span class="melo-req" aria-hidden="true">*</span>
+              </div>
+
+              <div class="input textarea input-wrapper required form__label melo-field melo-field_req">
+                <label for="">
+                  <input type="tel" class="focus-input input-field" required name="phone" placeholder="Телефон">
+                </label>
+                <span class="melo-req" aria-hidden="true">*</span>
+              </div>
+
+              <?php /* почта больше не обязательна: класс required снят,
+                       атрибут тоже — иначе валидация продолжит требовать */ ?>
+              <div class="input textarea input-wrapper form__label melo-field">
+                <label for="">
+                  <input type="email" class="focus-input input-field" name="email" placeholder="Email">
                 </label>
               </div>
-              <div class="input textarea input-wrapper required form__label">
+
+              <div class="input textarea input-wrapper form__label melo-field melo-field_area">
                 <label for="">
-                  <input type="email" class="focus-input input-field" required name="email" placeholder="Email *">
-                  <!--<span class="form__label-placeholder">Email *</span>-->
+                  <textarea class="focus-input input-field" name="comment" rows="3" placeholder="Комментарий"></textarea>
                 </label>
               </div>
               <button class="btn form__btn btn_animate" type="submit">

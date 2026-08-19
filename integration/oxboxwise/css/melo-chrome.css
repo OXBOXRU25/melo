@@ -145,33 +145,29 @@
 
 .melo-burger {
   display: none;
-  width: 44px; height: 44px;
+  width: 44px; height: 44px;   /* цель под палец: рисунок 24, площадь 44 */
   margin-left: auto;
   padding: 0;
   background: none;
   border: 0;
-  position: relative;
+  color: var(--melo-on-navy);
   cursor: pointer;
+  place-items: center;
 }
 
-.melo-burger span,
-.melo-burger::before,
-.melo-burger::after {
-  content: "";
-  position: absolute;
-  left: 10px; right: 10px;
-  height: 2px;
-  background: #fff;
-  transition: transform .28s var(--melo-ease), opacity .28s var(--melo-ease);
+.melo-burger svg {
+  display: block;
+  width: 24px; height: 24px;
+  justify-self: center;   /* иначе grid растягивает по ячейке */
+  align-self: center;
+  grid-area: 1 / 1;            /* обе иконки в одной ячейке, переключаем прозрачностью */
+  transition: opacity .28s var(--melo-ease), transform .28s var(--melo-ease);
 }
 
-.melo-burger::before { top: 15px; }
-.melo-burger span    { top: 21px; }
-.melo-burger::after  { top: 27px; }
+.melo-burger__close { opacity: 0; transform: rotate(-45deg); }
 
-.melo-burger[aria-expanded="true"]::before { transform: translateY(6px) rotate(45deg); }
-.melo-burger[aria-expanded="true"] span    { opacity: 0; }
-.melo-burger[aria-expanded="true"]::after  { transform: translateY(-6px) rotate(-45deg); }
+.melo-burger[aria-expanded="true"] .melo-burger__open  { opacity: 0; transform: rotate(45deg); }
+.melo-burger[aria-expanded="true"] .melo-burger__close { opacity: 1; transform: none; }
 
 /* ---------- Подвал ------------------------------------------- */
 
@@ -287,7 +283,7 @@
   .melo-nav,
   .melo-site-header__phone { display: none; }
 
-  .melo-burger { display: block; }
+  .melo-burger { display: grid; }
 
   /* при переносе строк логотип и бургер остаются в первой строке */
   .melo-logo               { order: 0; }
@@ -331,4 +327,10 @@
   /* строка 18px с зазором 10px — мелкая цель для пальца */
   .melo-footer-nav { gap: 4px; }
   .melo-footer-nav a { padding-block: 7px; }
+}
+
+/* Заглушка прежнего офф-канвас меню: нужна только скриптам темы,
+   человеку показывать нечего. См. пояснение в content-header.php. */
+.melo-legacy-menu {
+  display: none !important;
 }
