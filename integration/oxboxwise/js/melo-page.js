@@ -17,6 +17,38 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* --- Мобильное меню ---------------------------------------- */
+  var header = page.querySelector('.melo-site-header');
+  var burger = page.querySelector('.melo-burger');
+
+  if (header && burger) {
+    burger.addEventListener('click', function () {
+      var open = header.classList.toggle('melo-is-open');
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    header.querySelectorAll('.melo-nav__link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        header.classList.remove('melo-is-open');
+        burger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  /* --- Шапка реагирует на прокрутку --------------------------- */
+  if (header) {
+    var lastScrolled = null;
+    var syncHeader = function () {
+      var scrolled = window.pageYOffset > 40;
+      if (scrolled !== lastScrolled) {
+        header.classList.toggle('melo-is-scrolled', scrolled);
+        lastScrolled = scrolled;
+      }
+    };
+    window.addEventListener('scroll', syncHeader, { passive: true });
+    syncHeader();
+  }
+
   /* --- Слайдер направлений: горизонтальный скролл + прогресс ---
      Нужен только шаблону «MELO — направление деятельности». На странице
      услуги слайдера нет, и цикл просто не находит ничего. */

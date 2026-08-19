@@ -6,8 +6,9 @@
  * Внутренняя страница услуги в новой стилистике MELO: интро с матовым
  * стеклом, «Что входит в услугу», «Как мы работаем», «Примеры реализации».
  *
- * ВСТРАИВАЕТСЯ В СУЩЕСТВУЮЩУЮ ТЕМУ. Шапка, подвал, меню, попапы и формы
- * берутся из темы через get_header() / get_footer() — здесь их нет.
+ * Шапка и подвал — свои, в новой стилистике MELO: страницы идут в новом
+ * дизайне, старая шапка темы на них не к месту. Каркас документа лежит
+ * в template-parts/melo-header.php и melo-footer.php
  *
  * Весь контент обёрнут в <div class="melo-page">. Стили в
  * css/melo-page.css заскоуплены под этот класс и наружу не выходят,
@@ -23,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-get_header();
+get_template_part( 'template-parts/melo', 'header' );
 
 while ( have_posts() ) :
 	the_post();
@@ -105,50 +106,6 @@ while ( have_posts() ) :
 		array( 'img' => 'project-6.jpg', 'alt' => 'Кухня-гостиная с тёплым освещением', 'w' => 904, 'h' => 578, 'title' => 'Однокомнатная квартира', 'tag' => 'Интерьеры квартир', 'area' => '34', 'url' => '#' ),
 	);
 	?>
-
-<?php
-/* Блоки прячутся до появления только при живом JS: класс .js ставит скрипт
-   ниже. Если melo-page.js не поднимется за 2.5 секунды, срабатывает
-   аварийный показ .reveal-failsafe. Не удаляйте — иначе при сбое скрипта
-   страница окажется пустой. */
-?>
-<script>
-(function () {
-	var d = document.documentElement;
-	d.classList.add('melo-js');
-	setTimeout(function () {
-		if (!d.classList.contains('melo-reveal-ready')) d.classList.add('melo-reveal-failsafe');
-	}, 2500);
-})();
-</script>
-
-<div class="melo-page">
-
-	<?php /* Иконки блока услуги. Префикс melo- чтобы не столкнуться со спрайтом темы. */ ?>
-	<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-		<symbol id="melo-i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M4 12h15M13 6l6 6-6 6"/>
-		</symbol>
-		<symbol id="melo-i-plot-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M3 4h13v9"/><path d="M3 4v16h9"/><path d="M3 12h6"/>
-			<circle cx="17" cy="17" r="4"/><path d="M20 20l1.6 1.6"/>
-		</symbol>
-		<symbol id="melo-i-house-plan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M2.5 10.5 12 3l9.5 7.5"/><path d="M5 12.5V21h14v-8.5"/><path d="M10 21v-5h4v5"/>
-		</symbol>
-		<symbol id="melo-i-site-plan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M3 3.5h18v17H3z"/><path d="M3 13h8v7.5"/><path d="M11 13V8h10"/>
-			<circle cx="16.5" cy="17" r="2.2"/>
-		</symbol>
-		<symbol id="melo-i-structure" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M3 20.5h18"/><path d="M5 20.5V9l7-4.5L19 9v11.5"/>
-			<path d="M5 12.5h14"/><path d="M5 16.5h14"/><path d="M12 12.5v8"/>
-		</symbol>
-		<symbol id="melo-i-permit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M14 2.5H6.5a1 1 0 0 0-1 1v17a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V7z"/>
-			<path d="M14 2.5V7h4.5"/><path d="M8.5 15.5l2 2 4.5-4.5"/>
-		</symbol>
-	</svg>
 
 	<!-- ============ 1. Интро ============ -->
 	<section class="melo-hero">
@@ -292,9 +249,8 @@ while ( have_posts() ) :
 	endif;
 	?>
 
-</div><!-- /.melo-page -->
 
 	<?php
 endwhile;
 
-get_footer();
+get_template_part( 'template-parts/melo', 'footer' );

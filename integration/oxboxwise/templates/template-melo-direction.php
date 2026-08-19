@@ -10,8 +10,9 @@
  * Отличается от «MELO — страница услуги» только вторым блоком: там список
  * позиций с иконками и одной картинкой, здесь слайдер карточек с фото.
  *
- * ВСТРАИВАЕТСЯ В СУЩЕСТВУЮЩУЮ ТЕМУ. Шапка, подвал, меню, попапы и формы
- * берутся из темы через get_header() / get_footer().
+ * Шапка и подвал — свои, в новой стилистике MELO: страницы идут в новом
+ * дизайне, старая шапка темы на них не к месту. Каркас документа лежит
+ * в template-parts/melo-header.php и melo-footer.php.
  *
  * Весь контент обёрнут в <div class="melo-page">. Стили в
  * css/melo-page.css заскоуплены под этот класс и наружу не выходят.
@@ -23,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-get_header();
+get_template_part( 'template-parts/melo', 'header' );
 
 while ( have_posts() ) :
 	the_post();
@@ -118,30 +119,6 @@ while ( have_posts() ) :
 
 	$allow_br = array( 'br' => array() );
 	?>
-
-<?php
-/* Блоки прячутся до появления только при живом JS: класс .js ставит скрипт
-   ниже. Если melo-page.js не поднимется за 2.5 секунды, срабатывает
-   аварийный показ .reveal-failsafe. Не удаляйте — иначе при сбое скрипта
-   страница окажется пустой. */
-?>
-<script>
-(function () {
-	var d = document.documentElement;
-	d.classList.add('melo-js');
-	setTimeout(function () {
-		if (!d.classList.contains('melo-reveal-ready')) d.classList.add('melo-reveal-failsafe');
-	}, 2500);
-})();
-</script>
-
-<div class="melo-page">
-
-	<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-		<symbol id="melo-i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M4 12h15M13 6l6 6-6 6"/>
-		</symbol>
-	</svg>
 
 	<!-- ============ 1. Интро ============ -->
 	<section class="melo-hero">
@@ -293,9 +270,8 @@ while ( have_posts() ) :
 	endif;
 	?>
 
-</div><!-- /.melo-page -->
 
 	<?php
 endwhile;
 
-get_footer();
+get_template_part( 'template-parts/melo', 'footer' );
