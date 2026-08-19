@@ -142,18 +142,20 @@ while ( have_posts() ) :
 
 		<div class="melo-container melo-hero__inner">
 			<?php
-			/* Хлебные крошки выводит сама тема, выше по странице (см. header.php).
-			   Если нужны внутри первого экрана — раскомментируйте блок ниже
-			   и отключите вывод темы для этого шаблона.
-
-			<nav aria-label="Хлебные крошки">
-				<ol class="melo-breadcrumbs">
-					<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Главная</a></li>
-					<li><span aria-current="page"><?php the_title(); ?></span></li>
-				</ol>
+			/* Крошки перенесены сюда из-под шапки по решению заказчика: над
+			   заголовком, белым по фотографии. Видимый блок темы при этом
+			   отключён в template-parts/content-breadcrumbs.php, чтобы на
+			   странице не оказалось двух наборов крошек подряд — второй
+			   читался бы скринридером как повтор.
+			
+			   Плагин Breadcrumb NavXT даёт только <li>, обёртку пишем свою. */
+			if ( function_exists( "bcn_display_list" ) ) : ?>
+			<nav class="melo-hero__crumbs" aria-label="Хлебные крошки">
+				<ul class="melo-breadcrumbs">
+					<?php bcn_display_list(); ?>
+				</ul>
 			</nav>
-			*/
-			?>
+			<?php endif; ?>
 
 			<h1><?php the_title(); ?></h1>
 

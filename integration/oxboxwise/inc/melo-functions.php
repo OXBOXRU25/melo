@@ -43,13 +43,30 @@ function melo_enqueue_chrome() {
 		file_exists( $file ) ? filemtime( $file ) : null
 	);
 
+	/* Стили лайтбокса галереи — только на страницах проектов, где он есть.
+
+	   Тема подключает css/libs.min.css в header.php как <script>, то есть
+	   таблицу стилей грузит скриптом, и браузер её не применяет. Галерея
+	   из-за этого открывалась голой разметкой под подвалом. Целиком тот
+	   файл подключать нельзя — он несёт normalize.css и Swiper и сдвинул
+	   бы базовые стили всего сайта, поэтому берём из него только Fancybox. */
+	if ( is_singular( 'projects' ) ) {
+		$fb = get_template_directory() . '/css/melo-fancybox.css';
+		wp_enqueue_style(
+			'melo-fancybox',
+			get_template_directory_uri() . '/css/melo-fancybox.css',
+			array( 'melo-chrome' ),
+			file_exists( $fb ) ? filemtime( $fb ) : null
+		);
+	}
+
 	/* Точечные правки существующих секций темы — светлые «Услуги»
 	   и ссылки на карточках. Идут после chrome, чтобы перекрывать. */
 	$ovr = get_template_directory() . '/css/melo-overrides.css';
 	wp_enqueue_style(
 		'melo-overrides',
 		get_template_directory_uri() . '/css/melo-overrides.css',
-		array( 'melo-chrome' ),
+		array( wp_style_is( 'melo-fancybox', 'enqueued' ) ? 'melo-fancybox' : 'melo-chrome' ),
 		file_exists( $ovr ) ? filemtime( $ovr ) : null
 	);
 
@@ -63,6 +80,18 @@ function melo_enqueue_chrome() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'melo_enqueue_chrome', 100 );
+
+/**
+ * Страница собрана на шаблоне MELO?
+ *
+ * Нужно там, где поведение темы отличается на наших страницах: сейчас —
+ * чтобы не выводить хлебные крошки над первым экраном, они перенесены
+ * внутрь него.
+ */
+function melo_is_melo_template() {
+	$tpl = get_page_template_slug();
+	return $tpl && false !== strpos( $tpl, 'template-melo-' );
+}
 
 /**
  * Значок сайта.

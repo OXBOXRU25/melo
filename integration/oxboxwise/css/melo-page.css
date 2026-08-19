@@ -592,6 +592,14 @@
 
 .melo-page .melo-card__media img {
   width: 100%; height: 100%;
+  /* height: 100% здесь не срабатывает: коробка берёт высоту из
+     aspect-ratio, а не из явного значения, и процент от неё не
+     разрешается — картинка вставала по своей пропорции. У четырёх
+     фотографий пропорция совпадала с коробкой случайно, а пятая
+     (904x578) не дотягивала 32px, и снизу оставалась полоса.
+     Задаём картинке ту же пропорцию — тогда высота считается от
+     ширины и обрезка object-fit наконец работает. */
+  aspect-ratio: 590 / 409;
   object-fit: cover;
   transition: transform var(--dur-lux) var(--ease-lux);
 }
@@ -602,6 +610,13 @@
 }
 
 .melo-page .melo-card:hover .melo-card__media img { transform: scale(1.06); }
+
+/* Под ScrollSmoother зум отключаем: масштабированная картинка уезжает
+   на свой слой, и скруглённая обрезка контейнера там теряется — угол
+   становится прямым. Отклик по наведению остаётся: подъём фотографии
+   и золотая линия под заголовком. */
+.melo-smooth .melo-page .melo-card:hover .melo-card__media img,
+.melo-smooth .melo-page .melo-project:hover .melo-project__media img { transform: none; }
 
 .melo-page .melo-card__head h3 {
   font-size: var(--card-fs-title);
@@ -810,9 +825,10 @@
   transition: transform var(--dur-lux) var(--ease-lux);
 }
 
+/* Тень по наведению снята по решению заказчика: отклик даёт подъём
+   фотографии и золотая линия под заголовком, тень читалась лишней. */
 .melo-page .melo-project:hover .melo-project__media {
   transform: translateY(-6px);
-  box-shadow: 0 22px 44px rgba(3, 36, 71, .18);
 }
 
 .melo-page .melo-project:hover .melo-project__media img { transform: scale(1.05); }
@@ -849,7 +865,11 @@
 /* Цвет заголовка проекта не меняется и при наведении — решение заказчика.
    Отклик даёт золотая линия снизу (раздел 14) и подъём фотографии выше. */
 .melo-page .melo-project__tag {
-  margin-top: 4px;
+  /* Зазор до заголовка меряется по буквам, а не по боксам: строка выше
+     своих букв, поэтому положительный margin давал 33.55px видимого
+     воздуха при 4px в разметке. Заказчик просил вдвое меньше — уводим
+     margin в минус ровно на половину замеренного зазора. */
+  margin-top: -5px;
   font-size: var(--fs-small);
   color: var(--text);
 }
@@ -1003,7 +1023,23 @@
   color: #fff;
 }
 
+/* Разметку внутрь списка кладёт плагин Breadcrumb NavXT: <li> со
+   вложенными <span property> и ссылкой. Гасим маркеры списка и снимаем
+   собственный цвет ссылок — крошки над фотографией идут белыми. */
+.melo-page .melo-breadcrumbs {
+  list-style: none;
+  padding: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.melo-page .melo-breadcrumbs a,
+.melo-page .melo-breadcrumbs span { color: inherit; }
+
 .melo-page .melo-breadcrumbs a:hover { color: var(--gold); }
+
+/* последний пункт — текущая страница, приглушаем как в шапке темы */
+.melo-page .melo-breadcrumbs li:last-child { color: rgba(255, 255, 255, .62); }
 
 .melo-page .melo-breadcrumbs li + li::before {
   content: "/";
