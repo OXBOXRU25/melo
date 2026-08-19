@@ -1,0 +1,1428 @@
+/* ============================================================
+   MELO — внутренняя страница услуги
+   Стили для встраивания в тему oxboxwise.
+
+   ВСЁ заскоуплено под .melo-page — контейнер, в который обёрнут контент
+   шаблона. Ни одно правило не выходит за него, поэтому файл безопасно
+   подключать на живом сайте: шапка, подвал, меню, попапы и остальные
+   страницы не затрагиваются. Проверено обходом CSSOM — утечек ноль.
+
+   Имена ключевых кадров с префиксом melo-, чтобы не столкнуться
+   с анимациями темы.
+
+   Собрано скриптом из tokens.css + base.css + components.css проекта
+   MELO. Править исходники, а не этот файл.
+   ============================================================ */
+
+/* ============================================================
+   MELO — design tokens
+
+   Шкала снята с двух источников и сведена:
+   • melodesign.ru — вычисленные стили при ширине 1920
+   • MELO_2.jpg    — обмер по высоте прописных и шагу строк
+   Оба источника сходятся: эйбрау 30, абзац 24, H2 44 при 1920.
+
+   Все размеры записаны как clamp(min, Xvw, max), где vw-коэффициент
+   даёт ровно эталонное значение на 1920, а max его фиксирует, чтобы
+   на широких мониторах текст не разъезжался.
+   ============================================================ */
+.melo-page {
+  /* --- Цвет --------------------------------------------------- */
+  --navy:            #032447;
+  --navy-deep:       #042244; /* тёмные кнопки */
+  --navy-heading:    #032349;
+  --navy-hover:      #05305e;
+  /* Замер по плоским участкам кнопки и точки эйбрау даёт #d3ac67 как моду.
+     Прежние #d4ab6b и #d2ab66 — артефакты: первый снят с пикселя рядом с
+     белым текстом, второй просто JPEG-двойник того же цвета. */
+  --gold:            #d3ac67;
+  --gold-dark:       #c39a58; /* hover золотой кнопки */
+
+  --bg-white:        #ffffff;
+  --bg-gray:         #f0f0f0;
+
+  --text:            #000000;  /* замер макета: мода нейтральных тёмных пикселей = чистый чёрный */
+  --text-muted:      #6e6e6e;
+  --text-on-navy:    #ffffff;
+  --text-on-navy-dim:rgba(255, 255, 255, .72);
+
+  --line:            #dcdcdc;
+  --line-on-navy:    rgba(255, 255, 255, .18);
+
+  /* --- Типографика: шрифты ------------------------------------ */
+  --font-sans:  "Golos Text", "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Merriweather", "Georgia", serif;  /* заголовки */
+
+  /* --- Типографика: шкала (значение справа = размер на 1920) --- */
+  --fs-h1:      clamp(34px, 3.54vw, 68px);  /* 68 — заголовок первого экрана   */
+  --fs-h2:      clamp(26px, 2.29vw, 44px);  /* 44 — заголовок секции           */
+  --fs-caps:    clamp(24px, 1.98vw, 38px);  /* 38 — ПРОЕКТ, ПРЕМИУМ            */
+  --fs-h3:      clamp(20px, 1.56vw, 30px);  /* 30 — заголовок карточки         */
+  --fs-eyebrow: clamp(20px, 1.56vw, 30px);  /* 30 — ● Направления деятельности */
+  --fs-price:   clamp(19px, 1.56vw, 30px);  /* 30 — от 1 500 руб/кв.м          */
+  --fs-lead:    clamp(17px, 1.25vw, 24px);  /* 24 — лид, крупный абзац         */
+  --fs-body:    clamp(16px, 1.25vw, 24px);  /* 24 — основной текст             */
+  --fs-nav:     clamp(14px, .83vw, 16px);   /* 16 — меню и телефон в шапке     */
+  --fs-list:    clamp(15px, 1.09vw, 21px);  /* 21 — пункты списков, площадь    */
+  --fs-small:   clamp(14px, .94vw, 18px);   /* 18 — кнопки, теги, сноски       */
+  --fs-micro:   clamp(13px, .83vw, 16px);   /* 16 — копирайт, номер проекта    */
+
+  /* --- Типографика: интерлиньяж и начертания ------------------- */
+  --lh-tight:   1.18;  /* H1 — шаг строк 80px при кегле 68        */
+  --lh-head:    1.15;  /* заголовки и короткие строки             */
+  --lh-body:    1.2;   /* абзацы — шаг 28px при кегле 24          */
+  --lh-lead:    1.35;  /* лид первого экрана — шаг 32px при 24    */
+  --lh-list:    1.45;  /* многострочные пункты списков            */
+
+  /* На melodesign.ru есть разрядка (.025em у заголовков, .02em у текста),
+     но по решению заказчика её не используем — набор идёт без трекинга. */
+  --ls-head:    normal;
+  --ls-body:    normal;
+
+  --fw-light:   300;
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+
+  /* --- Сетка и ритм ------------------------------------------- */
+  --container:      1840px;                     /* контент 1840 при 1920 */
+  --gutter:         clamp(16px, 2.08vw, 40px);  /* боковой отступ 40     */
+  --grid-gap:       clamp(16px, 1.45vw, 28px);
+  --grid-gap-tight: clamp(12px, .95vw, 18px);
+  --card-indent:    40px;  /* колонка номера и тире в карточке направления */
+
+  --section-py:     clamp(44px, 3.65vw, 70px);  /* 70 — отступ секции    */
+  --section-head-mb:clamp(24px, 2.3vw, 44px);   /* 44 — под эйбрау       */
+  --header-h:       88px;
+
+  /* --- Форма -------------------------------------------------- */
+  --radius:      14px;
+  --radius-sm:   8px;
+  --radius-pill: 999px;
+  --btn-h:       clamp(48px, 3.65vw, 70px);
+  --btn-h-sm:    clamp(44px, 2.7vw, 52px);
+
+  /* --- Движение ----------------------------------------------- */
+  --ease:      cubic-bezier(.22, .61, .36, 1);
+  /* Длинный хвост: движение резко стартует и долго успокаивается. Именно
+     это читается как «дорого» — быстрый линейный переход всегда дешевит. */
+  --ease-lux:  cubic-bezier(.16, 1, .3, 1);
+  --dur:       .28s;
+  --dur-slow:  .5s;
+  --dur-lux:   .9s;
+  --dur-wipe:  1.05s;  /* шторка, открывающая фотографию */
+}
+
+/* ============================================================
+   MELO — reset + базовая типографика + контейнер
+   ============================================================ */
+.melo-page, .melo-page *,
+.melo-page *::before,
+.melo-page *::after { box-sizing: border-box; }
+
+/* -webkit-text-size-adjust и scroll-behavior не переносим:
+   у темы сайта свои правила на html */
+
+.melo-page {
+  margin: 0;
+  background: var(--bg-white);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  letter-spacing: var(--ls-body);
+  font-weight: var(--fw-regular);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.melo-page img,
+.melo-page picture,
+.melo-page video,
+.melo-page svg { display: block; max-width: 100%; }
+
+.melo-page img { height: auto; }
+
+.melo-page a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--dur) var(--ease);
+}
+
+.melo-page button,
+.melo-page input,
+.melo-page textarea,
+.melo-page select {
+  font: inherit;
+  color: inherit;
+}
+
+.melo-page button { cursor: pointer; }
+
+.melo-page ul,
+.melo-page ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.melo-page h1,
+.melo-page h2,
+.melo-page h3,
+.melo-page h4,
+.melo-page p,
+.melo-page figure { margin: 0; }
+
+.melo-page h1,
+.melo-page h2,
+.melo-page h3,
+.melo-page h4 {
+  font-family: var(--font-display);
+  color: var(--navy-heading);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-head);
+  letter-spacing: var(--ls-head);
+}
+
+.melo-page h1 {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  /* капс убран 18.08.2026 по решению заказчика: с антиквой Merriweather
+     набор идёт с заглавной, как обычное предложение */
+}
+
+.melo-page h2 { font-size: var(--fs-h2); }
+
+.melo-page h3 { font-size: var(--fs-h3); }
+
+/* --- Служебное ------------------------------------------------ */
+.melo-page .container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.melo-page .section {
+  padding-block: var(--section-py);
+}
+
+.melo-page .section--tall { padding-block: calc(var(--section-py) * 1.5); }
+
+.melo-page .section--gray { background: var(--bg-gray); }
+
+.melo-page .section--white { background: var(--bg-white); }
+
+.melo-page .section--navy { background: var(--navy); color: var(--text-on-navy); }
+
+.melo-page .section--navy h1,
+.melo-page .section--navy h2,
+.melo-page .section--navy h3 { color: var(--text-on-navy); }
+
+.melo-page .text-muted { color: var(--text-muted); }
+
+.melo-page .text-center { text-align: center; }
+
+.melo-page .hr {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: var(--line);
+}
+
+.melo-page .visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Прятать блоки можно только когда JS точно работает: класс .js ставит
+   инлайновый скрипт в <head>. Без него контент виден сразу.
+   .reveal-failsafe — аварийный показ, если main.js не поднялся. */
+.js .melo-page [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--dur-lux) var(--ease-lux), transform var(--dur-lux) var(--ease-lux);
+}
+
+.js .melo-page [data-reveal].is-visible,
+.js.reveal-failsafe .melo-page [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Фотографии не всплывают вместе с блоком, а открываются шторкой снизу
+   вверх. Сам переход объявлен в components.css одним списком рядом с
+   карточкой — разбивать его нельзя, шорткат затрёт соседние свойства. */
+.js .melo-page .card[data-reveal] .card__media,
+.js .melo-page .project[data-reveal] .project__media,
+.js .melo-page .service__media[data-reveal] { clip-path: inset(0 0 100% 0); }
+
+.js .melo-page .card[data-reveal].is-visible .card__media,
+.js .melo-page .project[data-reveal].is-visible .project__media,
+.js .melo-page .service__media[data-reveal].is-visible,
+.js.reveal-failsafe .melo-page .card[data-reveal] .card__media,
+.js.reveal-failsafe .melo-page .project[data-reveal] .project__media,
+.js.reveal-failsafe .melo-page .service__media[data-reveal] { clip-path: inset(0 0 0 0); }
+
+/* У картинки блока услуги появление даёт только шторка: всплывание вместе
+   с ней читается как двойное движение. Правило идёт после общего, поэтому
+   opacity и transform от [data-reveal] здесь перебиваются. */
+.js .melo-page .service__media[data-reveal] { opacity: 1; transform: none; }
+
+/* золотая точка эйбрау раскрывается следом за заголовком секции */
+.js .melo-page [data-reveal] .eyebrow::before { transform: scale(0); }
+
+.js .melo-page [data-reveal].is-visible .eyebrow::before,
+.js.reveal-failsafe .melo-page .eyebrow::before { transform: scale(1); }
+
+/* вертикальные линии этапов прочерчиваются сверху вниз */
+.js .melo-page .flow__item[data-reveal]::before { transform: scaleY(0); }
+
+.js .melo-page .flow__item[data-reveal].is-visible::before,
+.js.reveal-failsafe .melo-page .flow__item::before { transform: scaleY(1); }
+
+.melo-page :where(a,
+.melo-page button,
+.melo-page [tabindex]):focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce)  {
+.melo-page { scroll-behavior: auto; }
+
+.melo-page, .melo-page *,
+.melo-page *::before,
+.melo-page *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    /* без этого каскад первого экрана всё равно отсчитывает свои 0.78 с */
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
+
+/* ============================================================
+   MELO — библиотека паттернов, снятых с макета
+   Порядок: шапка → эйбрау → кнопки → списки → карточки →
+            таблица → прайс → слайдер → проекты → футер
+   ============================================================ */
+
+/* ---------- 1. Шапка ----------------------------------------- */
+.melo-page .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--navy);
+  color: var(--text-on-navy);
+  transition: box-shadow var(--dur-slow) var(--ease-lux);
+}
+
+/* класс вешает JS после прокрутки от верха страницы */
+.melo-page .site-header.is-scrolled { box-shadow: 0 8px 28px rgba(3, 36, 71, .3); }
+
+.melo-page .site-header__inner {
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 3vw, 64px);
+  transition: height var(--dur-slow) var(--ease-lux);
+}
+
+@media (min-width: 861px)  {
+.melo-page .site-header.is-scrolled .site-header__inner { height: 68px; }
+
+.melo-page .site-header.is-scrolled .logo__mark { height: 38px; }
+}
+
+.melo-page .logo__mark { transition: height var(--dur-slow) var(--ease-lux); }
+
+.melo-page .logo {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+
+/* готовый лок-ап 196×54: знак и слово MELO уже внутри ассета.
+   Размер задаём по высоте, ширина считается по пропорции. */
+.melo-page .logo__mark {
+  height: 50px;
+  width: auto;
+  flex: none;
+}
+
+.melo-page .nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2.1vw, 40px);
+  margin-inline: auto;
+}
+
+.melo-page .nav__link {
+  font-size: var(--fs-nav);
+  color: var(--text-on-navy);
+}
+
+.melo-page .nav__link:hover,
+.melo-page .nav__link[aria-current="page"] { color: var(--gold); }
+
+.melo-page .site-header__phone {
+  flex: none;
+  font-size: var(--fs-nav);
+  white-space: nowrap;
+}
+
+.melo-page .site-header__phone:hover { color: var(--gold); }
+
+.melo-page .burger {
+  display: none;
+  width: 44px; height: 44px;
+  margin-left: auto;
+  padding: 0;
+  background: none;
+  border: 0;
+  position: relative;
+}
+
+.melo-page .burger span,
+.melo-page .burger::before,
+.melo-page .burger::after {
+  content: "";
+  position: absolute;
+  left: 10px; right: 10px;
+  height: 2px;
+  background: #fff;
+  transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+
+.melo-page .burger::before { top: 15px; }
+
+.melo-page .burger span { top: 21px; }
+
+.melo-page .burger::after { top: 27px; }
+
+.melo-page .burger[aria-expanded="true"]::before { transform: translateY(6px) rotate(45deg); }
+
+.melo-page .burger[aria-expanded="true"] span { opacity: 0; }
+
+.melo-page .burger[aria-expanded="true"]::after { transform: translateY(-6px) rotate(-45deg); }
+
+/* ---------- 2. Эйбрау секции (● Подпись) --------------------- */
+.melo-page .eyebrow {
+  display: inline-flex;
+  /* эйбрау бывает и заголовком секции: гарнитуру называем явно, чтобы
+     он не унаследовал антикву от h2 */
+  font-family: var(--font-sans);
+  align-items: center;
+  gap: clamp(14px, 1.35vw, 26px);
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-head);
+  color: var(--navy-heading);
+}
+
+.melo-page .eyebrow::before {
+  content: "";
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex: none;
+  transition: transform var(--dur-slow) var(--ease-lux) .25s;
+}
+
+.melo-page .section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: clamp(24px, 4vw, 80px);
+  margin-bottom: var(--section-head-mb);
+}
+
+/* заголовок секции без эйбрау — один, по центру полосы */
+.melo-page .section__head--solo {
+  display: block;
+  text-align: center;
+}
+
+/* эйбрау слева, заголовок по центру полосы — как в блоке «Наши последние работы» */
+.melo-page .section__head--center {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+}
+
+.melo-page .section__head--center > :first-child { justify-self: start; }
+
+.melo-page .section__head--center h2 { text-align: center; }
+
+.melo-page .section__intro {
+  max-width: 62ch;
+  margin-bottom: var(--section-head-mb);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-body);
+}
+
+/* ---------- 3. Кнопки ---------------------------------------- */
+.melo-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: var(--btn-h);
+  padding-inline: clamp(28px, 2.4vw, 46px);
+  border: 0;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-regular);
+  text-align: center;
+  /* Отклик простой: фон плавно меняет тон. Наезжающая заливка на
+     псевдоэлементе была отвергнута заказчиком 18.08.2026 — держим ровную
+     заливку, а «дорого» здесь даёт длительность и кривая, а не приём. */
+  transition: background-color var(--dur-slow) var(--ease-lux),
+              color var(--dur-slow) var(--ease-lux),
+              box-shadow var(--dur-slow) var(--ease-lux),
+              transform var(--dur) var(--ease);
+}
+
+.melo-page .btn:active { transform: translateY(1px); }
+
+.melo-page .btn--gold {
+  background: var(--gold);
+  color: #fff;
+}
+
+.melo-page .btn--gold:hover { background: var(--gold-dark); }
+
+.melo-page .btn--navy {
+  background: var(--navy-deep);
+  color: #fff;
+}
+
+.melo-page .btn--navy:hover { background: var(--navy-hover); }
+
+.melo-page .btn--ghost {
+  background: transparent;
+  color: var(--navy);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.melo-page .btn--ghost:hover { box-shadow: inset 0 0 0 1px var(--navy); }
+
+/* вариант со стрелкой, прижатой к правому краю */
+.melo-page .btn--wide {
+  height: var(--btn-h-sm);
+  width: min(497px, 100%);
+  justify-content: space-between;
+}
+
+.melo-page .btn__arrow {
+  width: 22px; height: 22px;
+  flex: none;
+  transition: transform var(--dur-slow) var(--ease-lux);
+}
+
+.melo-page .btn:hover .btn__arrow { transform: translateX(6px); }
+
+/* ---------- 4. Списки с золотым тире ------------------------- */
+.melo-page .dash-list {
+  display: grid;
+  gap: 10px;
+}
+
+.melo-page .dash-list li {
+  display: grid;
+  grid-template-columns: var(--card-indent) 1fr;
+  gap: 0;
+  font-size: var(--fs-list);
+  line-height: var(--lh-body);
+}
+
+.melo-page .dash-list li::before {
+  content: "";
+  margin-top: .68em;
+  width: 22px;
+  height: 1px;
+  background: var(--gold);
+}
+
+/* простой список без маркеров (состав тарифа) */
+.melo-page .plain-list {
+  display: grid;
+  gap: 8px;
+  font-size: var(--fs-list);
+  line-height: var(--lh-list);
+}
+
+/* ---------- 5. Карточка направления -------------------------- */
+.melo-page .grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--grid-gap);
+}
+
+.melo-page .card__media {
+  aspect-ratio: 590 / 409;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--line);
+  /* Один transition на все состояния фотографии: подъём с тенью по
+     наведению и шторка при появлении. Разносить по разным правилам
+     нельзя — шорткат transition затирает весь список целиком. */
+  transition: transform var(--dur-lux) var(--ease-lux),
+              box-shadow var(--dur-lux) var(--ease-lux),
+              clip-path var(--dur-wipe) var(--ease-lux) .12s;
+}
+
+.melo-page .card__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-lux) var(--ease-lux);
+}
+
+.melo-page .card:hover .card__media {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 44px rgba(3, 36, 71, .18);
+}
+
+.melo-page .card:hover .card__media img { transform: scale(1.06); }
+
+.melo-page .card__head {
+  display: grid;
+  grid-template-columns: var(--card-indent) 1fr;
+  align-items: start;
+  gap: 0;
+  margin-block: clamp(20px, 1.67vw, 32px) clamp(16px, 1.3vw, 25px);
+}
+
+.melo-page .card__num {
+  color: var(--gold);
+  font-size: var(--fs-list);
+  line-height: var(--lh-head);
+}
+
+/* вводная строка карточки: идёт между заголовком и списком услуг */
+.melo-page .card__lead {
+  padding-left: var(--card-indent);
+  font-size: var(--fs-list);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+.melo-page .card__lead + .dash-list { margin-top: 16px; }
+
+/* упрощённая карточка: фото → заголовок → короткое описание */
+.melo-page .card__title {
+  margin-top: clamp(18px, 1.6vw, 30px);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-medium);
+  color: var(--navy-heading);
+  line-height: var(--lh-head);
+}
+
+.melo-page .card__text {
+  margin-top: clamp(10px, .85vw, 16px);
+  font-size: var(--fs-list);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
+}
+
+/* ---------- 6. Строчная таблица (Функциональность / …) ------- */
+.melo-page .spec-table {
+  border-top: 1px solid var(--line);
+}
+
+.melo-page .spec-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 2fr;
+  gap: clamp(24px, 3vw, 60px);
+  padding-block: clamp(20px, 2vw, 34px);
+  border-bottom: 1px solid var(--line);
+}
+
+.melo-page .spec-row__title {
+  color: var(--navy-heading);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-head);
+}
+
+.melo-page .spec-row__text {
+  font-size: var(--fs-list);
+  line-height: var(--lh-body);
+}
+
+/* ---------- 7. Прайс-строка ---------------------------------- */
+.melo-page .pricing {
+  border-top: 1px solid var(--line);
+}
+
+.melo-page .pricing__row {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(300px, 1.15fr) auto;
+  gap: clamp(24px, 3vw, 60px);
+  padding-block: clamp(32px, 3.3vw, 60px);
+  border-bottom: 1px solid var(--line);
+}
+
+.melo-page .pricing__title {
+  font-size: var(--fs-caps);
+  font-weight: var(--fw-bold);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.melo-page .pricing__title--navy { color: var(--navy-heading); }
+
+.melo-page .pricing__title--dark { color: var(--text); }
+
+.melo-page .pricing__note {
+  margin-top: 10px;
+  font-size: var(--fs-small);
+  color: var(--text);
+}
+
+.melo-page .pricing__price {
+  font-size: var(--fs-price);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  text-align: right;
+}
+
+.melo-page .pricing__cta { margin-top: clamp(20px, 2vw, 34px); }
+
+/* ---------- 8. Слайдер: прогресс + стрелки ------------------- */
+.melo-page .slider-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - var(--grid-gap) * 2) / 3);  /* 3 карточки в кадре */
+  gap: var(--grid-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.melo-page .slider-track::-webkit-scrollbar { display: none; }
+
+.melo-page .slider-track > * { scroll-snap-align: start; }
+
+.melo-page .slider-foot {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 3vw, 60px);
+  margin-top: clamp(28px, 3vw, 56px);
+}
+
+.melo-page .slider-progress {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: var(--line);
+}
+
+.melo-page .slider-progress__bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 65%;
+  background: var(--navy);
+  /* короткий линейный переход: при перетаскивании трека полоса должна
+     идти за пальцем, а не догонять его через треть секунды */
+  transition: width .12s linear;
+}
+
+.melo-page .slider-nav {
+  display: flex;
+  gap: 16px;
+  flex: none;
+}
+
+/* белый кружок с небольшой стрелкой внутри */
+.melo-page .slider-btn {
+  width: 52px; height: 52px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--navy);
+  transition: background-color var(--dur) var(--ease),
+              color var(--dur) var(--ease),
+              opacity var(--dur) var(--ease);
+}
+
+.melo-page .slider-btn svg {
+  width: 18px; height: 18px;
+  transition: transform var(--dur-slow) var(--ease-lux);
+}
+
+/* левая кнопка — та же стрелка, отражённая по горизонтали */
+.melo-page .slider-btn[data-slider-prev] svg { transform: scaleX(-1); }
+
+/* стрелка шагает в свою сторону: у левой сдвиг тоже положительный,
+   потому что считается уже в отражённой системе координат */
+.melo-page .slider-btn[data-slider-next]:not(:disabled):hover svg { transform: translateX(3px); }
+
+.melo-page .slider-btn[data-slider-prev]:not(:disabled):hover svg { transform: scaleX(-1) translateX(3px); }
+
+.melo-page .slider-btn:disabled { opacity: .4; cursor: default; }
+
+.melo-page .slider-btn:not(:disabled):hover {
+  background: var(--navy);
+  color: #fff;
+}
+
+/* ---------- 9. Карточка проекта ------------------------------ */
+.melo-page .project__media {
+  display: block;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--line);
+  /* см. комментарий у .card__media — список transition должен быть один */
+  transition: transform var(--dur-lux) var(--ease-lux),
+              box-shadow var(--dur-lux) var(--ease-lux),
+              clip-path var(--dur-wipe) var(--ease-lux) .12s;
+}
+
+.melo-page .project__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-lux) var(--ease-lux);
+}
+
+.melo-page .project:hover .project__media {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 44px rgba(3, 36, 71, .18);
+}
+
+.melo-page .project:hover .project__media img { transform: scale(1.05); }
+
+.melo-page .project__meta {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.melo-page .project__num {
+  font-size: var(--fs-micro);
+  /* тот же золотой, что у номеров направлений и этапов: номер везде
+     играет одну роль, значит и цвет у него один */
+  color: var(--gold);
+  margin-right: 6px;
+  /* выравниваем верх цифры по верху прописной в заголовке: они разного
+     кегля и по умолчанию сидят на одной базовой линии, из-за чего верх
+     меньшего текста проваливается. Сдвиг = разница высот прописных. */
+  vertical-align: .37em;
+}
+
+.melo-page .project__title {
+  display: inline;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  /* в макете тот же navy, что у прочих заголовков — замер по сердцевине
+     штрихов даёт #032447. Прежний #14508c был поставлен на глаз. */
+  color: var(--navy-heading);
+}
+
+/* Цвет заголовка проекта не меняется и при наведении — решение заказчика.
+   Отклик даёт золотая линия снизу (раздел 14) и подъём фотографии выше. */
+.melo-page .project__tag {
+  margin-top: 4px;
+  font-size: var(--fs-small);
+  color: var(--text);
+}
+
+.melo-page .project__area {
+  font-size: var(--fs-list);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.melo-page .project__area sup {
+  font-size: .7em;
+  color: var(--text-muted);
+}
+
+/* ---------- 10. Футер ---------------------------------------- */
+.melo-page .site-footer {
+  background: var(--navy);
+  color: var(--text-on-navy);
+  padding-top: clamp(48px, 4.5vw, 86px);
+}
+
+.melo-page .site-footer__grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1.4fr 1.4fr auto;
+  gap: clamp(28px, 3vw, 56px);
+  padding-bottom: clamp(40px, 4vw, 76px);
+}
+
+.melo-page .site-footer__claim {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  max-width: 22ch;
+}
+
+.melo-page .footer-contacts {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+
+.melo-page .footer-contacts__major {
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-medium);
+  line-height: var(--lh-head);
+}
+
+.melo-page .footer-contacts__major:hover { color: var(--gold); }
+
+.melo-page .footer-contacts__gap { height: clamp(12px, 1.2vw, 24px); }
+
+.melo-page .footer-contacts__address {
+  margin-top: clamp(28px, 4vw, 90px);
+  font-size: var(--fs-list);
+}
+
+.melo-page .footer-nav {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  font-size: var(--fs-body);
+  line-height: var(--lh-head);
+}
+
+.melo-page .footer-nav a:hover { color: var(--gold); }
+
+.melo-page .footer-top-link {
+  font-size: var(--fs-small);
+  justify-self: end;
+  align-self: start;
+}
+
+.melo-page .footer-top-link:hover { color: var(--gold); }
+
+.melo-page .site-footer__bottom {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  padding-block: clamp(20px, 1.9vw, 34px);
+  border-top: 1px solid var(--line-on-navy);
+  font-size: var(--fs-micro);
+  color: var(--text-on-navy-dim);
+}
+
+.melo-page .site-footer__bottom > :last-child { justify-self: end; }
+
+.melo-page .site-footer__bottom a:hover { color: var(--gold); }
+
+/* ---------- 11. Интро внутренней страницы -------------------- */
+.melo-page .hero {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: clamp(520px, 55.3vw, 1062px);
+  overflow: hidden;
+  background: var(--navy);
+}
+
+/* фото выше блока на 7% сверху и снизу — этот запас съедает параллакс,
+   поэтому при сдвиге края не оголяются */
+.melo-page .hero__bg {
+  position: absolute;
+  top: -7%; left: 0;
+  width: 100%; height: 114%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+/* затемнение ровно на левой половине — как на первом экране макета.
+   backdrop-filter размывает фото под вуалью (эффект матового стекла).
+   Где он не поддерживается, остаётся просто плотная заливка. */
+.melo-page .hero__veil {
+  position: absolute;
+  inset: 0 50% 0 0;
+  background: rgba(3, 36, 71, .75);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.melo-page .hero__inner {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  padding-block: clamp(56px, 5vw, 96px);
+}
+
+.melo-page .hero h1 {
+  color: #fff;
+  max-width: 17ch;
+  text-wrap: balance;
+}
+
+.melo-page .hero__lead {
+  margin-top: clamp(22px, 2.2vw, 40px);
+  max-width: 40ch;
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+  color: rgba(255, 255, 255, .92);
+}
+
+.melo-page .hero .btn { margin-top: clamp(26px, 3vw, 58px); }
+
+.melo-page .breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: clamp(20px, 2vw, 36px);
+  font-size: var(--fs-small);
+  color: #fff;
+}
+
+.melo-page .breadcrumbs a:hover { color: var(--gold); }
+
+.melo-page .breadcrumbs li + li::before {
+  content: "/";
+  margin-right: 10px;
+  color: rgba(255, 255, 255, .38);
+}
+
+.melo-page .breadcrumbs li { display: flex; align-items: center; }
+
+/* --- вход первого экрана -------------------------------------
+   Вуаль наезжает на фотографию слева направо, следом друг за другом
+   выходят крошки, заголовок, лид и кнопка. Сделано анимациями, а не
+   через data-reveal: герой всегда наверху, ждать прокрутки нечего,
+   и без JS вход отрабатывает ровно так же. */
+@keyframes melo-veil-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes melo-hero-rise {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes melo-hero-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.melo-page .hero__veil { animation: melo-veil-in 1.1s var(--ease-lux) both; }
+
+.melo-page .hero__inner > * { animation: melo-hero-rise .95s var(--ease-lux) both; }
+
+.melo-page .hero__inner > :first-child { animation-delay: .38s; }
+
+.melo-page .hero h1 { animation-delay: .5s;  }
+
+.melo-page .hero__lead { animation-delay: .64s; }
+
+/* кнопке — только проявление: анимация с fill-mode both удерживает
+   transform, и подъём при :active тогда перестал бы работать */
+.melo-page .hero .btn {
+  animation-name: melo-hero-fade;
+  animation-delay: .78s;
+}
+
+/* ---------- 11б. Что входит в услугу: список + картинка ------ */
+.melo-page .service {
+  /* Кегли позиций на 15% мельче общих ролей — решение заказчика 18.08.2026.
+     Держим их здесь двумя строками, а не по месту: менять придётся вместе.
+     У аннотации есть пол в 13px — без него на телефоне выходило 12.75, а
+     ниже 13 текст уже считается нечитаемым. */
+  --service-fs-title: calc(var(--fs-h3) * .85);
+  --service-fs-text:  max(13px, calc(var(--fs-list) * .85));
+
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: clamp(28px, 4.2vw, 80px);
+  /* картинка тянется на высоту списка: при пяти позициях центрирование
+     оставляло бы над ней и под ней пустые поля */
+  align-items: stretch;
+}
+
+.melo-page .service__list {
+  display: grid;
+  gap: clamp(26px, 2.8vw, 54px);
+}
+
+.melo-page .service__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(16px, 1.5vw, 28px);
+  align-items: start;
+}
+
+/* тонкий золотой круг с линейной иконкой внутри — как на референсе */
+.melo-page .service__icon {
+  width: clamp(48px, 3.65vw, 70px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--gold);
+  color: var(--gold);
+}
+
+.melo-page .service__icon svg {
+  width: 46%;
+  height: 46%;
+}
+
+.melo-page .service__title {
+  font-size: var(--service-fs-title);
+  line-height: var(--lh-head);
+  color: var(--navy-heading);
+}
+
+.melo-page .service__text {
+  margin-top: clamp(8px, .75vw, 15px);
+  font-size: var(--service-fs-text);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+.melo-page .service__media {
+  aspect-ratio: 4 / 3;  /* работает, пока блок в одну колонку */
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--line);
+  /* один список transition — см. комментарий у .card__media */
+  transition: clip-path var(--dur-wipe) var(--ease-lux) .12s;
+}
+
+.melo-page .service__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* В две колонки высоту диктует список, и пропорцию надо снять: иначе
+   aspect-ratio считает от растянутой высоты ШИРИНУ и раздувает колонку —
+   блок вылезал за экран на 30px. Правило обязано идти после объявления
+   выше: специфичность у них одинаковая, решает порядок. */
+@media (min-width: 861px)  {
+.melo-page .service__media { aspect-ratio: auto; }
+}
+
+/* ---------- 12. Этапы работ ---------------------------------- */
+.melo-page .steps { border-top: 1px solid var(--line); }
+
+.melo-page .steps__row {
+  display: grid;
+  grid-template-columns: 46px minmax(200px, 1fr) 2.1fr auto;
+  gap: clamp(16px, 2.4vw, 46px);
+  align-items: start;
+  padding-block: clamp(24px, 2.4vw, 40px);
+  border-bottom: 1px solid var(--line);
+}
+
+.melo-page .steps__num {
+  color: var(--gold);
+  font-size: var(--fs-body);
+  line-height: var(--lh-head);
+}
+
+.melo-page .steps__title {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  color: var(--navy-heading);
+  line-height: var(--lh-head);
+}
+
+.melo-page .steps__text {
+  font-size: var(--fs-list);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+.melo-page .steps__term {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* ---------- 12б. Этапы лентой: иконка → название → описание -- */
+.melo-page .flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(20px, 2.1vw, 40px);
+  padding-top: clamp(24px, 2.2vw, 42px);
+  border-top: 1px solid var(--line);
+}
+
+/* Вертикальная полоска слева у каждого этапа — в цвет верхней линии.
+   Сделана псевдоэлементом, а не border: border прочертить нельзя. */
+.melo-page .flow__item {
+  position: relative;
+  padding-left: clamp(16px, 1.7vw, 32px);
+}
+
+.melo-page .flow__item::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: var(--line);
+  transform-origin: 50% 0;
+  transition: transform var(--dur-lux) var(--ease-lux) .1s;
+}
+
+.melo-page .flow__num {
+  display: block;
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-regular);
+  line-height: 1;
+  color: var(--gold);
+}
+
+.melo-page .flow__title {
+  margin-top: clamp(134px, 12.29vw, 236px);  /* воздух под цифрой этапа */
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  color: var(--navy-heading);
+  line-height: var(--lh-head);
+}
+
+.melo-page .flow__text {
+  margin-top: clamp(8px, .7vw, 14px);
+  font-size: var(--fs-list);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+/* ---------- 13. Кладка примеров реализации ------------------- */
+.melo-page .works {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: start;
+  column-gap: var(--grid-gap-tight);
+  row-gap: clamp(32px, 4.2vw, 80px);
+}
+
+.melo-page .project--tall  .project__media { aspect-ratio: 903 / 1004; }
+
+.melo-page .project--short .project__media { aspect-ratio: 904 / 644; }
+
+.melo-page .project--mid   .project__media { aspect-ratio: 903 / 746; }
+
+.melo-page .project--wide  .project__media { aspect-ratio: 904 / 578; }
+
+/* ровная сетка примеров: три в ряд, одинаковая пропорция */
+.melo-page .works-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 2vw, 38px) var(--grid-gap);
+}
+
+.melo-page .works-grid .project__media { aspect-ratio: 3 / 2; }
+
+.melo-page .works__cta {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(36px, 3.6vw, 68px);
+}
+
+/* ---------- 14. Ссылки: золотая линия выезжает слева --------- */
+
+/* Градиент вместо border-bottom: переживает перенос строки и меняет
+   только background-size, то есть не дёргает раскладку. */
+.melo-page .nav__link,
+.melo-page .site-header__phone,
+.melo-page .breadcrumbs a,
+.melo-page .project__title,
+.melo-page .footer-nav a,
+.melo-page .footer-contacts__major,
+.melo-page .footer-top-link,
+.melo-page .site-footer__bottom a {
+  background-image: linear-gradient(var(--gold), var(--gold));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: color var(--dur) var(--ease),
+              background-size var(--dur-slow) var(--ease-lux);
+}
+
+.melo-page .nav__link:hover,
+.melo-page .site-header__phone:hover,
+.melo-page .breadcrumbs a:hover,
+.melo-page .project__title:hover,
+.melo-page .footer-nav a:hover,
+.melo-page .footer-contacts__major:hover,
+.melo-page .footer-top-link:hover,
+.melo-page .site-footer__bottom a:hover { background-size: 100% 1px; }
+
+/* активный пункт меню держит линию постоянно */
+.melo-page .nav__link[aria-current="page"] { background-size: 100% 1px; }
+
+/* у крупного текста линия отодвигается от букв: padding на строчном
+   элементе двигает фон, но не трогает высоту строки */
+.melo-page .project__title,
+.melo-page .footer-contacts__major { padding-bottom: 4px; }
+
+/* ============================================================
+   Адаптив
+   ============================================================ */
+@media (max-width: 1100px)  {
+.melo-page .grid-3 { grid-template-columns: repeat(2, 1fr); }
+
+/* три карточки в кадре здесь дают по 277px — списки услуг встают колом */
+.melo-page .slider-track { grid-auto-columns: calc((100% - var(--grid-gap)) / 2); }
+
+.melo-page .pricing__row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+.melo-page .pricing__price {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+  }
+
+.melo-page .pricing__body { grid-column: 1 / -1; }
+
+.melo-page .site-footer__grid { grid-template-columns: 1fr 1fr; }
+
+.melo-page .footer-top-link { grid-column: 2; justify-self: end; }
+}
+
+@media (max-width: 860px)  {
+.melo-page .nav,
+.melo-page .site-header__phone { display: none; }
+
+.melo-page .burger { display: block; }
+
+/* при переносе строк логотип и бургер должны остаться в первой строке */
+.melo-page .logo { order: 0; }
+
+.melo-page .burger { order: 1; }
+
+.melo-page .nav { order: 2; }
+
+.melo-page .site-header__phone { order: 3; }
+
+.melo-page .site-header.is-open .site-header__inner {
+    height: auto;
+    flex-wrap: wrap;
+    row-gap: 0;
+    padding-block: 21px 26px;
+  }
+
+.melo-page .site-header.is-open .nav {
+    display: grid;
+    gap: 6px;
+    flex-basis: 100%;
+    margin: 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--line-on-navy);
+  }
+
+.melo-page .site-header.is-open .site-header__phone {
+    display: block;
+    flex-basis: 100%;
+    margin-top: 16px;
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-medium);
+  }
+
+.melo-page .section__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+.melo-page .spec-row,
+.melo-page .pricing__row { grid-template-columns: 1fr; }
+
+/* две карточки в кадре становятся слишком узкими — показываем одну */
+.melo-page .slider-track { grid-auto-columns: 86%; }
+
+.melo-page .hero__veil { inset: 0; background: rgba(3, 36, 71, .74); }
+
+.melo-page .section__head--center {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+.melo-page .section__head--center h2 { text-align: left; }
+
+.melo-page .steps__row {
+    grid-template-columns: 40px 1fr;
+    gap: 10px 16px;
+  }
+
+.melo-page .steps__text,
+.melo-page .steps__term { grid-column: 2; }
+
+.melo-page .steps__term { text-align: left; }
+
+.melo-page .flow {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: clamp(28px, 4vw, 48px);
+  }
+
+/* Блок встаёт в одну колонку: рядом список и картинка слишком узкие.
+     Картинка при этом поднимается под заголовок — внизу, после пяти
+     пунктов текста, до неё пришлось бы долистывать. Порядок в разметке
+     не трогаем, меняем только визуальный: картинка иллюстративная. */
+.melo-page .service {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 4vw, 48px);
+  }
+
+.melo-page .service__media { order: -1; }
+
+.melo-page .works-grid { grid-template-columns: repeat(2, 1fr); }
+
+.melo-page .pricing__price {
+    grid-column: 1;
+    grid-row: auto;
+    text-align: left;
+  }
+}
+
+@media (max-width: 620px)  {
+.melo-page .logo__mark { height: 36px; }
+
+.melo-page .grid-3 { grid-template-columns: 1fr; }
+
+.melo-page .works { grid-template-columns: 1fr; }
+
+.melo-page .works-grid { grid-template-columns: 1fr; }
+
+.melo-page .flow { grid-template-columns: 1fr; }
+
+/* воздух под цифрой существует ради выравнивания заголовков в ряду;
+     в одну колонку выравнивать не с чем, а дыра остаётся четырежды */
+.melo-page .flow__title { margin-top: clamp(20px, 6vw, 34px); }
+
+.melo-page .project--tall .project__media,
+.melo-page .project--mid  .project__media { aspect-ratio: 4 / 3; }
+
+.melo-page .site-footer__grid { grid-template-columns: 1fr; }
+
+.melo-page .footer-top-link { grid-column: 1; justify-self: start; }
+
+/* строка в 18px с зазором 10px — мелкая цель для пальца: разводим до 40px
+     шага, добирая высоту паддингом, чтобы не трогать вид линии подчёркивания */
+.melo-page .footer-nav { gap: 4px; }
+
+.melo-page .footer-nav a { padding-block: 7px; }
+
+.melo-page .site-footer__bottom { grid-template-columns: 1fr; text-align: left; }
+
+.melo-page .site-footer__bottom > :last-child { justify-self: start; }
+
+.melo-page .btn--wide { width: 100%; }
+}
