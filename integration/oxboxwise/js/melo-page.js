@@ -19,17 +19,43 @@
   var header = document.querySelector('.melo-site-header');
   var burger = document.querySelector('.melo-burger');
 
-  if (header && burger) {
-    burger.addEventListener('click', function () {
-      var open = header.classList.toggle('melo-is-open');
+  var menu = document.querySelector('.melo-menu');
+
+  if (burger && menu) {
+    var closeBtn = menu.querySelector('.melo-menu__close');
+
+    var setMenu = function (open) {
+      /* hidden снимаем до анимации, иначе переход не запустится:
+         элемент с display:none не анимируется */
+      if (open) menu.hidden = false;
+      window.requestAnimationFrame(function () {
+        menu.classList.toggle('melo-is-open', open);
+      });
       burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      /* Пока меню открыто, страницу под ним не прокручиваем. Скрытие
+         полосы прокрутки сдвигает вёрстку на её ширину — логотип в этот
+         момент дёргался. Компенсируем отступом ровно на эту ширину. */
+      var gap = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = open && gap > 0 ? gap + 'px' : '';
+      document.body.classList.toggle('melo-menu-open', open);
+      if (!open) {
+        window.setTimeout(function () {
+          if (!menu.classList.contains('melo-is-open')) menu.hidden = true;
+        }, 400);
+      }
+    };
+
+    burger.addEventListener('click', function () { setMenu(true); });
+    if (closeBtn) closeBtn.addEventListener('click', function () { setMenu(false); });
+
+    /* переход по пункту закрывает меню */
+    menu.querySelectorAll('.melo-menu__link').forEach(function (link) {
+      link.addEventListener('click', function () { setMenu(false); });
     });
 
-    header.querySelectorAll('.melo-nav__link').forEach(function (link) {
-      link.addEventListener('click', function () {
-        header.classList.remove('melo-is-open');
-        burger.setAttribute('aria-expanded', 'false');
-      });
+    /* Escape тоже закрывает */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.classList.contains('melo-is-open')) setMenu(false);
     });
   }
 

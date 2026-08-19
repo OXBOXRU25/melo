@@ -63,7 +63,9 @@
   --fs-body:    clamp(16px, 1.25vw, 24px);  /* 24 — основной текст             */
   --fs-nav:     clamp(14px, .83vw, 16px);   /* 16 — меню и телефон в шапке     */
   --fs-list:    clamp(15px, 1.09vw, 21px);  /* 21 — пункты списков, площадь    */
-  --fs-small:   clamp(14px, .94vw, 18px);   /* 18 — кнопки, теги, сноски       */
+  /* Пол поднят с 14 до 15: на телефоне тег проекта читался как подпись.
+     Ориентир — 12px абсолютный минимум, корпусный текст 14–16. */
+  --fs-small:   clamp(15px, .94vw, 18px);   /* 18 — кнопки, теги, сноски       */
   --fs-micro:   clamp(13px, .83vw, 16px);   /* 16 — копирайт, номер проекта    */
 
   /* --- Типографика: интерлиньяж и начертания ------------------- */
@@ -572,7 +574,7 @@
      их здесь, а не по месту: менять придётся вместе. У текста есть
      пол в 13px, ниже него набор уже нечитаем. */
   --card-fs-title: calc(var(--fs-h3) * .85);
-  --card-fs-text:  max(13px, calc(var(--fs-list) * .85));
+  --card-fs-text:  max(15px, calc(var(--fs-list) * .85));
 }
 
 .melo-page .melo-card__media {
@@ -1358,8 +1360,9 @@
 .melo-page .melo-spec-row,
 .melo-page .melo-pricing__row { grid-template-columns: 1fr; }
 
-/* две карточки в кадре становятся слишком узкими — показываем одну */
-.melo-page .melo-slider-track { grid-auto-columns: 86%; }
+/* На телефоне карточка занимает экран целиком. Прежние 86% давали
+     край соседнего слайда — заказчик просил убрать. */
+.melo-page .melo-slider-track { grid-auto-columns: 100%; }
 
 .melo-page .melo-hero__veil { inset: 0; background: rgba(3, 36, 71, .74); }
 
@@ -1416,6 +1419,9 @@
 
 /* на телефоне тег стоял вплотную к заголовку проекта — разводим вдвое */
 .melo-page .melo-project__tag { margin-top: 8px; }
+
+/* подпись под фотографией стояла к ней впритык */
+.melo-page .melo-project__meta { margin-top: 26px; }
 
 .melo-page .melo-flow { grid-template-columns: 1fr; }
 

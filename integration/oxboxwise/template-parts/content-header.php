@@ -31,8 +31,12 @@ if ( ! defined( 'ABSPATH' ) ) {
    get_field( 'opt_site_logo', 'option' )['url']. */
 $melo_logo = get_template_directory_uri() . '/img/melo/logo.png';
 
-/* Телефон из настроек сайта. */
+/* Телефон и почта из настроек сайта. */
 $melo_phone = function_exists( 'get_field' ) ? get_field( 'opt_phone_site', 'option' ) : '';
+$melo_email = function_exists( 'get_field' ) ? get_field( 'opt_email_site', 'option' ) : '';
+if ( ! $melo_email ) {
+	$melo_email = melo_contact( 'email' );
+}
 
 /* На главной логотип никуда не ведёт — мы уже на ней. */
 $melo_home = ( is_front_page() || is_home() ) ? 'javascript:void(0);' : get_home_url();
@@ -80,6 +84,52 @@ $melo_home = ( is_front_page() || is_home() ) ? 'javascript:void(0);' : get_home
 		</button>
 	</div>
 </header>
+
+<?php
+/* Полноэкранное меню. Открывается бургером, закрывается крестиком или
+   переходом по пункту. Пункты те же, что в шапке — из админки. */
+?>
+<div class="melo-menu" id="melo-menu" hidden>
+	<div class="melo-container melo-menu__top">
+		<a class="melo-logo" href="<?php echo esc_url( $melo_home ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) . ' — на главную' ); ?>">
+			<img class="melo-logo__mark" src="<?php echo esc_url( $melo_logo ); ?>" alt="" width="196" height="54">
+		</a>
+
+		<button class="melo-menu__close" type="button" aria-label="Закрыть меню">
+			<svg width="24" height="24" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+				<path d="M13.3333 13.3333L2.66666 2.66667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+				<path d="M13.3333 2.66667L2.66666 13.3333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+			</svg>
+		</button>
+	</div>
+
+	<div class="melo-container melo-menu__body">
+		<nav class="melo-menu__nav" aria-label="Меню">
+			<?php
+			melo_nav(
+				'Главное меню',
+				'melo-menu__link',
+				array(
+					'Направления' => '/#directions',
+					'О нас'       => '/#about',
+					'Портфолио'   => '/#projects',
+					'Цены'        => '/#pricing',
+					'Контакты'    => '#contacts',
+				)
+			);
+			?>
+		</nav>
+
+		<div class="melo-menu__contacts">
+			<?php if ( $melo_phone ) : ?>
+				<a class="melo-menu__phone" href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $melo_phone ) ); ?>"><?php echo esc_html( $melo_phone ); ?></a>
+			<?php endif; ?>
+			<?php if ( $melo_email ) : ?>
+				<a class="melo-menu__email" href="mailto:<?php echo esc_attr( $melo_email ); ?>"><?php echo esc_html( $melo_email ); ?></a>
+			<?php endif; ?>
+		</div>
+	</div>
+</div>
 
 <?php
 /* Заглушка прежнего офф-канвас меню.

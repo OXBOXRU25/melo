@@ -170,7 +170,7 @@ get_header();
     </section>
 
     <!-- ============ 2. Направления деятельности ============ -->
-    <section class="melo-section melo-section--gray" id="melo-what">
+    <section class="melo-section melo-section--gray" id="areas">
         <div class="melo-container">
             <div class="melo-section__head" data-reveal>
                 <h2 class="melo-eyebrow"><?php echo esc_html( $cards_title ); ?></h2>
@@ -222,7 +222,7 @@ get_header();
 
 <div class="bg-gray">
 
-		<section class="about" data-speed="0.97" data-anc_id="#about">
+		<section class="about" id="about" data-speed="0.97" data-anc_id="#about">
 
             <div class="container">
 
@@ -296,7 +296,7 @@ get_header();
 	
 	
 	
-        <section class="project project_p-block">
+        <section class="project project_p-block" id="projects">
           <div class="project__inner container">
             <div class="project__top section-top wow animate__animated animate__fadeInUp animate__delay-05s">
               <h2 class="project__section-title title-section title-section_dark">
@@ -371,7 +371,7 @@ get_header();
 	
 	
 	
-	<section class="service melo-service-light service_p-block wow animate__animated animate__slideInUp"   data-anc_id="#services">
+	<section class="service melo-service-light service_p-block wow animate__animated animate__slideInUp" id="services"   data-anc_id="#services">
           <div class="service__inner container">
 
             <div class="service__top section-top wow animate__animated animate__fadeInUp animate__delay-05s">

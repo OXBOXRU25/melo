@@ -261,7 +261,7 @@
      их здесь, а не по месту: менять придётся вместе. У текста есть
      пол в 13px, ниже него набор уже нечитаем. */
   --card-fs-title: calc(var(--fs-h3) * .85);
-  --card-fs-text:  max(13px, calc(var(--fs-list) * .85));
+  --card-fs-text:  max(15px, calc(var(--fs-list) * .85));
 }
 
 .card__media {
@@ -1045,8 +1045,9 @@
   .spec-row,
   .pricing__row { grid-template-columns: 1fr; }
 
-  /* две карточки в кадре становятся слишком узкими — показываем одну */
-  .slider-track { grid-auto-columns: 86%; }
+  /* На телефоне карточка занимает экран целиком. Прежние 86% давали
+     край соседнего слайда — заказчик просил убрать. */
+  .slider-track { grid-auto-columns: 100%; }
 
   .hero__veil { inset: 0; background: rgba(3, 36, 71, .74); }
 
@@ -1098,6 +1099,9 @@
 
   /* на телефоне тег стоял вплотную к заголовку проекта — разводим вдвое */
   .project__tag { margin-top: 8px; }
+
+  /* подпись под фотографией стояла к ней впритык */
+  .project__meta { margin-top: 26px; }
   .flow { grid-template-columns: 1fr; }
 
   /* воздух под цифрой существует ради выравнивания заголовков в ряду;

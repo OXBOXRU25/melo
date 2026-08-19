@@ -65,6 +65,24 @@ function melo_enqueue_chrome() {
 add_action( 'wp_enqueue_scripts', 'melo_enqueue_chrome', 100 );
 
 /**
+ * Значок сайта.
+ *
+ * Ставится в wp_head с приоритетом 1, чтобы перекрыть значок из
+ * настройщика WordPress, если он там задан.
+ */
+function melo_favicon() {
+	$dir = get_template_directory_uri() . '/img/melo/';
+	echo '<link rel="icon" type="image/png" sizes="32x32" href="' . esc_url( $dir . 'favicon-32.png' ) . '">' . "\n";
+	echo '<link rel="icon" type="image/png" sizes="512x512" href="' . esc_url( $dir . 'favicon-512.png' ) . '">' . "\n";
+	echo '<link rel="apple-touch-icon" href="' . esc_url( $dir . 'favicon-180.png' ) . '">' . "\n";
+}
+add_action( 'wp_head', 'melo_favicon', 1 );
+
+/* Значок из настройщика WordPress убираем: иначе в head два набора
+   иконок и браузер берёт последний, то есть прежний. */
+remove_action( 'wp_head', 'wp_site_icon', 99 );
+
+/**
  * Стили и скрипт содержимого страниц MELO.
  *
  * Вызывается из шаблонов ДО get_header(), чтобы попасть в wp_head().
@@ -162,6 +180,19 @@ function melo_nav( $location, $link_class = '', $fallback = array() ) {
 
 	$current = get_the_ID();
 
+	/* На главной пункты меню должны вести к разделам этой же страницы,
+	   а не на внутренние. Подменяем адрес по последнему сегменту пути:
+	   /projects/ -> #projects и так далее. Названия пунктов не трогаем,
+	   поэтому переименование в админке ничего не сломает. */
+	$to_anchor = array(
+		'projects' => '#projects',
+		'contacts' => '#contacts',
+		'about'    => '#about',
+		'services' => '#services',
+		'areas'    => '#areas',
+	);
+	$on_front = is_front_page() || is_home();
+
 	foreach ( $items as $item ) {
 		if ( (int) $item->menu_item_parent !== 0 ) {
 			continue;   // подпункты в этой разметке не предусмотрены
@@ -169,10 +200,26 @@ function melo_nav( $location, $link_class = '', $fallback = array() ) {
 
 		$is_current = ( 'page' === $item->object && (int) $item->object_id === (int) $current );
 
+		$url = $item->url;
+
+		if ( $on_front ) {
+			/* на главной — якорь к разделу этой же страницы */
+			$slug = trim( wp_parse_url( $url, PHP_URL_PATH ) ? wp_parse_url( $url, PHP_URL_PATH ) : '', '/' );
+			$slug = $slug ? substr( strrchr( '/' . $slug, '/' ), 1 ) : '';
+			if ( $slug && isset( $to_anchor[ $slug ] ) ) {
+				$url = $to_anchor[ $slug ];
+			}
+		} elseif ( '' !== $url && '#' === $url[0] && '#contacts' !== $url ) {
+			/* На внутренних страницах голый якорь вёл бы в никуда: таких
+			   секций здесь нет. Разворачиваем на главную. Исключение —
+			   #contacts: подвал есть на каждой странице. */
+			$url = home_url( '/' ) . $url;
+		}
+
 		printf(
 			'<a class="%1$s" href="%2$s"%3$s>%4$s</a>',
 			esc_attr( $link_class ),
-			esc_url( $item->url ),
+			esc_url( $url ),
 			$is_current ? ' aria-current="page"' : '',
 			esc_html( $item->title )
 		);

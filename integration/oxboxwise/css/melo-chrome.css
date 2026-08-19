@@ -12,7 +12,8 @@
    ============================================================ */
 
 .melo-site-header,
-.melo-site-footer {
+.melo-site-footer,
+.melo-menu {
   /* --- Цвет --- */
   --melo-navy:            #032447;
   --melo-gold:            #d3ac67;
@@ -42,6 +43,9 @@
   box-sizing: border-box;
 }
 
+.melo-menu *,
+.melo-menu *::before,
+.melo-menu *::after,
 .melo-site-header *,
 .melo-site-header *::before,
 .melo-site-header *::after,
@@ -233,19 +237,10 @@ body.is-open .melo-site-header.header { z-index: 1; }
   font-size: var(--melo-fs-major);
   font-weight: 500;
   line-height: 1.15;
-  padding-bottom: 4px;
-  background-image: linear-gradient(var(--melo-gold), var(--melo-gold));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0 1px;
-  transition: color .28s var(--melo-ease),
-              background-size var(--melo-dur) var(--melo-ease);
+  transition: color .28s var(--melo-ease);
 }
 
-.melo-footer-contacts__major:hover {
-  color: var(--melo-gold);
-  background-size: 100% 1px;
-}
+.melo-footer-contacts__major:hover { color: var(--melo-gold); }
 
 .melo-footer-contacts__gap { height: clamp(12px, 1.2vw, 24px); }
 
@@ -262,16 +257,13 @@ body.is-open .melo-site-header.header { z-index: 1; }
   line-height: 1.15;
 }
 
+/* В подвале отклик — только цвет. Подчёркивание убрано: ссылки там
+   блочные, и линия растягивалась на всю колонку. */
 .melo-footer-nav a {
-  background-image: linear-gradient(var(--melo-gold), var(--melo-gold));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0 1px;
-  transition: color .28s var(--melo-ease),
-              background-size var(--melo-dur) var(--melo-ease);
+  transition: color .28s var(--melo-ease);
 }
 
-.melo-footer-nav a:hover { color: var(--melo-gold); background-size: 100% 1px; }
+.melo-footer-nav a:hover { color: var(--melo-gold); }
 
 .melo-footer-top-link {
   font-size: var(--melo-fs-small);
@@ -295,6 +287,122 @@ body.is-open .melo-site-header.header { z-index: 1; }
 .melo-site-footer__bottom > :last-child { justify-self: end; }
 .melo-site-footer__bottom a:hover { color: var(--melo-gold); }
 
+
+/* ---------- Полноэкранное меню -------------------------------
+   Открывается бургером на узких экранах. Слой на всю страницу, а не
+   раскрытие шапки: так пункты можно набрать крупно и внизу поместить
+   контакты. */
+
+.melo-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 200;              /* выше шапки (50), ниже модалок темы (2000) */
+  display: flex;
+  flex-direction: column;
+  background: var(--melo-navy);
+  color: var(--melo-on-navy);
+  font-family: var(--melo-font);
+
+  /* --- собственные размеры, чтобы не зависеть от шапки --- */
+  --melo-menu-gap:   28px;   /* межстрочное расстояние в списке */
+  --melo-menu-size:  26px;   /* кегль пункта */
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-12px);
+  transition: opacity .38s var(--melo-ease),
+              transform .38s var(--melo-ease),
+              visibility .38s;
+}
+
+.melo-menu[hidden] { display: none; }
+
+.melo-menu.melo-is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* --- верх: логотип и крестик --- */
+.melo-menu__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--melo-header-h);
+  flex: none;
+}
+
+.melo-menu__close {
+  width: 44px; height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--melo-on-navy);
+  cursor: pointer;
+}
+
+.melo-menu__close svg { display: block; width: 24px; height: 24px; }
+
+/* --- тело: пункты сверху, контакты внизу --- */
+.melo-menu__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-block: 0 clamp(32px, 9vw, 64px);
+  overflow-y: auto;
+
+  /* Линия под логотипом и крестиком. Отступ до пунктов был вдвое
+     меньше — по просьбе заказчика разведено. */
+  border-top: 1px solid var(--melo-line-on-navy);
+  padding-top: clamp(36px, 11vw, 72px);
+}
+
+.melo-menu__nav {
+  display: grid;
+  gap: var(--melo-menu-gap);
+  align-content: start;
+}
+
+.melo-menu__link {
+  font-size: var(--melo-menu-size);
+  line-height: 1.2;
+  color: var(--melo-on-navy);
+  text-decoration: none;
+  transition: color .28s var(--melo-ease);
+}
+
+.melo-menu__link:hover,
+.melo-menu__link[aria-current="page"] { color: var(--melo-gold); }
+
+/* --- контакты внизу --- */
+.melo-menu__contacts {
+  display: grid;
+  gap: 12px;
+  margin-top: clamp(32px, 10vw, 72px);
+}
+
+.melo-menu__phone {
+  font-size: calc(var(--melo-menu-size) * .85);
+  font-weight: 500;
+  color: var(--melo-on-navy);
+  text-decoration: none;
+}
+
+.melo-menu__email {
+  font-size: calc(var(--melo-menu-size) * .72);
+  color: var(--melo-on-navy-dim);
+  text-decoration: none;
+}
+
+.melo-menu__phone:hover,
+.melo-menu__email:hover { color: var(--melo-gold); }
+
+/* пока меню открыто, страница под ним не прокручивается */
+body.melo-menu-open { overflow: hidden; }
+
 /* ============================================================
    Адаптив
    ============================================================ */
@@ -309,6 +417,11 @@ body.is-open .melo-site-header.header { z-index: 1; }
   .melo-footer-top-link { grid-column: 2; justify-self: end; }
 }
 
+@media (min-width: 861px) {
+  /* на широких экранах меню-слой не нужен: пункты стоят в шапке */
+  .melo-menu { display: none !important; }
+}
+
 @media (max-width: 860px) {
   .melo-nav,
   .melo-site-header__phone { display: none; }
@@ -321,33 +434,15 @@ body.is-open .melo-site-header.header { z-index: 1; }
   .melo-nav                { order: 2; }
   .melo-site-header__phone { order: 3; }
 
-  .melo-site-header.melo-is-open .melo-site-header__inner {
-    height: auto;
-    flex-wrap: wrap;
-    row-gap: 0;
-    padding-block: 21px 26px;
-  }
-
-  .melo-site-header.melo-is-open .melo-nav {
-    display: grid;
-    gap: 6px;
-    flex-basis: 100%;
-    margin: 0;
-    padding-top: 18px;
-    border-top: 1px solid var(--melo-line-on-navy);
-  }
-
-  .melo-site-header.melo-is-open .melo-site-header__phone {
-    display: block;
-    flex-basis: 100%;
-    margin-top: 16px;
-    font-size: var(--melo-fs-list);
-    font-weight: 500;
-  }
+@media (max-width: 860px) {
+  /* На телефоне шапка была высотой с десктопную — сжимаем. */
+  .melo-site-header { --melo-header-h: 64px; }
+  .melo-logo__mark { height: 38px; }
+  .melo-menu__top { height: 64px; }
 }
 
 @media (max-width: 620px) {
-  .melo-logo__mark { height: 36px; }
+  .melo-logo__mark { height: 34px; }
 
   .melo-site-footer__grid { grid-template-columns: 1fr; }
   .melo-footer-top-link { grid-column: 1; justify-self: start; }
