@@ -75,7 +75,149 @@
   }
 
   /* --- Переход к разделу по якорю -----------------------------
-     Слушаем в фазе перехвата и останавливаем событие: иначе следом
+
+     Тема гоняет страницу через GSAP ScrollSmoother: вся вёрстка лежит
+     внутри .scroll-parent — фиксированного бокса во весь экран с
+     overflow: hidden, — а двигает содержимое скрипт, слушая прокрутку
+     ОКНА. Высоту документу при этом даёт body, поэтому обычная полоса
+     прокрутки на месте и всё выглядит как всегда.
+
+     Отсюда ловушка, на которой меню и сломалось. scrollIntoView возит
+     не окно, а ближайшего прокручиваемого предка, и overflow: hidden
+     для скрипта прокручиваемый: уезжал сам .scroll-parent, а window
+     оставался на нуле. Содержимое сдвигалось, но ни ScrollSmoother, ни
+     WOW темы, ни наш показ блоков об этом не узнавали — они все висят
+     на прокрутке окна. Разделы приезжали пустыми, страница разъезжалась,
+     а когда бокс упирался в свой предел, переход переставал работать
+     вовсе, хотя адрес в строке продолжал меняться.
+
+     Правильный способ ровно один: двигать прокрутку окна — тем же,
+     чем это делает сама тема. */
+
+  var getSmoother = function () {
+    return (window.ScrollSmoother && window.ScrollSmoother.get)
+      ? window.ScrollSmoother.get()
+      : null;
+  };
+
+  /* Служебный бокс прокручиваться не должен никогда. Увезти его может
+     не только скрипт: браузер сам прокручивает предка, уводя фокус на
+     элемент за экраном. Возвращаем на ноль, чтобы страница не разъехалась. */
+  var scrollParent = document.querySelector('.scroll-parent');
+  if (scrollParent) {
+    scrollParent.addEventListener('scroll', function () {
+      if (scrollParent.scrollTop || scrollParent.scrollLeft) {
+        scrollParent.scrollTop = 0;
+        scrollParent.scrollLeft = 0;
+      }
+    }, { passive: true });
+  }
+
+  /* Останавливаемся не вплотную к разделу, а под липкой шапкой. */
+  var headerGap = function () {
+    var h = header ? Math.round(header.getBoundingClientRect().height) : 88;
+    return h + 16;
+  };
+
+  var scrollToSection = function (target) {
+    var sm = getSmoother();
+    var stop = 'top ' + headerGap() + 'px';
+
+    /* Где раздел окажется в единицах прокрутки окна. У смузера для этого
+       есть свой расчёт: во время движения видимое положение отстаёт от
+       прокрутки, и считать по getBoundingClientRect в этот момент нельзя. */
+    var wanted = function () {
+      if (sm && typeof sm.offset === 'function') {
+        try {
+          var v = sm.offset(target, stop);
+          if (typeof v === 'number' && isFinite(v)) return Math.max(0, Math.round(v));
+        } catch (err) { /* ниже посчитаем вручную */ }
+      }
+      var base = sm && typeof sm.scrollTop === 'function' ? sm.scrollTop() : window.pageYOffset;
+      return Math.max(0, Math.round(target.getBoundingClientRect().top + base - headerGap()));
+    };
+
+    var goTo = function (y, smooth) {
+      if (sm) sm.scrollTo(y, smooth);
+      else window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'auto' });
+    };
+
+    goTo(wanted(), true);
+
+    /* Дотяжка. Пока едем, ниже догружаются ленивые картинки, страница
+       растёт, и точка, посчитанная в момент клика, устаревает: до «Услуг»
+       не доезжало больше двух тысяч пикселей. Поэтому пересчитываем на
+       ходу и поправляемся. Тронул колесо — отступаем, у человека приоритет. */
+    var cancelled = false;
+    var give = function () { cancelled = true; };
+    var giveUp = ['wheel', 'touchstart', 'keydown'];
+    giveUp.forEach(function (t) {
+      window.addEventListener(t, give, { passive: true });
+    });
+
+    /* Поправлять можно только после остановки. Смузер едет полторы
+       секунды с затуханием, и поправка на ходу отправляет страницу
+       мимо цели — на «Услугах» так проскакивало на 458px назад.
+       Поэтому ждём, пока прокрутка перестанет меняться, и только тогда
+       сверяемся с целью. */
+    var at = function () {
+      return sm && typeof sm.scrollTop === 'function'
+        ? Math.round(sm.scrollTop())
+        : Math.round(window.pageYOffset);
+    };
+
+    var prev = null;
+    var still = 0;
+    var fixes = 0;
+    var ticks = 0;
+
+    var settle = function () {
+      if (cancelled || ticks >= 30 || fixes >= 3) {
+        giveUp.forEach(function (t) { window.removeEventListener(t, give); });
+        return;
+      }
+      ticks += 1;
+
+      var now = at();
+      still = (prev !== null && Math.abs(now - prev) <= 1) ? still + 1 : 0;
+      prev = now;
+
+      /* Показ блоков и у темы (WOW), и у нас висит на прокрутке окна.
+         После программного переезда будим его вручную, иначе раздел
+         останется пустым — ровно тот баг, который мы и ловим. */
+      window.dispatchEvent(new Event('scroll'));
+
+      if (still >= 2) {
+        var y = wanted();
+        if (Math.abs(y - now) > 2) {
+          fixes += 1;
+          goTo(y, true);
+          still = 0;
+          prev = null;
+        } else {
+          giveUp.forEach(function (t) { window.removeEventListener(t, give); });
+          return;
+        }
+      }
+
+      setTimeout(settle, 180);
+    };
+    setTimeout(settle, 300);
+  };
+
+  /* Заход сразу по адресу с якорем. Тема это тоже делает, но считает
+     точку на готовом DOM — до того, как встанут ленивые картинки, —
+     поэтому промахивается. Повторяем после загрузки, уже с дотяжкой. */
+  var openStartHash = function () {
+    var id = (window.location.hash || '').slice(1);
+    if (!id) return;
+    var target = document.getElementById(id);
+    if (target) scrollToSection(target);
+  };
+  if (document.readyState === 'complete') setTimeout(openStartHash, 80);
+  else window.addEventListener('load', function () { setTimeout(openStartHash, 80); });
+
+  /* Клик слушаем в фазе перехвата и останавливаем событие: иначе следом
      отработает обработчик темы и увезёт прокрутку не туда. */
   document.addEventListener('click', function (e) {
     var link = e.target.closest ? e.target.closest('a[href^="#"]') : null;
@@ -85,7 +227,16 @@
     if (!link.closest('.melo-site-header, .melo-menu, .melo-site-footer')) return;
 
     var id = link.getAttribute('href').slice(1);
-    if (!id) return;
+
+    /* Пустая решётка — адрес-заглушка (Telegram, MAX, пока не заполнены).
+       Отпустить её нельзя: обработчик темы ищет [data-anc_id="#"], не
+       находит и падает на .offset() несуществующего элемента. Гасим
+       клик здесь — ошибки нет, страница не прыгает наверх. */
+    if (!id) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return;
+    }
 
     var target = document.getElementById(id);
     if (!target) return;
@@ -100,7 +251,7 @@
       if (burgerBtn) burgerBtn.dispatchEvent(new Event('melo-close'));
     }
 
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    scrollToSection(target);
 
     /* адрес обновляем без прыжка: history вместо location.hash */
     if (window.history && window.history.replaceState) {
