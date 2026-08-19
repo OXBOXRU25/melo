@@ -241,7 +241,7 @@
 }
 
 .about .about__human img + p {
-  margin-top: 1.6em;
+  margin-top: .9em;   /* было 1.6em — подпись висела слишком низко */
 }
 
 /* ---------- Проекты на главной, телефон ----------------------
@@ -266,5 +266,25 @@
     height: auto;
     aspect-ratio: 4 / 5;
     object-fit: cover;
+  }
+
+  /* Порядок в тарифе. В одну колонку шло: заголовок, список с кнопкой,
+     цена — то есть цена оказывалась ПОД кнопкой. Поднять её порядком
+     нельзя: кнопка лежит внутри .service__item-box, а цена снаружи.
+     Раскрываем обёртку через display: contents — её дети становятся
+     элементами той же сетки, и порядок расставляется свободно. */
+  .service.melo-service-light .service__item-box { display: contents; }
+
+  .service.melo-service-light .service__item-left    { order: 1; }
+  .service.melo-service-light .service__item-content { order: 2; }
+  .service.melo-service-light .service__item-price   { order: 3; }
+  .service.melo-service-light .service__btn          { order: 4; }
+
+  /* цена больше не в правой колонке — прижимаем к левому краю */
+  .service.melo-service-light .service__item-price {
+    padding-left: 0;
+    padding-top: 0;
+    text-align: left;
+    margin-bottom: 18px;
   }
 }
