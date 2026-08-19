@@ -52,8 +52,12 @@
   border-color: var(--melo-hairline);
 }
 
+/* Декоративная полоса под каждым тарифом. В тёмной секции она была
+   чёрной на чёрном и не читалась, а на белом фоне превратилась в лишнюю
+   линию — заметнее всего под последним тарифом, где дальше ничего нет.
+   Между тарифами линию и так рисует border-top, поэтому полосу прячем. */
 .service.melo-service-light .service__item_decor {
-  background-color: var(--melo-accent);
+  background-color: transparent;
 }
 
 /* Кнопка была белой на чёрном — становится тёмной на белом.
@@ -74,6 +78,24 @@
 
 .service.melo-service-light .service__btn svg path[stroke] { stroke: #ffffff; }
 .service.melo-service-light .service__btn svg path[fill]   { fill: #ffffff; }
+
+/* ---------- Заголовки секций — антиквой -----------------------
+   Крупные заголовки сайта переводим на Merriweather, как на новых
+   страницах. Кегли не трогаем: у антиквы при том же размере другой
+   рисунок, но менять кегль — значит перекомпоновать блоки. */
+
+.about__title,
+.project__title.title,
+.service__item-title,
+.title-section,
+.about__benefits-item p:first-child {   /* только подпись, не описание рядом */
+  font-family: "Merriweather", "Georgia", serif;
+}
+
+/* Названия тарифов были капсом. По макету — обычный набор с заглавной. */
+.service__item-title {
+  text-transform: none;
+}
 
 /* ---------- Карточки направлений: вся карточка — ссылка ------
    Заголовок ведёт на страницу услуги, картинка туда же. Цвет
