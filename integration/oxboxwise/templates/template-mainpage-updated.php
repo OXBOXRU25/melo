@@ -69,6 +69,12 @@ if ( ! $hero_lead ) {
 
 /* Карточки перенесены из шаблона «MELO — направление деятельности». */
 $cards_title = 'Направления деятельности';
+
+/* Куда ведёт карточка. Пока страница услуги одна, поэтому адрес общий;
+   когда появятся остальные, достаточно проставить свой url в массиве
+   $cards. Ищем по слагу, чтобы не зависеть от идентификатора записи. */
+$melo_service_page = get_page_by_path( 'melo-arhitekturnoe-proektirovanie' );
+$melo_service_url  = $melo_service_page ? get_permalink( $melo_service_page ) : home_url( '/' );
 $cards = array(
     array(
         'img'   => 'dir-1.jpg',
@@ -175,13 +181,18 @@ get_header();
                     <?php foreach ( $cards as $i => $card ) : ?>
                         <article class="melo-card" data-reveal>
                             <div class="melo-card__media">
-                                <img src="<?php echo esc_url( $melo_dir . $card['img'] ); ?>"
-                                    alt="<?php echo esc_attr( $card['alt'] ); ?>"
-                                    width="590" height="409" loading="lazy">
+                                <?php /* картинка ведёт туда же, что и заголовок, но скрыта
+                                   от скринридера и табуляции: иначе одна и та же ссылка
+                                   читалась бы дважды подряд */ ?>
+                                <a class="melo-card__media-link" href="<?php echo esc_url( isset( $card['url'] ) ? $card['url'] : $melo_service_url ); ?>" tabindex="-1" aria-hidden="true">
+                                    <img src="<?php echo esc_url( $melo_dir . $card['img'] ); ?>"
+                                        alt="<?php echo esc_attr( $card['alt'] ); ?>"
+                                        width="590" height="409" loading="lazy">
+                                </a>
                             </div>
                             <div class="melo-card__head">
                                 <span class="melo-card__num"><?php echo esc_html( sprintf( '%02d', $i + 1 ) ); ?></span>
-                                <h3><?php echo wp_kses( $card['title'], $allow_br ); ?></h3>
+                                <h3><a class="melo-card__link" href="<?php echo esc_url( isset( $card['url'] ) ? $card['url'] : $melo_service_url ); ?>"><?php echo wp_kses( $card['title'], $allow_br ); ?></a></h3>
                             </div>
                             <p class="melo-card__lead"><?php echo esc_html( $card['lead'] ); ?></p>
                             <ul class="melo-dash-list">
@@ -360,7 +371,7 @@ get_header();
 	
 	
 	
-	<section class="service bg-gray service_p-block wow animate__animated animate__slideInUp"   data-anc_id="#services">
+	<section class="service melo-service-light service_p-block wow animate__animated animate__slideInUp"   data-anc_id="#services">
           <div class="service__inner container">
 
             <div class="service__top section-top wow animate__animated animate__fadeInUp animate__delay-05s">

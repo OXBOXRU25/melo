@@ -1,0 +1,103 @@
+/* ============================================================
+   MELO — точечные правки существующих секций темы
+
+   Здесь и только здесь мы вмешиваемся в чужие классы. Каждое правило
+   привязано к дополнительному классу melo-*, который проставляется в
+   шаблоне: без него прежние страницы работают как раньше.
+
+   Отдельный файл, а не melo-chrome.css, чтобы вмешательство было
+   видно с первого взгляда и легко откатывалось.
+   ============================================================ */
+
+/* ---------- «Услуги» на светлом фоне -------------------------
+   В теме секция чёрная с белым текстом. По макету она светлая,
+   поэтому перекрашиваем фон, текст, границы и кнопки. Класс
+   .melo-service-light ставится на саму секцию в шаблоне главной. */
+
+.service.melo-service-light {
+  --melo-ink:        #000000;
+  --melo-ink-navy:   #032349;
+  --melo-ink-muted:  #6e6e6e;
+  --melo-hairline:   #dcdcdc;
+  --melo-accent:     #032447;
+
+  background-color: #ffffff;
+  color: var(--melo-ink);
+}
+
+/* заголовок секции и заголовки тарифов — тёмные вместо белых */
+.service.melo-service-light .title-section_onblack,
+.service.melo-service-light .title_onblack {
+  color: var(--melo-ink-navy);
+}
+
+.service.melo-service-light .subtitle,
+.service.melo-service-light .service__item-description {
+  color: var(--melo-ink-muted);
+}
+
+.service.melo-service-light .service__item-content,
+.service.melo-service-light .service__item-price {
+  color: var(--melo-ink);
+}
+
+/* подписи колонок были светло-серые на чёрном — на белом не видны */
+.service.melo-service-light .service__names-col {
+  color: var(--melo-ink-muted);
+}
+
+/* волосяные линии: тёмные вместо светлых */
+.service.melo-service-light .service__names,
+.service.melo-service-light .service__item {
+  border-color: var(--melo-hairline);
+}
+
+.service.melo-service-light .service__item_decor {
+  background-color: var(--melo-accent);
+}
+
+/* Кнопка была белой на чёрном — становится тёмной на белом.
+   Цвет задаём и вложенным span: у кнопки темы текст лежит внутри
+   .btn_animate-box, и без этого он остался бы тёмным на тёмном. */
+.service.melo-service-light .service__btn,
+.service.melo-service-light .service__btn.btn_outline {
+  background: var(--melo-accent);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.service.melo-service-light .service__btn span,
+.service.melo-service-light .service__btn .btn_animate-box,
+.service.melo-service-light .service__btn .btn_icon {
+  color: #ffffff;
+}
+
+.service.melo-service-light .service__btn svg path[stroke] { stroke: #ffffff; }
+.service.melo-service-light .service__btn svg path[fill]   { fill: #ffffff; }
+
+/* ---------- Карточки направлений: вся карточка — ссылка ------
+   Заголовок ведёт на страницу услуги, картинка туда же. Цвет
+   заголовка при наведении не меняем — отклик даёт подъём фото
+   и золотая линия, как на остальных страницах. */
+
+.melo-card__link {
+  display: inline;
+  color: inherit;
+  text-decoration: none;
+
+  background-image: linear-gradient(var(--gold), var(--gold));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size var(--dur-slow) var(--ease-lux);
+}
+
+.melo-card:hover .melo-card__link { background-size: 100% 1px; }
+
+/* картинка ведёт туда же, но скрыта от скринридера и табуляции:
+   иначе одна и та же ссылка читалась бы дважды подряд */
+.melo-card__media-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}

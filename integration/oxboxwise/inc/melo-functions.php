@@ -43,6 +43,16 @@ function melo_enqueue_chrome() {
 		file_exists( $file ) ? filemtime( $file ) : null
 	);
 
+	/* Точечные правки существующих секций темы — светлые «Услуги»
+	   и ссылки на карточках. Идут после chrome, чтобы перекрывать. */
+	$ovr = get_template_directory() . '/css/melo-overrides.css';
+	wp_enqueue_style(
+		'melo-overrides',
+		get_template_directory_uri() . '/css/melo-overrides.css',
+		array( 'melo-chrome' ),
+		file_exists( $ovr ) ? filemtime( $ovr ) : null
+	);
+
 	$js = get_template_directory() . '/js/melo-page.js';
 	wp_enqueue_script(
 		'melo-page',
