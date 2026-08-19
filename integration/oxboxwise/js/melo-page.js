@@ -12,14 +12,12 @@
 (function () {
   'use strict';
 
-  var page = document.querySelector('.melo-page');
-  if (!page) return;
-
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* --- Мобильное меню ---------------------------------------- */
-  var header = page.querySelector('.melo-site-header');
-  var burger = page.querySelector('.melo-burger');
+  /* Шапка живёт вне .melo-page — она общая для всех страниц сайта,
+     поэтому ищем её по документу. Всё остальное только внутри .melo-page. */
+  var header = document.querySelector('.melo-site-header');
+  var burger = document.querySelector('.melo-burger');
 
   if (header && burger) {
     burger.addEventListener('click', function () {
@@ -49,8 +47,13 @@
     syncHeader();
   }
 
+  /* Дальше — только содержимое страниц MELO. Если его на странице нет,
+     работает одна шапка выше, и это нормально. */
+  var page = document.querySelector('.melo-page');
+  if (!page) return;
+
   /* --- Слайдер направлений: горизонтальный скролл + прогресс ---
-     Нужен только шаблону «MELO — направление деятельности». На странице
+     Нужен шаблону «направление деятельности» и главной. На странице
      услуги слайдера нет, и цикл просто не находит ничего. */
   page.querySelectorAll('[data-slider]').forEach(function (root) {
     var track = root.querySelector('[data-slider-track]');

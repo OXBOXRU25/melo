@@ -16,6 +16,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Стили шапки и подвала — на всех страницах сайта.
+ *
+ * Шапка общая, поэтому её стили нельзя запирать под .melo-page. Файл
+ * melo-chrome.css изолирован только префиксами классов и подключается
+ * последним, чтобы перекрывать прежние правила темы там, где имена
+ * всё-таки пересеклись бы.
+ *
+ * Стили самих страниц (melo-page.css) грузит их собственный каркас —
+ * на других страницах они не нужны и не подключаются.
+ */
+function melo_enqueue_chrome() {
+	$file = get_template_directory() . '/css/melo-chrome.css';
+
+	wp_enqueue_style(
+		'melo-fonts',
+		'https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap',
+		array(),
+		null
+	);
+
+	wp_enqueue_style(
+		'melo-chrome',
+		get_template_directory_uri() . '/css/melo-chrome.css',
+		array( 'melo-fonts' ),
+		file_exists( $file ) ? filemtime( $file ) : null
+	);
+
+	$js = get_template_directory() . '/js/melo-page.js';
+	wp_enqueue_script(
+		'melo-page',
+		get_template_directory_uri() . '/js/melo-page.js',
+		array(),
+		file_exists( $js ) ? filemtime( $js ) : null,
+		true
+	);
+}
+add_action( 'wp_enqueue_scripts', 'melo_enqueue_chrome', 100 );
+
+/**
+ * Стили и скрипт содержимого страниц MELO.
+ *
+ * Вызывается из шаблонов ДО get_header(), чтобы попасть в wp_head().
+ * На остальных страницах сайта этот файл не грузится вовсе.
+ */
+function melo_enqueue_page() {
+	$file = get_template_directory() . '/css/melo-page.css';
+	wp_enqueue_style(
+		'melo-page',
+		get_template_directory_uri() . '/css/melo-page.css',
+		array( 'melo-chrome' ),
+		file_exists( $file ) ? filemtime( $file ) : null
+	);
+}
+
+/**
  * Контакты для шапки и подвала страниц MELO.
  *
  * Значения по умолчанию — рыба из макета. Переопределяются фильтром,
@@ -67,13 +122,20 @@ function melo_contact( $key ) {
  */
 function melo_nav( $location, $link_class = '', $fallback = array() ) {
 	$items = array();
+	$menu  = false;
 
+	/* Сначала как область меню (menu_main, menu_footer), затем как имя
+	   самого меню — в теме оно зовётся «Главное меню» и выводится по имени,
+	   а не через область. */
 	if ( has_nav_menu( $location ) ) {
 		$locations = get_nav_menu_locations();
 		$menu      = wp_get_nav_menu_object( $locations[ $location ] );
-		if ( $menu ) {
-			$items = wp_get_nav_menu_items( $menu->term_id );
-		}
+	}
+	if ( ! $menu ) {
+		$menu = wp_get_nav_menu_object( $location );
+	}
+	if ( $menu ) {
+		$items = wp_get_nav_menu_items( $menu->term_id );
 	}
 
 	if ( empty( $items ) ) {
