@@ -37,7 +37,7 @@ $melo_email  = $melo_opt( 'opt_email_site', melo_contact( 'email' ) );
 $melo_addr   = $melo_opt( 'opt_address_site', melo_contact( 'address' ) );
 ?>
 
-	<footer class="melo-site-footer" id="contacts">
+	<footer class="melo-site-footer" id="contacts" data-anc_id="#contacts">
 		<div class="melo-container">
 			<div class="melo-site-footer__grid">
 				<p class="melo-site-footer__claim"><?php echo esc_html( melo_contact( 'claim' ) ); ?></p>

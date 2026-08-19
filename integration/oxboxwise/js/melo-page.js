@@ -46,6 +46,7 @@
     };
 
     burger.addEventListener('click', function () { setMenu(true); });
+    burger.addEventListener('melo-close', function () { setMenu(false); });
     if (closeBtn) closeBtn.addEventListener('click', function () { setMenu(false); });
 
     /* переход по пункту закрывает меню */
@@ -72,6 +73,40 @@
     window.addEventListener('scroll', syncHeader, { passive: true });
     syncHeader();
   }
+
+  /* --- Переход к разделу по якорю -----------------------------
+     Слушаем в фазе перехвата и останавливаем событие: иначе следом
+     отработает обработчик темы и увезёт прокрутку не туда. */
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!link) return;
+
+    /* только наши ссылки: шапка, меню, подвал */
+    if (!link.closest('.melo-site-header, .melo-menu, .melo-site-footer')) return;
+
+    var id = link.getAttribute('href').slice(1);
+    if (!id) return;
+
+    var target = document.getElementById(id);
+    if (!target) return;
+
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    /* Клик перехвачен в фазе capture, поэтому обработчик закрытия на
+       самой ссылке уже не сработает — закрываем меню здесь. */
+    if (link.closest('.melo-menu')) {
+      var burgerBtn = document.querySelector('.melo-burger');
+      if (burgerBtn) burgerBtn.dispatchEvent(new Event('melo-close'));
+    }
+
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    /* адрес обновляем без прыжка: history вместо location.hash */
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', '#' + id);
+    }
+  }, true);
 
   /* Дальше — только содержимое страниц MELO. Если его на странице нет,
      работает одна шапка выше, и это нормально. */

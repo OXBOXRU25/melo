@@ -170,7 +170,7 @@ get_header();
     </section>
 
     <!-- ============ 2. Направления деятельности ============ -->
-    <section class="melo-section melo-section--gray" id="areas">
+    <section class="melo-section melo-section--gray" id="areas" data-anc_id="#areas">
         <div class="melo-container">
             <div class="melo-section__head" data-reveal>
                 <h2 class="melo-eyebrow"><?php echo esc_html( $cards_title ); ?></h2>
@@ -296,7 +296,7 @@ get_header();
 	
 	
 	
-        <section class="project project_p-block" id="projects">
+        <section class="project project_p-block" id="projects" data-anc_id="#projects">
           <div class="project__inner container">
             <div class="project__top section-top wow animate__animated animate__fadeInUp animate__delay-05s">
               <h2 class="project__section-title title-section title-section_dark">

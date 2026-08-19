@@ -434,6 +434,8 @@ body.melo-menu-open { overflow: hidden; }
   .melo-nav                { order: 2; }
   .melo-site-header__phone { order: 3; }
 
+}
+
 @media (max-width: 860px) {
   /* На телефоне шапка была высотой с десктопную — сжимаем. */
   .melo-site-header { --melo-header-h: 64px; }
@@ -458,4 +460,18 @@ body.melo-menu-open { overflow: hidden; }
    человеку показывать нечего. См. пояснение в content-header.php. */
 .melo-legacy-menu {
   display: none !important;
+}
+
+/* Прокрутка к разделу останавливается под липкой шапкой, иначе первые
+   строки уезжают под неё. Значение — высота шапки плюс небольшой воздух. */
+#areas, #about, #projects, #services, #contacts,
+[data-anc_id] {
+  scroll-margin-top: calc(var(--melo-header-h, 88px) + 16px);
+}
+
+@media (max-width: 860px) {
+  #areas, #about, #projects, #services, #contacts,
+  [data-anc_id] {
+    scroll-margin-top: 80px;
+  }
 }
