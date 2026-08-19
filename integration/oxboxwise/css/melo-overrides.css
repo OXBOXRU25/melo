@@ -68,41 +68,35 @@
   background-color: transparent;
 }
 
-/* Кнопка была белой на чёрном — становится тёмной на белом.
-   Цвет задаём и вложенным span: у кнопки темы текст лежит внутри
-   .btn_animate-box, и без этого он остался бы тёмным на тёмном. */
+/* Кнопка тарифа = кнопка «Все проекты».
+   У той класс .btn_animate, у этой .btn_outline, отсюда была рамка
+   вместо заливки. Повторяем поведение родной кнопки темы: navy в
+   покое, золото по наведению, тот же переход 0.4s.
+
+   Цвет задаём и вложенным узлам: подпись у кнопок темы лежит внутри
+   .btn_animate-box, и без этого осталась бы тёмной на тёмном. */
+
 .service.melo-service-light .service__btn,
 .service.melo-service-light .service__btn.btn_outline {
   background: var(--melo-accent);
+  border: 1px solid transparent;
   color: #ffffff;
   box-shadow: none;
+  transition: color .4s, background .4s, border .4s;
 }
 
 .service.melo-service-light .service__btn span,
 .service.melo-service-light .service__btn .btn_animate-box,
-.service.melo-service-light .service__btn .btn_icon {
-  color: #ffffff;
-}
+.service.melo-service-light .service__btn .btn_icon { color: #ffffff; }
 
 .service.melo-service-light .service__btn svg path[stroke] { stroke: #ffffff; }
 .service.melo-service-light .service__btn svg path[fill]   { fill: #ffffff; }
 
-/* Отклик по наведению — как на новых страницах: фон плавно светлеет,
-   стрелка делает шаг. Длинная кривая с хвостом вместо резкого
-   переключения: быстрый симметричный переход всегда читается дёшево. */
-.service.melo-service-light .service__btn {
-  transition: background-color .5s cubic-bezier(.16, 1, .3, 1),
-              border-color .5s cubic-bezier(.16, 1, .3, 1),
-              color .5s cubic-bezier(.16, 1, .3, 1);
-}
-
-/* По наведению кнопка заливается золотым, а не обводится: у темы
-   .btn:hover рисует рамку цветом акцента — её гасим прозрачной,
-   иначе поверх заливки осталась бы лишняя линия. Цвет берём из
-   переменной темы, чтобы совпадал с акцентом сайта. */
-.service.melo-service-light .service__btn:hover {
+/* по наведению — заливка золотым, как у «Все проекты» */
+.service.melo-service-light .service__btn:hover,
+.service.melo-service-light .service__btn.btn_outline:hover {
   background: var(--color-accent, #d3ac67);
-  border-color: transparent;
+  border-color: var(--color-accent, #d3ac67);
   color: #ffffff;
 }
 
@@ -112,18 +106,6 @@
 
 .service.melo-service-light .service__btn:hover svg path[stroke] { stroke: #ffffff; }
 .service.melo-service-light .service__btn:hover svg path[fill]   { fill: #ffffff; }
-
-.service.melo-service-light .service__btn svg {
-  transition: transform .5s cubic-bezier(.16, 1, .3, 1);
-}
-
-.service.melo-service-light .service__btn:hover svg {
-  transform: translateX(6px);
-}
-
-.service.melo-service-light .service__btn:active {
-  transform: translateY(1px);
-}
 
 /* ---------- Заголовки секций — антиквой -----------------------
    Крупные заголовки сайта переводим на Merriweather, как на новых

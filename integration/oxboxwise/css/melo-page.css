@@ -416,9 +416,10 @@
 /* ---------- 2. Эйбрау секции (● Подпись) --------------------- */
 .melo-page .melo-eyebrow {
   display: inline-flex;
-  /* эйбрау бывает и заголовком секции: гарнитуру называем явно, чтобы
-     он не унаследовал антикву от h2 */
-  font-family: var(--font-sans);
+  /* Эйбрау набирается антиквой, как остальные заголовки — решение
+     заказчика 19.08.2026. Гарнитуру называем явно, потому что эйбрау
+     бывает и span-ом, который сам по себе антикву не получит. */
+  font-family: var(--font-display);
   align-items: center;
   gap: clamp(14px, 1.35vw, 26px);
   font-size: var(--fs-eyebrow);
@@ -538,7 +539,7 @@
   display: grid;
   grid-template-columns: var(--card-indent) 1fr;
   gap: 0;
-  font-size: var(--fs-list);
+  font-size: var(--card-fs-text, var(--fs-list));
   line-height: var(--lh-body);
 }
 
@@ -563,6 +564,15 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--grid-gap);
+}
+
+.melo-page .melo-card {
+  /* Кегли карточки на 15% мельче общих ролей — решение заказчика
+     19.08.2026: в три колонки набор читался слишком крупно. Держим
+     их здесь, а не по месту: менять придётся вместе. У текста есть
+     пол в 13px, ниже него набор уже нечитаем. */
+  --card-fs-title: calc(var(--fs-h3) * .85);
+  --card-fs-text:  max(13px, calc(var(--fs-list) * .85));
 }
 
 .melo-page .melo-card__media {
@@ -591,6 +601,10 @@
 
 .melo-page .melo-card:hover .melo-card__media img { transform: scale(1.06); }
 
+.melo-page .melo-card__head h3 {
+  font-size: var(--card-fs-title);
+}
+
 .melo-page .melo-card__head {
   display: grid;
   grid-template-columns: var(--card-indent) 1fr;
@@ -601,14 +615,14 @@
 
 .melo-page .melo-card__num {
   color: var(--gold);
-  font-size: var(--fs-list);
+  font-size: var(--card-fs-text);
   line-height: var(--lh-head);
 }
 
 /* вводная строка карточки: идёт между заголовком и списком услуг */
 .melo-page .melo-card__lead {
   padding-left: var(--card-indent);
-  font-size: var(--fs-list);
+  font-size: var(--card-fs-text);
   line-height: var(--lh-body);
   color: var(--text);
 }
