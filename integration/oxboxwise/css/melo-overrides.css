@@ -79,6 +79,29 @@
 .service.melo-service-light .service__btn svg path[stroke] { stroke: #ffffff; }
 .service.melo-service-light .service__btn svg path[fill]   { fill: #ffffff; }
 
+/* Отклик по наведению — как на новых страницах: фон плавно светлеет,
+   стрелка делает шаг. Длинная кривая с хвостом вместо резкого
+   переключения: быстрый симметричный переход всегда читается дёшево. */
+.service.melo-service-light .service__btn {
+  transition: background-color .5s cubic-bezier(.16, 1, .3, 1);
+}
+
+.service.melo-service-light .service__btn:hover {
+  background: #05305e;
+}
+
+.service.melo-service-light .service__btn svg {
+  transition: transform .5s cubic-bezier(.16, 1, .3, 1);
+}
+
+.service.melo-service-light .service__btn:hover svg {
+  transform: translateX(6px);
+}
+
+.service.melo-service-light .service__btn:active {
+  transform: translateY(1px);
+}
+
 /* ---------- Заголовки секций — антиквой -----------------------
    Крупные заголовки сайта переводим на Merriweather, как на новых
    страницах. Кегли не трогаем: у антиквы при том же размере другой
@@ -92,9 +115,29 @@
   font-family: "Merriweather", "Georgia", serif;
 }
 
-/* Названия тарифов были капсом. По макету — обычный набор с заглавной. */
+/* Названия тарифов были капсом. По макету — обычный набор с заглавной.
+   Если подпись всё равно выводится прописными, значит она так записана
+   в самом поле ACF: CSS тут бессилен, правится в админке. */
 .service__item-title {
   text-transform: none;
+}
+
+/* ---------- Разрядка ------------------------------------------
+   Тема разгоняет буквы в заголовках: .title 0.025em, .about__title
+   и слайды 0.03em, комплексы 0.04em. На крупном кегле это читается
+   как рыхлый набор. Снимаем везде, где она положительная. */
+
+.title,
+.title-section,
+.about__title,
+.advanteges__slide-title,
+.complecs__title,
+.reviews__item-content,
+.top__text,
+.footer__policy-item,
+.service__item-title,
+.project__title {
+  letter-spacing: normal;
 }
 
 /* ---------- Карточки направлений: вся карточка — ссылка ------
