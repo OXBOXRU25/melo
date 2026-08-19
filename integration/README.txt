@@ -14,10 +14,11 @@
 Скопировать содержимое папки oxboxwise/ в wp-content/themes/oxboxwise/,
 сохранив структуру. Ничего не перезаписывается — все файлы новые:
 
-  templates/template-melo-service.php   шаблон страницы
-  css/melo-page.css                     стили (40 КБ)
-  js/melo-page.js                       скрипт (3 КБ)
-  img/melo/                             8 картинок, 1.4 МБ
+  templates/template-melo-direction.php  шаблон со слайдером направлений
+  templates/template-melo-service.php    шаблон со списком «что входит»
+  css/melo-page.css                      стили, общие для обоих (41 КБ)
+  js/melo-page.js                        скрипт, общий для обоих (5 КБ)
+  img/melo/                              10 картинок, 1.6 МБ
 
 
 ПОДКЛЮЧЕНИЕ
@@ -26,7 +27,8 @@
 (wp_enqueue_* там закомментированы). Добавьте две строки туда же,
 рядом с остальными — перед <?php wp_head(); ?>:
 
-  <?php if ( is_page_template( 'templates/template-melo-service.php' ) ) : ?>
+  <?php if ( is_page_template( 'templates/template-melo-service.php' )
+          || is_page_template( 'templates/template-melo-direction.php' ) ) : ?>
     <link rel="stylesheet" href="<?=get_template_directory_uri()?>/css/melo-page.css?v=<? echo time() ?>">
     <script defer src="<?=get_template_directory_uri()?>/js/melo-page.js?v=<? echo time() ?>"></script>
   <?php endif; ?>
@@ -39,7 +41,15 @@
 
 1. Страницы → Добавить новую.
 2. Заголовок страницы станет H1 первого экрана.
-3. Атрибуты страницы → Шаблон → «MELO — страница услуги».
+3. Атрибуты страницы → Шаблон:
+
+   «MELO — направление деятельности»  второй блок — слайдер из пяти
+                                      карточек с фотографиями
+   «MELO — страница услуги»           второй блок — список из пяти
+                                      позиций с иконками и картинка
+
+   Оба шаблона универсальные: заголовок, подзаголовок и фон берутся из
+   самой записи, страниц на каждом можно завести сколько угодно.
 4. Изображение записи станет фоном первого экрана (нужен горизонтальный
    кадр ~1920×1069). Не задано — возьмётся img/melo/hero.jpg.
 5. Отрывок (excerpt) станет подзаголовком под H1. Не задан — подставится
@@ -52,10 +62,18 @@
 в melo-page.css заскоуплено под этот класс. Проверено обходом CSSOM:
 238 правил, ни одного селектора без .melo-page.
 
-Это важно, потому что в исходной вёрстке есть сброс на html/body/img/a/
-ul/h1-h4 и классы, которые у вас уже заняты: container, btn, nav,
-nav__link, breadcrumbs, service, service__item, service__title,
-project__title. Без изоляции они бы переписали ваши.
+Но одного скоупинга мало — он защищает САЙТ ОТ НАС, а не наоборот.
+Поэтому ВСЕ наши классы получили префикс melo-: melo-container,
+melo-btn, melo-service и так далее. Всего 112 классов.
+
+Без префикса ваши правила протекали внутрь наших блоков по свойствам,
+которые мы не задаём. Так и вышло на первом прогоне: секция «Что входит
+в услугу» получила синий фон от вашего .service. Та же мина сидела в
+container, btn, nav, nav__link, breadcrumbs, service__item,
+service__title, project__title.
+
+Единственный класс без префикса — open-modal-os: он ваш и стоит там
+намеренно.
 
 Имена ключевых кадров тоже с префиксом: melo-veil-in, melo-hero-rise,
 melo-hero-fade.
@@ -102,7 +120,7 @@ melo-hero-fade.
 ЧЕГО НЕ ЛОМАТЬ
 
 1. Инлайновый скрипт перед <div class="melo-page">. Он ставит класс .js
-   и через 2.5 секунды включает аварийный показ, если melo-page.js не
+   и через 2.5 секунды включает аварийный показ .melo-reveal-failsafe, если melo-page.js не
    загрузился. Уберёте — при сбое скрипта страница окажется пустой:
    блоки до появления стоят в opacity: 0.
 

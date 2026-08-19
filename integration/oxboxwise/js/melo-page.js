@@ -17,6 +17,53 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* --- Слайдер направлений: горизонтальный скролл + прогресс ---
+     Нужен только шаблону «MELO — направление деятельности». На странице
+     услуги слайдера нет, и цикл просто не находит ничего. */
+  page.querySelectorAll('[data-slider]').forEach(function (root) {
+    var track = root.querySelector('[data-slider-track]');
+    var bar   = root.querySelector('.melo-slider-progress__bar');
+    var prev  = root.querySelector('[data-slider-prev]');
+    var next  = root.querySelector('[data-slider-next]');
+    if (!track) return;
+
+    function step() {
+      var first = track.firstElementChild;
+      if (!first) return track.clientWidth;
+      var styles = getComputedStyle(track);
+      return first.getBoundingClientRect().width + (parseFloat(styles.columnGap) || 0);
+    }
+
+    function sync() {
+      var max = track.scrollWidth - track.clientWidth;
+      var ratio = max > 0 ? track.scrollLeft / max : 0;
+      if (bar) {
+        var visible = track.clientWidth / track.scrollWidth;
+        bar.style.width = Math.min(100, (visible + (1 - visible) * ratio) * 100) + '%';
+      }
+      if (prev) prev.disabled = track.scrollLeft <= 1;
+      if (next) next.disabled = track.scrollLeft >= max - 1;
+    }
+
+    if (prev) prev.addEventListener('click', function () {
+      track.scrollBy({ left: -step(), behavior: 'smooth' });
+    });
+
+    if (next) next.addEventListener('click', function () {
+      track.scrollBy({ left: step(), behavior: 'smooth' });
+    });
+
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+
+    /* первый расчёт идёт до загрузки картинок и шрифтов, поэтому
+       пересчитываем, когда размеры устоятся */
+    window.addEventListener('load', sync);
+    if ('ResizeObserver' in window) new ResizeObserver(sync).observe(track);
+
+    sync();
+  });
+
   /* --- Появление блоков со ступенчатой задержкой --------------
      Положение считаем сами по getBoundingClientRect, а не через
      IntersectionObserver. Наблюдатель присылает результат асинхронно и
@@ -44,7 +91,7 @@
         var r = el.getBoundingClientRect();
         if (r.top >= h * 0.92 || r.bottom <= 0) return true;
         el.style.transitionDelay = firstPass ? '0ms' : staggerFor(el) + 'ms';
-        el.classList.add('is-visible');
+        el.classList.add('melo-is-visible');
         return false;
       });
 
@@ -71,15 +118,15 @@
     window.addEventListener('load', showInView);
     showInView();
   } else {
-    reveal.forEach(function (el) { el.classList.add('is-visible'); });
+    reveal.forEach(function (el) { el.classList.add('melo-is-visible'); });
   }
 
   /* снимает аварийный показ, заведённый инлайновым скриптом в шаблоне */
-  document.documentElement.classList.add('reveal-ready');
+  document.documentElement.classList.add('melo-reveal-ready');
 
   /* --- Параллакс фотографии первого экрана -------------------- */
-  var hero = page.querySelector('.hero');
-  var heroBg = page.querySelector('.hero__bg');
+  var hero = page.querySelector('.melo-hero');
+  var heroBg = page.querySelector('.melo-hero__bg');
 
   if (hero && heroBg && !reduceMotion) {
     var ticking = false;

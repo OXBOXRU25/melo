@@ -1,20 +1,20 @@
 <?php
 /**
- * Template Name: MELO — страница услуги
+ * Template Name: MELO — направление деятельности
  * Template Post Type: page
  *
- * Внутренняя страница услуги в новой стилистике MELO: интро с матовым
- * стеклом, «Что входит в услугу», «Как мы работаем», «Примеры реализации».
+ * Внутренняя страница направления в новой стилистике MELO: интро с матовым
+ * стеклом, «Направления деятельности» слайдером карточек, «Как мы работаем»,
+ * «Примеры реализации».
+ *
+ * Отличается от «MELO — страница услуги» только вторым блоком: там список
+ * позиций с иконками и одной картинкой, здесь слайдер карточек с фото.
  *
  * ВСТРАИВАЕТСЯ В СУЩЕСТВУЮЩУЮ ТЕМУ. Шапка, подвал, меню, попапы и формы
- * берутся из темы через get_header() / get_footer() — здесь их нет.
+ * берутся из темы через get_header() / get_footer().
  *
  * Весь контент обёрнут в <div class="melo-page">. Стили в
- * css/melo-page.css заскоуплены под этот класс и наружу не выходят,
- * поэтому остальные страницы сайта не затрагиваются.
- *
- * Содержимое блоков — PHP-массивы ниже. Правятся здесь либо заменяются
- * на ACF (в теме уже стоит ACF Pro), циклы вывода при этом не меняются.
+ * css/melo-page.css заскоуплены под этот класс и наружу не выходят.
  *
  * @package oxboxwise
  */
@@ -28,9 +28,6 @@ get_header();
 while ( have_posts() ) :
 	the_post();
 
-	/* ---------------------------------------------------------------
-	 * Интро
-	 * ------------------------------------------------------------- */
 	$melo_dir = get_template_directory_uri() . '/img/melo/';
 
 	$hero_bg = get_the_post_thumbnail_url( get_the_ID(), 'full' );
@@ -40,50 +37,69 @@ while ( have_posts() ) :
 
 	$lead = get_the_excerpt();
 	if ( ! $lead ) {
-		$lead = 'Проектируем дом от посадки на участке до рабочих чертежей. Помогаем выбрать правильный «исходник» — участок, на котором проект получится.';
+		$lead = 'Создаём цельный образ дома — от планировки комнат до фасада и входной группы. Считаем каждый метр, каждый материал и каждый рубль бюджета.';
 	}
 
 	/* ---------------------------------------------------------------
-	 * Что входит в услугу
-	 * icon — id символа из спрайта ниже.
+	 * Направления деятельности — карточки слайдера
+	 * В заголовке разрешён только <br> — им ловится перенос с макета.
 	 * ------------------------------------------------------------- */
-	$service_title = 'Что входит в услугу';
-	$service_image = array(
-		'img' => 'dir-1.jpg',
-		'alt' => 'Архитектурный макет дома и рабочие чертежи',
+	$cards_title = 'Направления деятельности';
+
+	$cards = array(
+		array(
+			'img'   => 'dir-1.jpg',
+			'alt'   => 'Архитектурный макет и рабочие чертежи здания',
+			'title' => 'Архитектурное проектирование<br>и планирование',
+			'lead'  => 'Сюда входят услуги по:',
+			'items' => array(
+				'Консультация дизайнера по подбору недвижимости (помощь в выборе правильного «исходника» участка).',
+				'Проектирование домов (архитектурный раздел).',
+				'Планирование участка и ситуационный план.',
+			),
+		),
+		array(
+			'img'   => 'dir-3.jpg',
+			'alt'   => 'Фасад современного загородного дома',
+			'title' => 'Дизайн интерьера и экстерьера',
+			'lead'  => 'Всё, что касается визуального облика и стиля самого здания.',
+			'items' => array(
+				'Дизайн-проект интерьера дома.',
+				'Дизайн экстерьера (фасады, заборы, входные группы).',
+			),
+		),
+		array(
+			'img'   => 'dir-2.jpg',
+			'alt'   => 'Благоустроенная территория вокруг загородного дома',
+			'title' => 'Ландшафт и малые архитектурные<br>формы (МАФ)',
+			'lead'  => 'Благоустройство территории вокруг дома.',
+			'items' => array(
+				'Ландшафтная архитектура (генплан, зонирование).',
+				'Проектирование малых сооружений (бани, беседки, навесы, бассейны, зоны отдыха).',
+			),
+		),
+		array(
+			'img'   => 'project-6.jpg',
+			'alt'   => 'Готовая кухня-гостиная после реализации проекта',
+			'title' => 'Реализация и строительство',
+			'lead'  => 'Переход от чертежей к физическому воплощению.',
+			'items' => array(
+				'Строительство и ремонт (реализация объекта под ключ).',
+				'Комплектация объектов (подбор мебели, материалов, оборудования).',
+			),
+		),
+		array(
+			'img'   => 'project-2.jpg',
+			'alt'   => 'Интерьер гостиной, сданной под ключ',
+			'title' => 'Сопровождение и управление',
+			'lead'  => 'Сервис, который снимает головную боль с заказчика.',
+			'items' => array(
+				'Управление объектом (комплексное сопровождение всех процессов).',
+				'Авторский надзор (обычно идёт в связке с управлением).',
+			),
+		),
 	);
 
-	$service_items = array(
-		array(
-			'icon'  => 'melo-i-plot-search',
-			'title' => 'Консультация по подбору недвижимости',
-			'text'  => 'Помогаем выбрать правильный «исходник» — участок, на котором проект вообще получится: рельеф, подъезды, ориентация по сторонам света и ограничения застройки.',
-		),
-		array(
-			'icon'  => 'melo-i-house-plan',
-			'title' => 'Проектирование домов',
-			'text'  => 'Архитектурный раздел целиком: планировки этажей, фасады, разрезы, узлы и посадка здания на участке.',
-		),
-		array(
-			'icon'  => 'melo-i-site-plan',
-			'title' => 'Планирование участка и ситуационный план',
-			'text'  => 'Генплан участка: расположение дома и построек, подъезды, дорожки, зоны и трассировка инженерных сетей.',
-		),
-		array(
-			'icon'  => 'melo-i-structure',
-			'title' => 'Конструктивные решения',
-			'text'  => 'Фундамент, несущие стены, перекрытия и кровля с расчётом нагрузок — чтобы дом простоял столько, сколько нарисован.',
-		),
-		array(
-			'icon'  => 'melo-i-permit',
-			'title' => 'Разрешительная документация',
-			'text'  => 'Уведомление о планируемом строительстве, ГПЗУ и согласования — собираем комплект и ведём его до положительного ответа.',
-		),
-	);
-
-	/* ---------------------------------------------------------------
-	 * Как мы работаем
-	 * ------------------------------------------------------------- */
 	$steps = array(
 		array( 'title' => 'Замер и планировка', 'text' => 'Выезжаем на объект, снимаем размеры и готовим варианты планировочных решений.' ),
 		array( 'title' => 'Концепция', 'text' => 'Собираем стилистику, палитру и материалы — по каждому помещению и по фасаду.' ),
@@ -91,11 +107,6 @@ while ( have_posts() ) :
 		array( 'title' => 'Чертежи и надзор', 'text' => 'Комплект документации для бригады, комплектация объекта и контроль до сдачи.' ),
 	);
 
-	/* ---------------------------------------------------------------
-	 * Примеры реализации
-	 * Чтобы тянуть из типа записи projects, который в теме уже есть,
-	 * замените массив на WP_Query — разметка цикла не меняется.
-	 * ------------------------------------------------------------- */
 	$projects = array(
 		array( 'img' => 'project-1.jpg', 'alt' => 'Интерьер квартиры-студии в светлых тонах', 'w' => 903, 'h' => 1004, 'title' => 'Квартира-студия', 'tag' => 'Интерьеры квартир', 'area' => '27', 'url' => '#' ),
 		array( 'img' => 'project-2.jpg', 'alt' => 'Гостиная однокомнатной квартиры с каменной стеной', 'w' => 904, 'h' => 644, 'title' => 'Однокомнатная квартира', 'tag' => 'Интерьеры квартир', 'area' => '34', 'url' => '#' ),
@@ -104,6 +115,8 @@ while ( have_posts() ) :
 		array( 'img' => 'project-5.jpg', 'alt' => 'Гостиная студии с мягкой мебелью', 'w' => 903, 'h' => 827, 'title' => 'Студия', 'tag' => 'Интерьеры квартир', 'area' => '27', 'url' => '#' ),
 		array( 'img' => 'project-6.jpg', 'alt' => 'Кухня-гостиная с тёплым освещением', 'w' => 904, 'h' => 578, 'title' => 'Однокомнатная квартира', 'tag' => 'Интерьеры квартир', 'area' => '34', 'url' => '#' ),
 	);
+
+	$allow_br = array( 'br' => array() );
 	?>
 
 <?php
@@ -124,29 +137,9 @@ while ( have_posts() ) :
 
 <div class="melo-page">
 
-	<?php /* Иконки блока услуги. Префикс melo- чтобы не столкнуться со спрайтом темы. */ ?>
 	<svg width="0" height="0" style="position:absolute" aria-hidden="true">
 		<symbol id="melo-i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
 			<path d="M4 12h15M13 6l6 6-6 6"/>
-		</symbol>
-		<symbol id="melo-i-plot-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M3 4h13v9"/><path d="M3 4v16h9"/><path d="M3 12h6"/>
-			<circle cx="17" cy="17" r="4"/><path d="M20 20l1.6 1.6"/>
-		</symbol>
-		<symbol id="melo-i-house-plan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M2.5 10.5 12 3l9.5 7.5"/><path d="M5 12.5V21h14v-8.5"/><path d="M10 21v-5h4v5"/>
-		</symbol>
-		<symbol id="melo-i-site-plan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M3 3.5h18v17H3z"/><path d="M3 13h8v7.5"/><path d="M11 13V8h10"/>
-			<circle cx="16.5" cy="17" r="2.2"/>
-		</symbol>
-		<symbol id="melo-i-structure" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M3 20.5h18"/><path d="M5 20.5V9l7-4.5L19 9v11.5"/>
-			<path d="M5 12.5h14"/><path d="M5 16.5h14"/><path d="M12 12.5v8"/>
-		</symbol>
-		<symbol id="melo-i-permit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M14 2.5H6.5a1 1 0 0 0-1 1v17a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V7z"/>
-			<path d="M14 2.5V7h4.5"/><path d="M8.5 15.5l2 2 4.5-4.5"/>
 		</symbol>
 	</svg>
 
@@ -182,37 +175,46 @@ while ( have_posts() ) :
 		</div>
 	</section>
 
-	<!-- ============ 2. Что входит в услугу ============ -->
+	<!-- ============ 2. Направления деятельности ============ -->
 	<section class="melo-section melo-section--gray" id="melo-what">
 		<div class="melo-container">
-			<div class="melo-section__head melo-section__head--solo" data-reveal>
-				<h2><?php echo esc_html( $service_title ); ?></h2>
+			<div class="melo-section__head" data-reveal>
+				<h2 class="melo-eyebrow"><?php echo esc_html( $cards_title ); ?></h2>
 			</div>
 
-			<div class="melo-service">
-				<ul class="melo-service__list">
-					<?php foreach ( $service_items as $item ) : ?>
-						<li class="melo-service__item" data-reveal>
-							<span class="melo-service__icon" aria-hidden="true">
-								<svg viewBox="0 0 24 24"><use href="#<?php echo esc_attr( $item['icon'] ); ?>"></use></svg>
-							</span>
-							<div>
-								<h3 class="melo-service__title"><?php echo esc_html( $item['title'] ); ?></h3>
-								<p class="melo-service__text"><?php echo esc_html( $item['text'] ); ?></p>
+			<div data-slider>
+				<div class="melo-slider-track" data-slider-track>
+					<?php foreach ( $cards as $i => $card ) : ?>
+						<article class="melo-card" data-reveal>
+							<div class="melo-card__media">
+								<img src="<?php echo esc_url( $melo_dir . $card['img'] ); ?>"
+									alt="<?php echo esc_attr( $card['alt'] ); ?>"
+									width="590" height="409" loading="lazy">
 							</div>
-						</li>
+							<div class="melo-card__head">
+								<span class="melo-card__num"><?php echo esc_html( sprintf( '%02d', $i + 1 ) ); ?></span>
+								<h3><?php echo wp_kses( $card['title'], $allow_br ); ?></h3>
+							</div>
+							<p class="melo-card__lead"><?php echo esc_html( $card['lead'] ); ?></p>
+							<ul class="melo-dash-list">
+								<?php foreach ( $card['items'] as $item ) : ?>
+									<li><?php echo esc_html( $item ); ?></li>
+								<?php endforeach; ?>
+							</ul>
+						</article>
 					<?php endforeach; ?>
-				</ul>
+				</div>
 
-				<?php
-				/* Картинка идёт после списка и в разметке: на широких экранах
-				   встаёт справа, ниже 860px поднимается под заголовок средствами
-				   CSS. Порядок чтения при этом не меняется. */
-				?>
-				<div class="melo-service__media" data-reveal>
-					<img src="<?php echo esc_url( $melo_dir . $service_image['img'] ); ?>"
-						alt="<?php echo esc_attr( $service_image['alt'] ); ?>"
-						width="590" height="409" loading="lazy">
+				<div class="melo-slider-foot">
+					<div class="melo-slider-progress"><span class="melo-slider-progress__bar"></span></div>
+					<div class="melo-slider-nav">
+						<button class="melo-slider-btn" type="button" data-slider-prev aria-label="Предыдущее направление">
+							<svg width="24" height="24" aria-hidden="true"><use href="#melo-i-arrow"></use></svg>
+						</button>
+						<button class="melo-slider-btn" type="button" data-slider-next aria-label="Следующее направление">
+							<svg width="24" height="24" aria-hidden="true"><use href="#melo-i-arrow"></use></svg>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -281,7 +283,6 @@ while ( have_posts() ) :
 	</section>
 
 	<?php
-	// Если в редакторе страницы что-то набрано — выводим под секциями.
 	$melo_content = get_the_content();
 	if ( trim( wp_strip_all_tags( $melo_content ) ) ) :
 		?>
