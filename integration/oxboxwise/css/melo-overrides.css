@@ -314,3 +314,28 @@
 .new-project__content-item-info {
   font-weight: 400;
 }
+
+/* ---------- Галерея проекта: зум по наведению ------------------
+   Обрезку вешаем на <picture>, а не на ссылку: скругление 8px тема
+   держит именно там. Масштабируем картинку внутри — рамка стоит на
+   месте, наезжает только изображение.
+
+   Пишем transition одним свойством, а не оставляем доставшийся от темы
+   transition: all — шорткат заменяет весь список целиком, и «all» тут
+   заодно анимировал бы всё, что тема поменяет рядом. */
+
+.new-project-gallery__picture {
+  display: block;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.new-project-gallery__picture img {
+  display: block;
+  width: 100%;
+  transition: transform .9s cubic-bezier(.16, 1, .3, 1);
+}
+
+.new-project-gallery__inner a:hover .new-project-gallery__picture img {
+  transform: scale(1.06);
+}

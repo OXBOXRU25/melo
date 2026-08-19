@@ -1019,7 +1019,10 @@
   align-items: center;
   gap: 10px;
   margin-bottom: clamp(20px, 2vw, 36px);
-  font-size: var(--fs-small);
+  /* На 20% мельче роли — решение заказчика. Пол в 13px обязателен:
+     без него на узком экране выходило ровно 12px, то есть впритык к
+     нижней границе читаемости, а крошки и так вспомогательные. */
+  font-size: max(13px, calc(var(--fs-small) * .8));
   color: #fff;
 }
 
