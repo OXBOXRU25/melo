@@ -26,6 +26,10 @@ $melo_dir = get_template_directory_uri() . '/img/melo/';
 
 /* Первый экран сохраняет реальные поля главной, меняется только дизайн. */
 $hero_image = get_field( 'intro_image' );
+
+/* Идентификатор нужен, чтобы srcset собрал сам WordPress: он уже нарезал
+   этот файл на девятнадцать размеров, грех не воспользоваться. */
+$melo_hero_id = is_array( $hero_image ) ? (int) ( $hero_image['ID'] ?? 0 ) : (int) $hero_image;
 $hero_bg    = '';
 
 if ( is_array( $hero_image ) && ! empty( $hero_image['url'] ) ) {
@@ -130,7 +134,7 @@ get_header();
 
     <!-- ============ 1. Интро ============ -->
     <section class="melo-hero">
-        <img class="melo-hero__bg" src="<?php echo esc_url( $hero_bg ); ?>" alt="" width="1920" height="1069">
+        <?php melo_hero_image( $melo_hero_id, 'hero.jpg' ); ?>
         <div class="melo-hero__veil"></div>
 
         <div class="melo-container melo-hero__inner">
@@ -213,7 +217,8 @@ get_header();
 
                   <div class="about__human">
 
-                    <img src="<? echo get_field('about_photo')['url']; ?>" alt="">
+                    <?php /* ниже сгиба — грузим лениво, чтобы не задерживать первую отрисовку */ ?>
+                    <img src="<? echo get_field('about_photo')['url']; ?>" alt="" loading="lazy" decoding="async">
 
                     <p>
                       <? echo get_field('about_name'); ?>

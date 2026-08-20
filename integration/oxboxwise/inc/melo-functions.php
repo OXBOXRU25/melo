@@ -324,3 +324,85 @@ function melo_nav( $location, $link_class = '', $fallback = array() ) {
 		);
 	}
 }
+
+/**
+ * Версия файла темы для адреса — время его правки.
+ *
+ * В header.php версия считалась как time(), то есть менялась при каждом
+ * запросе: браузер не мог закэшировать ни style.min.css, ни custom.js и
+ * качал их заново на каждой странице. Время правки меняется только
+ * вместе с файлом, поэтому кэш живёт и обновляется ровно тогда, когда
+ * файл действительно изменили.
+ *
+ * @param string $rel Путь от корня темы, со слешем в начале.
+ * @return string
+ */
+function melo_asset_ver( $rel ) {
+	$file = get_template_directory() . $rel;
+	return file_exists( $file ) ? (string) filemtime( $file ) : '1';
+}
+
+/**
+ * Фотография первого экрана.
+ *
+ * Это самая тяжёлая картинка страницы и почти всегда тот самый элемент,
+ * по которому Google считает LCP. Поэтому здесь три вещи:
+ *
+ * • srcset — телефону незачем качать 1920px, он покажет 412;
+ * • fetchpriority="high" — браузер по умолчанию считает картинку
+ *   неважной и берётся за неё после стилей и скриптов;
+ * • loading="eager" — ленивая загрузка тут навредила бы: картинка и так
+ *   в кадре, а отложенный запрос сдвигает LCP.
+ *
+ * Если картинка из медиатеки, srcset собирает сам WordPress. Если это
+ * файл темы — ищем рядом варианты вида hero-960.jpg, их готовит
+ * tools/make-hero-sizes.php.
+ *
+ * @param int    $attachment_id Идентификатор вложения или 0.
+ * @param string $file          Имя файла в img/melo/ на случай, если вложения нет.
+ * @param string $alt           Альтернативный текст.
+ */
+function melo_hero_image( $attachment_id, $file = 'hero.jpg', $alt = '' ) {
+	$attrs = array(
+		'class'         => 'melo-hero__bg',
+		'alt'           => $alt,
+		'sizes'         => '100vw',
+		'fetchpriority' => 'high',
+		'decoding'      => 'async',
+		'loading'       => 'eager',
+	);
+
+	if ( $attachment_id ) {
+		echo wp_get_attachment_image( $attachment_id, 'full', false, $attrs );
+		return;
+	}
+
+	$dir  = get_template_directory() . '/img/melo/';
+	$uri  = get_template_directory_uri() . '/img/melo/';
+	$name = pathinfo( $file, PATHINFO_FILENAME );
+	$ext  = pathinfo( $file, PATHINFO_EXTENSION );
+
+	if ( ! file_exists( $dir . $file ) ) {
+		return;
+	}
+
+	$size = getimagesize( $dir . $file );
+	$set  = array();
+
+	foreach ( glob( $dir . $name . '-*.' . $ext ) as $variant ) {
+		if ( preg_match( '/-(\d+)\.' . preg_quote( $ext, '/' ) . '$/', $variant, $m ) ) {
+			$set[] = esc_url( $uri . basename( $variant ) ) . ' ' . (int) $m[1] . 'w';
+		}
+	}
+	$set[] = esc_url( $uri . $file ) . ' ' . (int) $size[0] . 'w';
+	sort( $set, SORT_NATURAL );
+
+	printf(
+		'<img class="melo-hero__bg" src="%1$s" srcset="%2$s" sizes="100vw" alt="%3$s" width="%4$d" height="%5$d" fetchpriority="high" decoding="async" loading="eager">',
+		esc_url( $uri . $file ),
+		esc_attr( implode( ', ', $set ) ),
+		esc_attr( $alt ),
+		(int) $size[0],
+		(int) $size[1]
+	);
+}

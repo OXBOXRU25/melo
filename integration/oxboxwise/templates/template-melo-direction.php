@@ -150,7 +150,7 @@ while ( have_posts() ) :
 
 	<!-- ============ 1. Интро ============ -->
 	<section class="melo-hero">
-		<img class="melo-hero__bg" src="<?php echo esc_url( $hero_bg ); ?>" alt="" width="1920" height="1069">
+		<?php melo_hero_image( get_post_thumbnail_id(), 'hero.jpg' ); ?>
 		<div class="melo-hero__veil"></div>
 
 		<div class="melo-container melo-hero__inner">
