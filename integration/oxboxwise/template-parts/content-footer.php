@@ -73,7 +73,10 @@ $melo_addr   = $melo_opt( 'opt_address_site', melo_contact( 'address' ) );
 			<div class="melo-site-footer__bottom">
 				<span><?php echo esc_html( gmdate( 'Y' ) . ' ' . get_bloginfo( 'name' ) ); ?></span>
 				<a href="<?php echo esc_url( melo_contact( 'policy' ) ); ?>">Политика конфиденциальности</a>
-				<span>Разработано в OXBOX</span>
+				<?php /* target="_blank" — уводить с сайта клиента в той же вкладке не стоит;
+				         rel="noopener" обязателен: без него открытая вкладка получает
+				         доступ к window.opener и может подменить страницу-источник. */ ?>
+				<a href="https://www.oxbox.ru" target="_blank" rel="noopener">Разработано в OXBOX</a>
 			</div>
 		</div>
 	</footer>

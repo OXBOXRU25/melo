@@ -42,8 +42,17 @@ if ( ! $melo_email ) {
 $melo_home = ( is_front_page() || is_home() ) ? 'javascript:void(0);' : get_home_url();
 ?>
 
+<?php
+/* Якорь «наверх» из подвала. На самой шапке его держать нельзя: она
+   sticky, и как только прилипла к верху, её положение в документе
+   совпадает с текущей прокруткой — переход никуда не ведёт, кнопка
+   выглядит нерабочей. Отдельная нулевая точка перед шапкой всегда
+   стоит в начале страницы. */
+?>
+<span id="melo-top" class="melo-anchor" aria-hidden="true"></span>
+
 <?php /* класс header — для скриптов темы, см. пояснение внизу файла */ ?>
-<header class="melo-site-header header" id="melo-top">
+<header class="melo-site-header header">
 	<div class="melo-container melo-site-header__inner">
 
 		<a class="melo-logo" href="<?php echo esc_url( $melo_home ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) . ' — на главную' ); ?>">
