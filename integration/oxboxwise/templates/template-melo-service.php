@@ -106,6 +106,43 @@ while ( have_posts() ) :
 		array( 'img' => 'project-5.jpg', 'alt' => 'Гостиная студии с мягкой мебелью', 'w' => 903, 'h' => 827, 'title' => 'Студия', 'tag' => 'Интерьеры квартир', 'area' => '27', 'url' => '#' ),
 		array( 'img' => 'project-6.jpg', 'alt' => 'Кухня-гостиная с тёплым освещением', 'w' => 904, 'h' => 578, 'title' => 'Однокомнатная квартира', 'tag' => 'Интерьеры квартир', 'area' => '34', 'url' => '#' ),
 	);
+	/* --- Примеры реализации ---------------------------------------
+	   Берём настоящие записи проектов, а не список в шаблоне: это одна
+	   и та же сущность, просто показанная иначе, чем на главной. Тогда
+	   карточки ведут на страницы проектов, а новый проект появляется
+	   здесь сам, без правки кода.
+
+	   Список в шаблоне остаётся запасным: пока проектов нет (свежая
+	   установка, пустая база), раздел не должен превращаться в пустоту.
+	   ------------------------------------------------------------- */
+	$melo_works = get_posts( array(
+		'post_type'      => 'projects',
+		'post_status'    => 'publish',
+		'posts_per_page' => 6,
+	) );
+
+	if ( $melo_works ) {
+		$projects = array();
+		foreach ( $melo_works as $melo_work ) {
+			$melo_img = get_the_post_thumbnail_url( $melo_work->ID, 'project_front_big' );
+			if ( ! $melo_img ) {
+				$melo_img = get_the_post_thumbnail_url( $melo_work->ID, 'full' );
+			}
+
+			$projects[] = array(
+				/* Полный адрес, а не имя файла: картинка приходит из медиатеки,
+				   а не из папки темы. */
+				'src'   => $melo_img,
+				'alt'   => get_the_title( $melo_work->ID ),
+				'w'     => 903,
+				'h'     => 1004,
+				'title' => get_the_title( $melo_work->ID ),
+				'tag'   => (string) get_field( 'type', $melo_work->ID ),
+				'area'  => (string) get_field( 'square', $melo_work->ID ),
+				'url'   => get_permalink( $melo_work->ID ),
+			);
+		}
+	}
 	?>
 
 <div class="melo-page">
@@ -242,7 +279,8 @@ while ( have_posts() ) :
 						   читалась бы дважды подряд. */
 						?>
 						<a class="melo-project__media" href="<?php echo esc_url( $project['url'] ); ?>" tabindex="-1" aria-hidden="true">
-							<img src="<?php echo esc_url( $melo_dir . $project['img'] ); ?>"
+							<?php /* у проектов из базы адрес полный, у запасного списка — имя файла */ ?>
+							<img src="<?php echo esc_url( isset( $project['src'] ) ? $project['src'] : $melo_dir . $project['img'] ); ?>"
 								alt="<?php echo esc_attr( $project['alt'] ); ?>"
 								width="<?php echo esc_attr( $project['w'] ); ?>"
 								height="<?php echo esc_attr( $project['h'] ); ?>" loading="lazy">

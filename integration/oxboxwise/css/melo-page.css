@@ -741,6 +741,26 @@
 
 .melo-page .melo-slider-track > * { scroll-snap-align: start; }
 
+/* Трек можно тащить мышью — показываем это курсором. */
+.melo-page .melo-slider-track { cursor: grab; }
+
+.melo-page .melo-slider-track.melo-is-dragging {
+  cursor: grabbing;
+  /* Привязка к карточкам на время перетаскивания снимается: иначе она
+     тянет трек к ближайшей карточке прямо под рукой. Возвращается
+     сразу после отпускания и доводит до места сама. */
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  user-select: none;
+}
+
+/* Ссылка и картинка внутри карточки умеют перетаскиваться сами —
+   этот перенос забирает указатель себе и убивает листание. */
+.melo-page .melo-slider-track a,
+.melo-page .melo-slider-track img {
+  -webkit-user-drag: none;
+}
+
 .melo-page .melo-slider-foot {
   display: flex;
   align-items: center;
