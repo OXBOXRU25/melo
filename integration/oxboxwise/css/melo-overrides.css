@@ -399,3 +399,27 @@
   top: 50%;
   transform: translateY(-50%);
 }
+
+/* ---------- Подписи проектов на архиве «Кейсы» ---------------
+
+   На архиве проектов тема вешает на <body> класс bg-gray (см. header.php:
+   `if (get_queried_object()->name == 'projects')`), а под ним красит
+   подписи карточек в #bebebe:
+
+     .bg-gray .project__item-content sup   { color: #bebebe }
+     .bg-gray .project__item-description   { color: #bebebe }
+
+   Фон страницы при этом светлый, #f0f0f0, и контраст выходит 1.7:1 при
+   минимуме 4.5 — номер, площадь и тип проекта просто не читаются. На
+   главной те же подписи чёрные: там bg-gray на body нет, и выигрывает
+   правило из custom.css.
+
+   Приводим архив к главной. Специфичность та же, что у правил темы, —
+   наш файл подключается позже и потому перекрывает.
+   ------------------------------------------------------------- */
+.bg-gray .project__item-content { color: #222; }
+
+.bg-gray .project__item-description,
+.bg-gray .project__item-name sup { color: #000; }
+
+.bg-gray .project__item-size sup { color: #222; }
