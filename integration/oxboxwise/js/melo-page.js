@@ -335,67 +335,74 @@
 
     /* --- Перетаскивание мышью ---------------------------------
        Пальцем и колесом трек листался и раньше, а мышью его хочется
-       именно тащить. Три вещи, без которых это не работает:
+       именно тащить. Тонкостей три, и все обязательные.
 
-       • ссылка внутри карточки при нажатии запускает собственный
-         перенос адреса, указатель уходит браузеру, и обработчик не
-         получает ни одного движения — поэтому переносу говорим «нет»;
-       • привязка к карточкам (scroll-snap) на время перетаскивания
-         снимается: иначе она возвращает трек на место под рукой;
-       • клик после перетаскивания гасится, иначе отпускание кнопки
-         на карточке открывает ссылку, хотя человек просто листал. */
-    var dragging = false;
+       1. Ссылка и картинка внутри карточки умеют перетаскиваться сами:
+          браузер начинает перенос адреса, забирает указатель себе, и
+          обработчик не получает ни одного движения. Запрещаем.
+
+       2. Захват указателя (setPointerCapture) здесь не используем
+          намеренно. С ним все события до отпускания адресуются треку,
+          и клик достаётся ТРЕКУ, а не ссылке под курсором — карточки
+          перестают открываться вовсе. Вместо захвата слушаем движение
+          на документе: рука может уехать за пределы трека, а событий
+          мы не теряем, и адресация клика остаётся нетронутой.
+
+       3. Клик после настоящего перетаскивания гасим в фазе перехвата —
+          иначе отпускание кнопки на карточке откроет ссылку, хотя
+          человек просто листал. Порог в 4 пикселя: дрожание руки при
+          обычном клике не должно считаться листанием. */
+    var dragFrom = null;   // откуда начали, пока не решили — клик это или листание
+    var dragging = false;  // движение переросло в листание
     var moved = 0;
-    var startX = 0;
-    var startScroll = 0;
-    var pointer = null;
 
     [].forEach.call(track.querySelectorAll('a, img'), function (el) {
       el.setAttribute('draggable', 'false');
     });
 
-    track.addEventListener('pointerdown', function (e) {
-      /* палец и перо и так листают трек штатной прокруткой */
-      if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      dragging = true;
-      moved = 0;
-      startX = e.clientX;
-      startScroll = track.scrollLeft;
-      pointer = e.pointerId;
-      try { track.setPointerCapture(pointer); } catch (err) { /* не критично */ }
-      track.classList.add('melo-is-dragging');
-    });
-
-    track.addEventListener('pointermove', function (e) {
-      if (!dragging) return;
-      var dx = e.clientX - startX;
+    var onMove = function (e) {
+      if (!dragFrom) return;
+      var dx = e.clientX - dragFrom.x;
       if (Math.abs(dx) > moved) moved = Math.abs(dx);
-      track.scrollLeft = startScroll - dx;
-      e.preventDefault();
-    });
 
-    var stopDrag = function () {
+      /* Пока не перешли порог — это ещё клик, трек не трогаем. */
+      if (!dragging) {
+        if (moved <= 4) return;
+        dragging = true;
+        track.classList.add('melo-is-dragging');
+      }
+
+      track.scrollLeft = dragFrom.left - dx;
+      e.preventDefault();
+    };
+
+    var onUp = function () {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointercancel', onUp);
+      dragFrom = null;
       if (!dragging) return;
       dragging = false;
-      if (pointer !== null) {
-        try { track.releasePointerCapture(pointer); } catch (err) { /* уже отпущен */ }
-      }
-      /* Класс снимаем в следующем кадре: вернувшаяся привязка тут же
-         доводит трек до ближайшей карточки, и это выглядит как ответ
-         на движение, а не как рывок посреди него. */
+      /* Класс снимаем в следующем кадре: вернувшаяся привязка доводит
+         трек до ближайшей карточки, и это читается как ответ на
+         движение, а не как рывок посреди него. */
       window.requestAnimationFrame(function () {
         track.classList.remove('melo-is-dragging');
       });
     };
 
-    track.addEventListener('pointerup', stopDrag);
-    track.addEventListener('pointercancel', stopDrag);
-    track.addEventListener('pointerleave', stopDrag);
+    track.addEventListener('pointerdown', function (e) {
+      /* палец и перо и так листают трек штатной прокруткой */
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      dragFrom = { x: e.clientX, left: track.scrollLeft };
+      moved = 0;
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+      document.addEventListener('pointercancel', onUp);
+    });
 
-    /* Фаза перехвата — чтобы успеть раньше самой ссылки. Порог в три
-       пикселя: дрожание руки при обычном клике не должно его глушить. */
     track.addEventListener('click', function (e) {
-      if (moved > 3) {
+      if (moved > 4) {
         e.preventDefault();
         e.stopPropagation();
       }
