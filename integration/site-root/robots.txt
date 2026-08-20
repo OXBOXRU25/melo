@@ -1,0 +1,27 @@
+# robots.txt — melodesign.ru
+#
+# Что изменилось против прежней версии:
+#
+# 1. Сняты Disallow на /wp-content/themes/ и /wp-content/plugins/.
+#    Они закрывали от Google стили и скрипты сайта: правило Allow: /*/*.css
+#    короче правила Disallow: /wp-content/themes/, а в robots.txt
+#    выигрывает не порядок строк, а более длинное правило. Робот
+#    отрисовывал страницу без оформления и считал её хуже, чем она есть.
+#    Google об этом предупреждает отдельно.
+#
+# 2. Убрана строка Sitemap: /sitemap-images.xml — такой карты нет,
+#    адрес отдавал 404. Yoast её не создаёт.
+#
+# 3. Карта указана прямо на sitemap_index.xml, а не на /sitemap.xml,
+#    который отвечал редиректом.
+#
+# 4. Убрана директива Host — Яндекс перестал её учитывать в 2018 году.
+
+User-agent: *
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Disallow: /*?s=
+Disallow: /*?replytocom
+Disallow: /cgi-bin/
+
+Sitemap: https://melodesign.ru/sitemap_index.xml

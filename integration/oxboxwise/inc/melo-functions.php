@@ -179,19 +179,54 @@ function melo_contact( $key ) {
 	static $data = null;
 
 	if ( null === $data ) {
+		/* Значения берём из настроек темы (ACF, страница «Настройки»),
+		   чтобы контакты правились из админки, а не из кода. Что не
+		   заполнено — подставляется из умолчаний ниже. */
+		$opt = function ( $field, $default = '' ) {
+			if ( ! function_exists( 'get_field' ) ) {
+				return $default;
+			}
+			$v = get_field( $field, 'option' );
+			if ( is_array( $v ) ) {
+				$v = isset( $v['url'] ) ? $v['url'] : '';
+			}
+			$v = is_string( $v ) ? trim( $v ) : '';
+			return '' !== $v ? $v : $default;
+		};
+
+		$phone  = $opt( 'opt_phone_site', '+7 960 089 28 40' );
+		$phone2 = $opt( 'opt_phone2_site' );
+
+		/* Для tel: нужны только цифры. Ведущую 8 приводим к +7 — иначе
+		   часть телефонов набирается, а часть нет, в зависимости от того,
+		   как их записали в админке. */
+		$raw = function ( $s ) {
+			$d = preg_replace( '/\D+/', '', (string) $s );
+			if ( '' === $d ) {
+				return '';
+			}
+			if ( 11 === strlen( $d ) && '8' === $d[0] ) {
+				$d = '7' . substr( $d, 1 );
+			}
+			return '+' . $d;
+		};
+
 		$data = apply_filters(
 			'melo_contacts',
 			array(
-				'phone'     => '+7 900 000 00 00',
-				'phone_raw' => '+79000000000',
-				'phone2'    => '8 800 000 00 00',
-				'phone2_raw'=> '88000000000',
-				'email'     => 'info@name.ru',
-				'address'   => 'г. Казань, ул. Ленина 00',
-				'claim'     => 'Всегда открыт для новых проектов и сотрудничества.',
-				'telegram'  => '#',
-				'max'       => '#',
-				'policy'    => '#',
+				'phone'      => $phone,
+				'phone_raw'  => $raw( $phone ),
+				'phone2'     => $phone2,
+				'phone2_raw' => $raw( $phone2 ),
+				'email'      => $opt( 'opt_email_site', 'info@name.ru' ),
+				'address'    => $opt( 'opt_adr_site', 'г. Казань' ),
+				'hours'      => $opt( 'opt_time_site', 'с 10:00 до 19:00' ),
+				'claim'      => $opt( 'opt_text_site', 'Всегда открыт для новых проектов и сотрудничества.' ),
+				'telegram'   => $opt( 'opt_soc_tg', 'https://t.me/ravil_srf' ),
+				/* Пусто, а не «#»: пустой адрес шаблоны выводят текстом,
+				   а решётка сделала бы вид рабочей ссылки в никуда. */
+				'max'        => $opt( 'opt_soc_max' ),
+				'policy'     => $opt( 'opt_link_personal', home_url( '/politika-konfidentsialnosti/' ) ),
 			)
 		);
 	}

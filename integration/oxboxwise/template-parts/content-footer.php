@@ -46,8 +46,22 @@ $melo_addr   = $melo_opt( 'opt_address_site', melo_contact( 'address' ) );
 					<a class="melo-footer-contacts__major" href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $melo_phone2 ) ); ?>"><?php echo esc_html( $melo_phone2 ); ?></a>
 					<a class="melo-footer-contacts__major" href="mailto:<?php echo esc_attr( $melo_email ); ?>"><?php echo esc_html( $melo_email ); ?></a>
 					<span class="melo-footer-contacts__gap"></span>
-					<a class="melo-footer-contacts__major" href="<?php echo esc_url( melo_contact( 'telegram' ) ); ?>" rel="noopener">Telegram</a>
-					<a class="melo-footer-contacts__major" href="<?php echo esc_url( melo_contact( 'max' ) ); ?>" rel="noopener">MAX</a>
+					<?php
+					/* Мессенджер показываем только с заполненным адресом: пустая
+					   ссылка выглядит рабочей, но никуда не ведёт. Адреса берутся
+					   из настроек темы, поэтому список сам оживает по мере
+					   заполнения. */
+					$melo_messengers = array(
+						'Telegram' => melo_contact( 'telegram' ),
+						'MAX'      => melo_contact( 'max' ),
+					);
+					foreach ( $melo_messengers as $melo_label => $melo_href ) :
+						if ( '' === $melo_href || '#' === $melo_href ) {
+							continue;
+						}
+						?>
+						<a class="melo-footer-contacts__major" href="<?php echo esc_url( $melo_href ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $melo_label ); ?></a>
+					<?php endforeach; ?>
 					<p class="melo-footer-contacts__address"><?php echo esc_html( $melo_addr ); ?></p>
 				</div>
 
