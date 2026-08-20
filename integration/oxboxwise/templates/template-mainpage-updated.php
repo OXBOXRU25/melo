@@ -9,32 +9,18 @@
  */
 
 /*
- * Главная использует первые два блока новой стилистики MELO.
- * Подключаем их ассеты до get_header(), чтобы WordPress вывел CSS в wp_head(),
- * а JS — через wp_footer(). Остальная главная остаётся на старых стилях темы.
+ * Главная использует первые два блока новой стилистики MELO, поэтому
+ * подключается тем же вызовом, что и остальные страницы MELO: стили
+ * содержимого плюс запуск появления блоков. До get_header(), чтобы CSS
+ * успел в wp_head().
+ *
+ * Раньше здесь стояли свои wp_enqueue_* — копия того, что уже делают
+ * melo_enqueue_chrome() и melo_enqueue_page(). Шрифты из-за этого
+ * запрашивались дважды под разными именами, а запуск появления жил
+ * только на главной: на остальных страницах MELO блоки не анимировались
+ * вовсе.
  */
-$melo_css_file = get_template_directory() . '/css/melo-page.css';
-$melo_js_file  = get_template_directory() . '/js/melo-page.js';
-
-wp_enqueue_style(
-    'melo-google-fonts',
-    'https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap',
-    array(),
-    null
-);
-wp_enqueue_style(
-    'melo-page',
-    get_template_directory_uri() . '/css/melo-page.css',
-    array( 'melo-google-fonts' ),
-    file_exists( $melo_css_file ) ? filemtime( $melo_css_file ) : null
-);
-wp_enqueue_script(
-    'melo-page',
-    get_template_directory_uri() . '/js/melo-page.js',
-    array(),
-    file_exists( $melo_js_file ) ? filemtime( $melo_js_file ) : null,
-    true
-);
+melo_enqueue_page();
 
 $melo_dir = get_template_directory_uri() . '/img/melo/';
 
@@ -134,15 +120,6 @@ $allow_br = array( 'br' => array() );
 get_header();
 ?>
 
-<script>
-(function () {
-    var d = document.documentElement;
-    d.classList.add('melo-js');
-    setTimeout(function () {
-        if (!d.classList.contains('melo-reveal-ready')) d.classList.add('melo-reveal-failsafe');
-    }, 2500);
-})();
-</script>
 
 <div class="melo-page melo-home-intro">
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">

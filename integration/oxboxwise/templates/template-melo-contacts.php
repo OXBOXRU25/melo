@@ -3,8 +3,11 @@
  * Template Name: MELO — контакты
  * Template Post Type: page
  *
- * Страница контактов в стилистике MELO: интро, способы связи, офис,
- * форма и реквизиты.
+ * Страница контактов в стилистике MELO: интро и способы связи.
+ *
+ * Разделы «Как добраться», «Заявка» и «Реквизиты» сняты по решению
+ * заказчика. Их разметка и стили лежат в истории git, в коммите с
+ * первой сборкой страницы, — возвращаются оттуда целиком.
  *
  * Данные пока тестовые и лежат массивами ниже — правятся здесь либо
  * переносятся в ACF, разметка вывода при этом не меняется. Телефон,
@@ -79,30 +82,6 @@ while ( have_posts() ) :
 		array( 'label' => 'MAX',      'href' => melo_contact( 'max' ) ),
 	);
 
-	/* ---------------------------------------------------------------
-	 * Как добраться
-	 * ------------------------------------------------------------- */
-	$route_title = 'Как добраться';
-	$route_items = array(
-		'От метро «Кремлёвская» — 7 минут пешком через сквер.',
-		'Парковка для гостей во дворе, места отмечены табличкой.',
-		'Вход со стороны сквера, домофон 12, второй этаж направо.',
-		'Приезд лучше согласовать заранее — так встретим на входе.',
-	);
-
-	/* ---------------------------------------------------------------
-	 * Реквизиты. Значения тестовые: нули на месте цифр оставлены
-	 * намеренно, чтобы страницу нельзя было выпустить, не заметив.
-	 * ------------------------------------------------------------- */
-	$specs_title = 'Реквизиты';
-	$specs       = array(
-		array( 'Полное наименование', 'Общество с ограниченной ответственностью «МЕЛО»' ),
-		array( 'ИНН / КПП', '1600000000 / 160001001' ),
-		array( 'ОГРН', '1230000000000' ),
-		array( 'Юридический адрес', '420000, Республика Татарстан, г. Казань, ул. Ленина, д. 00, офис 000' ),
-		array( 'Расчётный счёт', '40702810000000000000' ),
-		array( 'Директор', 'Фамилия Имя Отчество' ),
-	);
 	?>
 
 <div class="melo-page melo-contacts-page">
@@ -121,9 +100,6 @@ while ( have_posts() ) :
 		</symbol>
 		<symbol id="melo-i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
 			<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3.4 2"/>
-		</symbol>
-		<symbol id="melo-i-arrow" viewBox="0 0 16 16" fill="none">
-			<path d="M8 0 6.7 1.3 12.48 7.08H0v1.84h12.48L6.7 14.7 8 16l8-8z" fill="currentColor"/>
 		</symbol>
 	</svg>
 
@@ -145,7 +121,12 @@ while ( have_posts() ) :
 
 			<p class="melo-hero__lead"><?php echo esc_html( $lead ); ?></p>
 
-			<a class="melo-btn melo-btn--gold" href="#melo-form">Написать нам</a>
+			<?php /* класс open-modal-os и data-title — триггер попапа темы:
+			       отдельной формы на странице нет, писать всё равно нужно. */ ?>
+			<button class="melo-btn melo-btn--gold open-modal-os" type="button"
+				data-title="Заявка со страницы контактов">
+				Написать нам
+			</button>
 		</div>
 	</section>
 
@@ -192,156 +173,6 @@ while ( have_posts() ) :
 				endforeach;
 				?>
 			</p>
-		</div>
-	</section>
-
-	<!-- ============ 3. Офис ============ -->
-	<section class="melo-section melo-section--white" id="melo-office">
-		<div class="melo-container">
-			<div class="melo-section__head melo-section__head--center" data-reveal>
-				<span class="melo-eyebrow">Офис</span>
-				<h2><?php echo esc_html( $route_title ); ?></h2>
-			</div>
-
-			<div class="melo-office">
-				<?php
-				/* Карта — заглушка. Встраиваемая карта тянет сторонний скрипт
-				   и точку на местности, которой пока нет: адрес тестовый.
-				   Когда появится настоящий — сюда встаёт iframe Яндекс.Карт,
-				   разметка вокруг не меняется. */
-				?>
-				<div class="melo-map" data-reveal>
-					<div class="melo-map__grid" aria-hidden="true"></div>
-					<div class="melo-map__pin" aria-hidden="true">
-						<svg viewBox="0 0 24 24"><use href="#melo-i-pin"></use></svg>
-					</div>
-					<div class="melo-map__card">
-						<p class="melo-map__role">Адрес</p>
-						<p class="melo-map__value ox-selectable"><?php echo esc_html( melo_contact( 'address' ) ); ?></p>
-						<a class="melo-map__link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-							Открыть в Яндекс.Картах
-							<svg class="melo-btn__arrow" aria-hidden="true"><use href="#melo-i-arrow"></use></svg>
-						</a>
-					</div>
-				</div>
-
-				<div class="melo-office__side">
-					<ul class="melo-route" data-reveal>
-						<?php foreach ( $route_items as $item ) : ?>
-							<li><?php echo esc_html( $item ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-
-					<p class="melo-office__hint" data-reveal>
-						Не нашли нужного? Позвоните <a class="ox-selectable" href="tel:<?php echo esc_attr( melo_contact( 'phone_raw' ) ); ?>"><?php echo esc_html( melo_contact( 'phone' ) ); ?></a> —
-						подскажем, как доехать.
-					</p>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- ============ 4. Форма ============ -->
-	<section class="melo-section melo-section--gray" id="melo-form">
-		<div class="melo-container">
-			<div class="melo-section__head melo-section__head--center" data-reveal>
-				<span class="melo-eyebrow">Заявка</span>
-				<h2>Написать нам</h2>
-			</div>
-
-			<div class="melo-form-card" data-reveal>
-				<?php
-				/* Разметка формы — темы: её же валидация (js/validation.js
-				   цепляется к form[data-controller]) и её же отправка
-				   (action=sendform). Отличия только в обёртке и в id: он
-				   обязан быть уникальным, форма в модалке зовётся os. */
-				?>
-				<form action="" class="form melo-form" data-controller id="melo-contacts-form">
-					<p class="melo-form__note">
-						Оставьте телефон — перезвоним в рабочие часы и обсудим задачу.
-					</p>
-
-					<fieldset class="form__col form__col_1">
-						<legend>Поля формы</legend>
-
-						<div class="input textarea input-wrapper required form__label melo-field melo-field_req">
-							<label for="">
-								<input type="text" class="focus-input input-field" required name="name" placeholder="Имя">
-							</label>
-							<span class="melo-req" aria-hidden="true">*</span>
-						</div>
-
-						<div class="input textarea input-wrapper required form__label melo-field melo-field_req">
-							<label for="">
-								<input type="tel" class="focus-input input-field" required name="phone" placeholder="Телефон">
-							</label>
-							<span class="melo-req" aria-hidden="true">*</span>
-						</div>
-
-						<div class="input textarea input-wrapper form__label melo-field">
-							<label for="">
-								<input type="email" class="focus-input input-field" name="email" placeholder="Email">
-							</label>
-						</div>
-
-						<div class="input textarea input-wrapper form__label melo-field melo-field_area">
-							<label for="">
-								<textarea class="focus-input input-field" name="comment" rows="3" placeholder="Комментарий"></textarea>
-							</label>
-						</div>
-
-						<button class="btn form__btn btn_animate" type="submit">
-							<div class="btn_animate-box">
-								<span>Отправить</span>
-								<span>Отправить</span>
-							</div>
-							<div class="btn_animate-box-icon">
-								<div class="btn_icon">
-									<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<path d="M8 -3.49691e-07L6.70082 1.29918L12.4828 7.0812L3.52868e-07 7.0812L2.72544e-07 8.9188L12.4828 8.9188L6.70081 14.7008L8 16L16 8L8 -3.49691e-07Z" fill="white" />
-									</svg>
-								</div>
-								<div class="btn_icon">
-									<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<path d="M8 -3.49691e-07L6.70082 1.29918L12.4828 7.0812L3.52868e-07 7.0812L2.72544e-07 8.9188L12.4828 8.9188L6.70081 14.7008L8 16L16 8L8 -3.49691e-07Z" fill="white" />
-									</svg>
-								</div>
-							</div>
-						</button>
-					</fieldset>
-
-					<label class="form__description required">
-						<input type="checkbox" name="agree" value="Да" required>
-						<div class="form__description-decor"></div>
-						<p>
-							Нажимая кнопку «Отправить», Вы соглашаетесь с
-							нашей политикой <a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>">обработки персональных данных</a>
-						</p>
-					</label>
-
-					<input type="hidden" name="action" value="sendform">
-					<input type="hidden" name="THEME" value="Заявка со страницы контактов">
-				</form>
-			</div>
-		</div>
-	</section>
-
-	<!-- ============ 5. Реквизиты ============ -->
-	<section class="melo-section melo-section--white" id="melo-specs">
-		<div class="melo-container">
-			<div class="melo-section__head melo-section__head--center" data-reveal>
-				<span class="melo-eyebrow">Документы</span>
-				<h2><?php echo esc_html( $specs_title ); ?></h2>
-			</div>
-
-			<div class="melo-spec-table ox-selectable">
-				<?php foreach ( $specs as $row ) : ?>
-					<div class="melo-spec-row" data-reveal>
-						<p class="melo-spec-row__title"><?php echo esc_html( $row[0] ); ?></p>
-						<p class="melo-spec-row__text"><?php echo esc_html( $row[1] ); ?></p>
-					</div>
-				<?php endforeach; ?>
-			</div>
 		</div>
 	</section>
 
