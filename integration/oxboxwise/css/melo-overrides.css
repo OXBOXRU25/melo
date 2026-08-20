@@ -339,3 +339,63 @@
 .new-project-gallery__inner a:hover .new-project-gallery__picture img {
   transform: scale(1.06);
 }
+
+/* ---------- Крошки на страницах темы -------------------------
+
+   Размер задан в двух местах и обоими способами: в style.min.css у
+   класса .breadcrumbs__item, а в custom.css у самих <li> — плагин
+   Breadcrumb NavXT кладёт в список свои классы (home, archive), и
+   классового правила там нет вовсе. Целиться нужно в li, иначе
+   правка просто не находит элемент.
+
+   Значение — .78vw без нижнего порога. На эталонных 1920 это 15px,
+   а дальше вниз: 11.2px на ноутбуке и 2.9px на телефоне, то есть
+   текст меньше трёх пикселей. Ставим порог 13px и потолок 15px —
+   ровно то, что тема и задумывала на своей ширине.
+
+   Цвет #bebebe на светлом фоне давал контраст 1.8:1 при минимуме
+   4.5. Приглушение оставляем, но такое, которое читается: 5.7:1.
+
+   Наших страниц это не касается — там крошки перенесены в первый
+   экран и живут под .melo-breadcrumbs со своим порогом.
+   ------------------------------------------------------------- */
+.breadcrumbs .breadcrumbs__list li,
+.breadcrumbs .breadcrumbs__list .breadcrumbs__item {
+  font-size: clamp(13px, .78vw, 15px);
+  line-height: 1.3;
+  color: #6e6e6e;
+}
+
+.breadcrumbs .breadcrumbs__list li a,
+.breadcrumbs .breadcrumbs__list .breadcrumbs__item a {
+  color: #032447;
+}
+
+.breadcrumbs .breadcrumbs__list li a:hover,
+.breadcrumbs .breadcrumbs__list .breadcrumbs__item a:hover {
+  color: #d3ac67;
+}
+
+/* Зазор между пунктами и точка-разделитель считались от ширины экрана
+   тем же способом: 1.46vw и .21vw. На телефоне это 5.5px зазора и
+   точка в 0.8px — то есть слова слипались, а точки не было вовсе.
+
+   Мобильные значения у темы есть, но они прописаны классу
+   .breadcrumbs__item, которого в разметке плагина нет, и потому не
+   срабатывают никогда. Ставим свои, с порогами.
+
+   Точку центрируем по высоте строки, а не отступом сверху в vw:
+   тогда она стоит посередине при любом кегле. */
+.breadcrumbs .breadcrumbs__list li:not(:last-child),
+.breadcrumbs .breadcrumbs__list .breadcrumbs__item:not(:last-child) {
+  padding-right: max(18px, 1.46vw);
+}
+
+.breadcrumbs .breadcrumbs__list li:not(:last-child)::before,
+.breadcrumbs .breadcrumbs__list .breadcrumbs__item:not(:last-child)::before {
+  width: max(3px, .21vw);
+  height: max(3px, .21vw);
+  right: max(7px, .63vw);
+  top: 50%;
+  transform: translateY(-50%);
+}
