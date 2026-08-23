@@ -347,10 +347,18 @@
     var frame = function () {
       x += (tx - x) * APPROACH;
       y += (ty - y) * APPROACH;
-      ring.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0) translate(-50%,-50%)';
-      /* Пока указатель на цели — крутим дальше. Ушёл и кружок
-         догнал — останавливаемся, чтобы не жечь кадры вхолостую. */
-      if (on || Math.abs(tx - x) > 0.5 || Math.abs(ty - y) > 0.5) {
+      /* Позицию пишем в отдельное свойство translate, а не внутрь
+         transform. Порядок применения — translate, rotate, scale,
+         transform — и смещение, записанное в transform, умножается на
+         scale. При затухании масштаб уходит в 0.4, и кружок вместе со
+         своим смещением стягивало к левому верхнему углу экрана.
+         Центрирование делает отрицательный margin в стилях. */
+      ring.style.translate = Math.round(x) + 'px ' + Math.round(y) + 'px';
+      /* Крутим, только пока указатель на цели. Раньше здесь стояла
+         догонялка «пока не доедет», и после ухода кружок продолжал
+         лететь за указателем через пол-экрана — гаснет он за 0.28с,
+         и весь этот полёт было видно. Теперь замирает на месте. */
+      if (on) {
         raf = window.requestAnimationFrame(frame);
       } else {
         raf = null;
@@ -362,6 +370,9 @@
     };
 
     document.addEventListener('pointermove', function (e) {
+      /* Пока указатель не на цели, цель не двигаем вовсе — иначе
+         затухающий кружок поедет вслед за рукой. */
+      if (!on) return;
       tx = e.clientX;
       ty = e.clientY;
       if (calm) { x = tx; y = ty; }
@@ -383,6 +394,17 @@
 
       t.addEventListener('pointerleave', function () {
         on = false;
+        /* Останавливаем движение начисто. Одного снятия флага мало:
+           кадр, уже стоящий в очереди, успевает шагнуть к новой цели,
+           и кружок уезжает в сторону прямо во время затухания. Поэтому
+           и цель прибиваем к текущей точке, и запланированный кадр
+           отменяем — кружок гаснет ровно там, где его оставили. */
+        tx = x;
+        ty = y;
+        if (raf) {
+          window.cancelAnimationFrame(raf);
+          raf = null;
+        }
         ring.classList.remove('melo-cursor--on');
       });
     });

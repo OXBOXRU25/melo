@@ -173,7 +173,7 @@ $melo_addr   = $melo_opt( 'opt_address_site', melo_contact( 'address' ) );
 
               <div class="input textarea input-wrapper form__label melo-field melo-field_area">
                 <label for="">
-                  <textarea class="focus-input input-field" name="comment" rows="3" placeholder="Комментарий"></textarea>
+                  <textarea class="focus-input input-field form__textarea" name="comment" rows="3" placeholder="Комментарий"></textarea>
                 </label>
               </div>
               <button class="btn form__btn btn_animate" type="submit">
