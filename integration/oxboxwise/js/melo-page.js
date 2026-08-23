@@ -308,6 +308,86 @@
 
      Без JS панель тоже рабочая: кнопки — настоящие ссылки на адреса
      направлений. */
+  /* --- Круглый курсор над карточками проектов -------------------
+
+     Показывается только там, где есть чем наводить: на телефоне
+     указателя нет вовсе, и рисовать кружок значит оставить его
+     висеть посреди экрана после первого касания.
+
+     Целью помечена сама фотография, а не строка карточки: разница
+     невидима ровно до того момента, когда указатель окажется в
+     карточке, но мимо снимка — и кружок повиснет над пустотой.
+
+     Движение ведём сами покадрово, а не переходом CSS: transition на
+     transform не умеет тянуться за указателем, не смазывая при этом
+     каждое осознанное движение. */
+  (function () {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    /* Фотографии проектов в каталоге и на главной плюс карточки
+       направлений — везде, где снимок ведёт на отдельную страницу. */
+    var targets = document.querySelectorAll('.project__item-picture, .melo-card__media');
+    if (!targets.length) return;
+
+    var ring = document.createElement('div');
+    ring.className = 'melo-cursor';
+    ring.setAttribute('aria-hidden', 'true');
+    ring.innerHTML = '<svg viewBox="0 0 24 24" fill="none">' +
+      '<path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.6"' +
+      ' stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    document.body.appendChild(ring);
+
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var x = 0, y = 0, tx = 0, ty = 0, on = false, raf = null;
+
+    /* Доля оставшегося расстояния, закрываемая за кадр. Всё отставание
+       живёт в этом числе: 1 — курсор прибит к указателю, 0.1 — плывёт. */
+    var APPROACH = 0.22;
+
+    var frame = function () {
+      x += (tx - x) * APPROACH;
+      y += (ty - y) * APPROACH;
+      ring.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0) translate(-50%,-50%)';
+      /* Пока указатель на цели — крутим дальше. Ушёл и кружок
+         догнал — останавливаемся, чтобы не жечь кадры вхолостую. */
+      if (on || Math.abs(tx - x) > 0.5 || Math.abs(ty - y) > 0.5) {
+        raf = window.requestAnimationFrame(frame);
+      } else {
+        raf = null;
+      }
+    };
+
+    var start = function () {
+      if (!raf) raf = window.requestAnimationFrame(frame);
+    };
+
+    document.addEventListener('pointermove', function (e) {
+      tx = e.clientX;
+      ty = e.clientY;
+      if (calm) { x = tx; y = ty; }
+      if (on) start();
+    }, { passive: true });
+
+    [].forEach.call(targets, function (t) {
+      t.classList.add('melo-cursor-target');
+
+      t.addEventListener('pointerenter', function (e) {
+        on = true;
+        /* Ставим кружок сразу под указатель, а не тянем его через
+           пол-экрана из точки прошлого наведения. */
+        tx = x = e.clientX;
+        ty = y = e.clientY;
+        ring.classList.add('melo-cursor--on');
+        start();
+      });
+
+      t.addEventListener('pointerleave', function () {
+        on = false;
+        ring.classList.remove('melo-cursor--on');
+      });
+    });
+  })();
+
   var filterBar = document.querySelector('[data-melo-filter]');
 
   /* Сворачивание списка под кнопку — только на узком экране, где кнопка

@@ -662,3 +662,109 @@
     display: none;
   }
 }
+
+/* ---------- Картинки без скруглений ---------------------------
+
+   Решение заказчика: углы у всех изображений прямые. Скругления были
+   разные и в разных местах — 14px у наших блоков, 10px у карточек
+   проектов темы, 12px у большого фото проекта, 8px в галерее и 16px по
+   правым углам у фотографии первого экрана.
+
+   Перечисляем обёртки поимённо, а не глушим одним img через !important:
+   у каждой из них радиус задан своим правилом с классом, и одиночный
+   селектор тега им проигрывает по специфичности. Заодно видно, что
+   именно правится.
+
+   Кнопки, поля формы и пилюли фильтра здесь не участвуют: у них
+   скругление — часть формы, а не оформление картинки.
+   ------------------------------------------------------------- */
+img,
+picture,
+video,
+.melo-page img,
+.melo-page picture,
+.melo-card__media,
+.melo-service__media,
+.melo-project__media,
+.melo-hero__bg,
+.project__item-picture,
+.project__item-picture img,
+.full-image,
+.new-project-gallery__picture,
+.new-project-gallery__picture img,
+.new-project__content-picture,
+.new-project__content-picture img,
+/* Обёртки наших блоков и фото автора заданы селектором из двух
+   классов, поэтому одиночный им проигрывает — повторяем ту же форму. */
+.melo-page .melo-card__media,
+.melo-page .melo-service__media,
+.melo-page .melo-project__media,
+.about .about__human img,
+.articles__item-picture img,
+.articles__item-picture::before,
+.detail__picture img,
+.comand__slide-picture img,
+.modal__picture,
+.modal__picture img,
+.form-parent__picture,
+.form-parent__picture img {
+  border-radius: 0;
+}
+
+/* ---------- Круглый курсор над карточками проектов ------------
+
+   Появляется при наведении на фотографию проекта — на главной и в
+   каталоге. Системный указатель над ней снимается: два указателя на
+   одной поверхности спорят друг с другом.
+
+   Рисуется под указателем и ничего не ловит (pointer-events: none),
+   иначе он же и перекрыл бы ссылку, по которой человек целится.
+   ------------------------------------------------------------- */
+.melo-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #fff;
+  color: #032447;
+  pointer-events: none;
+  opacity: 0;
+  /* Масштаб отдельным свойством от смещения: смещение пишет скрипт
+     каждый кадр, а масштаб ведёт переход, и в одном transform они
+     затирали бы друг друга. */
+  scale: 0.4;
+  transition: opacity .28s cubic-bezier(.16, 1, .3, 1), scale .28s cubic-bezier(.16, 1, .3, 1);
+}
+
+.melo-cursor svg { width: 26px; height: 26px; }
+
+.melo-cursor--on {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Свой указатель есть — системный убираем. И у ссылки внутри тоже:
+   без этого над самим снимком остаётся ладошка. */
+.melo-cursor-target,
+.melo-cursor-target * {
+  cursor: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .melo-cursor { transition-duration: .01ms; }
+}
+
+/* Своя стрелка у темы: .project__item-picture::before всплывает по
+   наведению золотым кружком в углу снимка. Рядом с нашим курсором это
+   две стрелки на одной поверхности, спорящие друг с другом.
+
+   Прячем не у самой картинки, а у помеченной цели: класс ставит скрипт
+   курсора, поэтому если он почему-то не поднялся, стрелка темы остаётся
+   на месте и карточка по-прежнему показывает, что она кликабельна. */
+.melo-cursor-target::before { display: none; }
