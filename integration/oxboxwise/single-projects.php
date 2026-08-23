@@ -16,10 +16,12 @@ get_header();
                 <div class="top-page__box">
                     <h1 class="title-page title_big-size title_dark"><? the_title(); ?></h1>
                     <ul class="filter__list container">
-                        <li class="filter__item">
-                            <button class="filter__item-btn filter__item-btn_border no-pointer"
-                                type="button"><? echo get_field('type'); ?></button>
-                        </li>
+                        <?php
+                        /* Чип с полем «Тип» убран по решению заказчика: тип объекта
+                           теперь живёт направлениями (таксономия napravlenie), а это
+                           поле осталось от прежней схемы и показывало устаревшее
+                           значение. Остаются параметры проекта. */
+                        ?>
                         <? foreach (get_field('params') as $param): ?>
 						<li class="filter__item">
                             <button class="filter__item-btn filter__item-btn_border no-pointer"
