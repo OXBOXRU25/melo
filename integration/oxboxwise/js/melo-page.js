@@ -292,6 +292,72 @@
     });
   }
 
+  /* --- Фильтр каталога по направлениям -------------------------
+
+     Панель живёт на архиве проектов, вне .melo-page, поэтому стоит до
+     выхода по отсутствию .melo-page ниже.
+
+     Два режима, и это не усложнение ради усложнения:
+
+     • на общем каталоге (/projects/) в разметке лежат ВСЕ проекты, и
+       переключение происходит на месте — мгновенно, без перезагрузки;
+     • на адресе направления (/projects/napravlenie/…) выборку уже
+       сделал сервер, и в разметке только часть проектов. Прятать там
+       нечего, а показать обратно нечего тем более, поэтому скрипт не
+       вмешивается и кнопки работают обычными ссылками.
+
+     Без JS панель тоже рабочая: кнопки — настоящие ссылки на адреса
+     направлений. */
+  var filterBar = document.querySelector('[data-melo-filter]');
+  var filterList = document.querySelector('[data-melo-filter-list]');
+
+  if (filterBar && filterList && filterBar.getAttribute('data-melo-filter') === 'all') {
+    var cards = [].slice.call(filterList.children);
+    var emptyNote = document.querySelector('[data-melo-filter-empty]');
+    var buttons = [].slice.call(filterBar.querySelectorAll('[data-melo-dir]'));
+
+    var applyFilter = function (dir) {
+      var shown = 0;
+
+      cards.forEach(function (card) {
+        var own = (card.getAttribute('data-melo-dir') || '').split(/\s+/);
+        var ok = !dir || own.indexOf(dir) !== -1;
+        /* style.display, а не атрибут hidden: у списка своя раскладка, и
+           правило [hidden]{display:none} проигрывает ей по специфичности. */
+        card.style.display = ok ? '' : 'none';
+        if (ok) shown += 1;
+      });
+
+      if (emptyNote) emptyNote.hidden = shown > 0;
+
+      buttons.forEach(function (b) {
+        b.classList.toggle('is-active', (b.getAttribute('data-melo-dir') || '') === (dir || ''));
+      });
+    };
+
+    filterBar.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('[data-melo-dir]') : null;
+      if (!btn) return;
+
+      e.preventDefault();
+      var dir = btn.getAttribute('data-melo-dir') || '';
+      applyFilter(dir);
+
+      /* В адрес пишем свой параметр, а не адрес направления: по нему
+         сервер отдал бы уже урезанный список, и следующее нажатие
+         «Все» показывать было бы нечего. Ссылка при этом остаётся
+         рабочей — её можно скопировать и открыть. */
+      if (window.history && window.history.replaceState) {
+        var url = window.location.pathname + (dir ? '?dir=' + encodeURIComponent(dir) : '');
+        window.history.replaceState(null, '', url);
+      }
+    });
+
+    /* Заход по готовой ссылке: применяем то, что записано в адресе. */
+    var startDir = (window.location.search.match(/[?&]dir=([^&]+)/) || [])[1];
+    if (startDir) applyFilter(decodeURIComponent(startDir));
+  }
+
   /* Дальше — только содержимое страниц MELO. Если его на странице нет,
      работает одна шапка выше, и это нормально. */
   var page = document.querySelector('.melo-page');

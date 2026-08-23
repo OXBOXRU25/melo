@@ -493,3 +493,100 @@
 
   .new-project-gallery { padding-top: calc(var(--s-72) / 2); }
 }
+
+/* ---------- Панель направлений над каталогом ------------------
+
+   Собрана на классах темы (.filter, .filter__item-btn) — тех же, что
+   выводят чипы на странице проекта. Здесь доводим то, чего у темы для
+   этой роли не было.
+   ------------------------------------------------------------- */
+
+/* Разделительная линия под панелью убрана: ниже начинается сетка
+   карточек, и она отделяет себя сама воздухом.
+
+   Воздух под панелью тема складывала из двух слагаемых, padding и
+   margin, и в сумме выходило 72px на ноутбуке и 75 на телефоне. По
+   решению заказчика вдвое меньше. Пишем одним значением, а не двумя:
+   числа, записанные порознь, расходятся при первой же правке одного
+   из них. */
+.melo-filter {
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-bottom: 2.5vw;
+}
+
+@media (max-width: 480px) {
+  .melo-filter { margin-bottom: calc(var(--s-72) / 2); }
+}
+
+.melo-filter .filter__list {
+  flex-wrap: wrap;
+  gap: clamp(8px, 0.8vw, 14px);
+  list-style: none;
+  /* Только вертикальные margin: горизонтальные у .container отвечают за
+     центрирование, и обнуление их одним словом margin: 0 уводило всю
+     панель к левому краю окна, мимо сетки карточек. */
+  margin-block: 0;
+}
+
+/* Отступы у кнопок заданы в vw без порогов, поэтому на телефоне цель
+   выходила ниже удобной: палец одинаковый на всех экранах, а vw усыхает.
+   48px — нижняя граница удобного нажатия. */
+.melo-filter .filter__item-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding-inline: clamp(16px, 1.67vw, 32px);
+  font-size: clamp(13px, .83vw, 16px);
+  line-height: 1.25;
+  text-decoration: none;
+  color: #505050;
+  background: transparent;
+  border: 1px solid #dcdcdc;
+  cursor: pointer;
+  transition: color .4s, background-color .4s, border-color .4s;
+}
+
+/* По наведению — белая заливка. */
+.melo-filter a.filter__item-btn:hover {
+  color: #032447;
+  background: #fff;
+  border-color: #fff;
+}
+
+/* Выбранное направление — золотом. Подпись тёмная: белая на золоте даёт
+   контраст около 2:1 и читается плохо, тёмно-синяя — 7.4:1. */
+.melo-filter .filter__item-btn.is-active,
+.melo-filter a.filter__item-btn.is-active:hover {
+  color: #032447;
+  background: #d3ac67;
+  border-color: #d3ac67;
+}
+
+/* Направление, в котором пока нет ни одного проекта. Показываем, чтобы
+   был виден весь список услуг, но нажать нельзя: пустой каталог в ответ
+   на нажатие читается как поломка, а не как «здесь пока пусто». */
+.melo-filter .filter__item-btn.is-empty {
+  color: #a5a5a5;
+  border-color: #e6e6e6;
+  cursor: default;
+}
+
+.melo-filter-empty {
+  padding-block: clamp(32px, 4vw, 72px);
+  font-size: clamp(15px, 1.1vw, 21px);
+  color: #6e6e6e;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  /* На телефоне пилюли занимают половину экрана каждая — в строку по
+     одной. Полосу прокрутки не делаем: направлений пять, а не двадцать,
+     и горизонтальный скролл в шапке каталога легко не заметить. */
+  .melo-filter .filter__list { gap: 10px; }
+
+  .melo-filter .filter__item-btn {
+    padding-inline: 18px;
+    font-size: 14px;
+  }
+}

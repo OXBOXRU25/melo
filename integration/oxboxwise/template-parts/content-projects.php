@@ -22,7 +22,9 @@ else
 
 
 <li
-								class="project__item <? echo $class ?> wow animate__animated animate__fadeInUp animate__delay-05s">
+								class="project__item <? echo $class ?> wow animate__animated animate__fadeInUp animate__delay-05s"
+								<?php /* направления слагами — по ним фильтрует панель над каталогом */ ?>
+								data-melo-dir="<?php echo esc_attr( function_exists( 'melo_post_directions' ) ? melo_post_directions() : '' ); ?>">
 								<a href="<? echo get_permalink(); ?>">
 								  <picture class="project__item-picture">
 									<? if($class=="project__item_size-big"): ?>
