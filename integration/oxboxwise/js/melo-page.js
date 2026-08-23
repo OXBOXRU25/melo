@@ -309,6 +309,36 @@
      Без JS панель тоже рабочая: кнопки — настоящие ссылки на адреса
      направлений. */
   var filterBar = document.querySelector('[data-melo-filter]');
+
+  /* Сворачивание списка под кнопку — только на узком экране, где кнопка
+     вообще показана. Проверяем не ширину окна, а видимость самой кнопки:
+     порог живёт в CSS, и дублировать его числом в скрипте значит завести
+     два числа, которые однажды разойдутся. */
+  if (filterBar) {
+    var toggle = filterBar.querySelector('[data-melo-filter-toggle]');
+
+    if (toggle) {
+      var setOpen = function (open) {
+        filterBar.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      };
+
+      toggle.addEventListener('click', function () {
+        setOpen(!filterBar.classList.contains('is-open'));
+      });
+
+      /* Выбрали направление — список сворачиваем: он своё дело сделал,
+         а карточки под ним человек хочет увидеть сразу. */
+      filterBar.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('[data-melo-dir]') : null;
+        if (btn) setOpen(false);
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && filterBar.classList.contains('is-open')) setOpen(false);
+      });
+    }
+  }
   var filterList = document.querySelector('[data-melo-filter-list]');
 
   if (filterBar && filterList && filterBar.getAttribute('data-melo-filter') === 'all') {
@@ -333,6 +363,14 @@
       buttons.forEach(function (b) {
         b.classList.toggle('is-active', (b.getAttribute('data-melo-dir') || '') === (dir || ''));
       });
+
+      /* Подпись свёрнутой кнопки: в закрытом виде это единственное, по
+         чему видно, что каталог отфильтрован. */
+      var current = filterBar.querySelector('[data-melo-filter-current]');
+      if (current) {
+        var picked = buttons.filter(function (b) { return b.classList.contains('is-active'); })[0];
+        current.textContent = (dir && picked) ? picked.textContent.trim() : 'Все направления';
+      }
     };
 
     filterBar.addEventListener('click', function (e) {

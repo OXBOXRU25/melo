@@ -51,7 +51,28 @@ get_header();
 				$melo_current = get_query_var( 'napravlenie' );
 				?>
 				<div class="filter melo-filter" data-melo-filter="<?php echo $melo_current ? 'term' : 'all'; ?>">
-					<ul class="filter__list container">
+					<?php
+					/* На телефоне пять направлений идут в столбик и съедают пол-экрана
+					   до первой карточки, поэтому там список прячется под кнопку.
+					   Кнопка показывает текущий выбор, а не просто слово «Фильтр»:
+					   иначе в свёрнутом виде непонятно, что каталог отфильтрован.
+					   На широком экране кнопка скрыта, список открыт всегда. */
+					?>
+					<div class="melo-filter__head container">
+						<button class="melo-filter__toggle" type="button"
+							data-melo-filter-toggle aria-expanded="false" aria-controls="melo-filter-list">
+							<span data-melo-filter-current><?php
+								echo $melo_current && isset( $melo_dirs[ $melo_current ] )
+									? esc_html( $melo_dirs[ $melo_current ] )
+									: 'Все направления';
+							?></span>
+							<svg class="melo-filter__chev" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+								<path d="M3 5.5 7 9.5l4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+						</button>
+					</div>
+
+					<ul class="filter__list container" id="melo-filter-list">
 						<li class="filter__item">
 							<a class="filter__item-btn<?php echo $melo_current ? '' : ' is-active'; ?>"
 								href="<?php echo esc_url( get_post_type_archive_link( 'projects' ) ); ?>"

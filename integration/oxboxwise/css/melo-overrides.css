@@ -579,14 +579,64 @@
   text-align: center;
 }
 
-@media (max-width: 480px) {
-  /* На телефоне пилюли занимают половину экрана каждая — в строку по
-     одной. Полосу прокрутки не делаем: направлений пять, а не двадцать,
-     и горизонтальный скролл в шапке каталога легко не заметить. */
-  .melo-filter .filter__list { gap: 10px; }
+/* Кнопка, под которую список прячется на узком экране. На широком её
+   нет — там пилюли помещаются в одну-две строки и прятать нечего. */
+.melo-filter__head { display: none; }
+
+.melo-filter__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  width: 100%;
+  padding-inline: 18px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.25;
+  text-align: left;
+  color: #032447;
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.melo-filter__chev {
+  flex: none;
+  transition: transform var(--dur, .28s) var(--ease, ease);
+}
+
+.melo-filter__toggle[aria-expanded="true"] .melo-filter__chev { transform: rotate(180deg); }
+
+@media (max-width: 767px) {
+  .melo-filter__head { display: block; }
+
+  /* Список свёрнут, пока кнопку не нажали. Прячем через display: none —
+     так пилюли уходят и из дерева доступности, и скринридер не читает
+     пять пунктов, которых на экране нет. */
+  .melo-filter .filter__list { display: none; }
+
+  .melo-filter.is-open .filter__list {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 10px;
+  }
 
   .melo-filter .filter__item-btn {
+    justify-content: flex-start;
     padding-inline: 18px;
     font-size: 14px;
+  }
+
+  /* Пункт «Все», пока он и так выбран, повторяет подпись свёрнутой
+     кнопки — «Все направления». Прячем именно в этом состоянии: как
+     только выбрано направление, пункт возвращается, и им сбрасывают
+     фильтр. На широком экране кнопки нет, дублировать нечего, поэтому
+     правило живёт только здесь. */
+  .melo-filter .filter__item:has(.filter__item-btn[data-melo-dir=""].is-active) {
+    display: none;
   }
 }
