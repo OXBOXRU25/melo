@@ -17,6 +17,11 @@
  * Весь контент обёрнут в <div class="melo-page">. Стили в
  * css/melo-page.css заскоуплены под этот класс и наружу не выходят.
  *
+ * Содержимое блоков правится в админке: поля объявлены в
+ * inc/melo-fields.php, читаются через melo_field() / melo_rows(), а
+ * запасные значения берутся оттуда же из melo_defaults(). Пустое поле
+ * показывает запасное значение, а не пустоту.
+ *
  * @package oxboxwise
  */
 
@@ -37,77 +42,28 @@ while ( have_posts() ) :
 		$hero_bg = $melo_dir . 'hero.jpg';
 	}
 
+	$d = melo_defaults( 'direction' );
+
+	/* Лид: сначала своё поле, потом краткое описание записи, и лишь затем
+	   текст по умолчанию. */
 	$lead = get_the_excerpt();
 	if ( ! $lead ) {
-		$lead = 'Создаём цельный образ дома — от планировки комнат до фасада и входной группы. Считаем каждый метр, каждый материал и каждый рубль бюджета.';
+		$lead = $d['melo_lead'];
 	}
+	$lead = melo_field( 'melo_lead', $lead );
+
+	$steps_eyebrow = melo_field( 'melo_steps_eyebrow', $d['melo_steps_eyebrow'] );
+	$steps_title   = melo_field( 'melo_steps_title', $d['melo_steps_title'] );
+	$works_eyebrow = melo_field( 'melo_works_eyebrow', $d['melo_works_eyebrow'] );
+	$works_title   = melo_field( 'melo_works_title', $d['melo_works_title'] );
 
 	/* ---------------------------------------------------------------
 	 * Направления деятельности — карточки слайдера
 	 * В заголовке разрешён только <br> — им ловится перенос с макета.
 	 * ------------------------------------------------------------- */
-	$cards_title = 'Направления деятельности';
-
-	$cards = array(
-		array(
-			'img'   => 'dir-1.jpg',
-			'alt'   => 'Архитектурный макет и рабочие чертежи здания',
-			'title' => 'Архитектурное проектирование<br>и планирование',
-			'lead'  => 'Сюда входят услуги по:',
-			'items' => array(
-				'Консультация дизайнера по подбору недвижимости (помощь в выборе правильного «исходника» участка).',
-				'Проектирование домов (архитектурный раздел).',
-				'Планирование участка и ситуационный план.',
-			),
-		),
-		array(
-			'img'   => 'dir-3.jpg',
-			'alt'   => 'Фасад современного загородного дома',
-			'title' => 'Дизайн интерьера и экстерьера',
-			'lead'  => 'Всё, что касается визуального облика и стиля самого здания.',
-			'items' => array(
-				'Дизайн-проект интерьера дома.',
-				'Дизайн экстерьера (фасады, заборы, входные группы).',
-			),
-		),
-		array(
-			'img'   => 'dir-2.jpg',
-			'alt'   => 'Благоустроенная территория вокруг загородного дома',
-			'title' => 'Ландшафт и малые архитектурные<br>формы (МАФ)',
-			'lead'  => 'Благоустройство территории вокруг дома.',
-			'items' => array(
-				'Ландшафтная архитектура (генплан, зонирование).',
-				'Проектирование малых сооружений (бани, беседки, навесы, бассейны, зоны отдыха).',
-			),
-		),
-		array(
-			'img'   => 'project-6.jpg',
-			'alt'   => 'Готовая кухня-гостиная после реализации проекта',
-			'title' => 'Реализация и строительство',
-			'lead'  => 'Переход от чертежей к физическому воплощению.',
-			'items' => array(
-				'Строительство и ремонт (реализация объекта под ключ).',
-				'Комплектация объектов (подбор мебели, материалов, оборудования).',
-			),
-		),
-		array(
-			'img'   => 'project-2.jpg',
-			'alt'   => 'Интерьер гостиной, сданной под ключ',
-			'title' => 'Сопровождение и управление',
-			'lead'  => 'Сервис, который снимает головную боль с заказчика.',
-			'items' => array(
-				'Управление объектом (комплексное сопровождение всех процессов).',
-				'Авторский надзор (обычно идёт в связке с управлением).',
-			),
-		),
-	);
-
-	$steps = array(
-		array( 'title' => 'Замер и планировка', 'text' => 'Выезжаем на объект, снимаем размеры и готовим варианты планировочных решений.' ),
-		array( 'title' => 'Концепция', 'text' => 'Собираем стилистику, палитру и материалы — по каждому помещению и по фасаду.' ),
-		array( 'title' => 'Визуализация', 'text' => 'Показываем фотореалистичный результат до начала работ и правим, пока это бесплатно.' ),
-		array( 'title' => 'Чертежи и надзор', 'text' => 'Комплект документации для бригады, комплектация объекта и контроль до сдачи.' ),
-	);
+	$cards_title = melo_field( 'melo_cards_title', $d['melo_cards_title'] );
+	$cards       = melo_fill( melo_rows( 'melo_cards', $d['melo_cards'] ), array( 'img', 'alt', 'title', 'lead', 'items' ) );
+	$steps       = melo_fill( melo_rows( 'melo_steps', $d['melo_steps'] ), array( 'title', 'text' ) );
 
 	$projects = array(
 		array( 'img' => 'project-1.jpg', 'alt' => 'Интерьер квартиры-студии в светлых тонах', 'w' => 903, 'h' => 1004, 'title' => 'Квартира-студия', 'tag' => 'Интерьеры квартир', 'area' => '27', 'url' => '#' ),
@@ -229,8 +185,8 @@ while ( have_posts() ) :
 					<?php foreach ( $cards as $i => $card ) : ?>
 						<article class="melo-card" data-reveal>
 							<div class="melo-card__media">
-								<img src="<?php echo esc_url( $melo_dir . $card['img'] ); ?>"
-									alt="<?php echo esc_attr( $card['alt'] ); ?>"
+								<img src="<?php echo esc_url( melo_img_src( $card['img'] ) ); ?>"
+									alt="<?php echo esc_attr( melo_img_alt( $card['img'], $card['alt'] ) ); ?>"
 									width="590" height="409" loading="lazy">
 							</div>
 							<div class="melo-card__head">
@@ -239,7 +195,7 @@ while ( have_posts() ) :
 							</div>
 							<p class="melo-card__lead"><?php echo esc_html( $card['lead'] ); ?></p>
 							<ul class="melo-dash-list">
-								<?php foreach ( $card['items'] as $item ) : ?>
+								<?php foreach ( melo_lines( $card['items'] ) as $item ) : ?>
 									<li><?php echo esc_html( $item ); ?></li>
 								<?php endforeach; ?>
 							</ul>
@@ -266,8 +222,8 @@ while ( have_posts() ) :
 	<section class="melo-section melo-section--gray" id="melo-steps">
 		<div class="melo-container">
 			<div class="melo-section__head melo-section__head--center" data-reveal>
-				<span class="melo-eyebrow">Процесс</span>
-				<h2>Как мы работаем</h2>
+				<span class="melo-eyebrow"><?php echo esc_html( $steps_eyebrow ); ?></span>
+				<h2><?php echo esc_html( $steps_title ); ?></h2>
 			</div>
 
 			<ol class="melo-flow">
@@ -286,8 +242,8 @@ while ( have_posts() ) :
 	<section class="melo-section melo-section--gray" id="melo-works">
 		<div class="melo-container">
 			<div class="melo-section__head melo-section__head--center" data-reveal>
-				<span class="melo-eyebrow">Проекты</span>
-				<h2>Примеры реализации</h2>
+				<span class="melo-eyebrow"><?php echo esc_html( $works_eyebrow ); ?></span>
+				<h2><?php echo esc_html( $works_title ); ?></h2>
 			</div>
 
 			<div class="melo-works-grid">

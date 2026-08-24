@@ -14,8 +14,10 @@
  * css/melo-page.css заскоуплены под этот класс и наружу не выходят,
  * поэтому остальные страницы сайта не затрагиваются.
  *
- * Содержимое блоков — PHP-массивы ниже. Правятся здесь либо заменяются
- * на ACF (в теме уже стоит ACF Pro), циклы вывода при этом не меняются.
+ * Содержимое блоков правится в админке: поля объявлены в
+ * inc/melo-fields.php, читаются через melo_field() / melo_rows(), а
+ * запасные значения берутся оттуда же из melo_defaults(). Пустое поле
+ * показывает запасное значение, а не пустоту.
  *
  * @package oxboxwise
  */
@@ -40,58 +42,38 @@ while ( have_posts() ) :
 		$hero_bg = $melo_dir . 'hero.jpg';
 	}
 
+	$d = melo_defaults( 'service' );
+
+	/* Лид: сначала своё поле, потом краткое описание записи, и лишь затем
+	   текст по умолчанию — так у заказчика есть и привычный «Отрывок», и
+	   наше поле, если он его не найдёт. */
 	$lead = get_the_excerpt();
 	if ( ! $lead ) {
-		$lead = 'Проектируем дом от посадки на участке до рабочих чертежей. Помогаем выбрать правильный «исходник» — участок, на котором проект получится.';
+		$lead = $d['melo_lead'];
 	}
+	$lead = melo_field( 'melo_lead', $lead );
 
 	/* ---------------------------------------------------------------
 	 * Что входит в услугу
 	 * icon — id символа из спрайта ниже.
 	 * ------------------------------------------------------------- */
-	$service_title = 'Что входит в услугу';
-	$service_image = array(
-		'img' => 'dir-1.jpg',
-		'alt' => 'Архитектурный макет дома и рабочие чертежи',
-	);
+	$service_title = melo_field( 'melo_service_title', $d['melo_service_title'] );
 
-	$service_items = array(
-		array(
-			'icon'  => 'melo-i-plot-search',
-			'title' => 'Консультация по подбору недвижимости',
-			'text'  => 'Помогаем выбрать правильный «исходник» — участок, на котором проект вообще получится: рельеф, подъезды, ориентация по сторонам света и ограничения застройки.',
-		),
-		array(
-			'icon'  => 'melo-i-house-plan',
-			'title' => 'Проектирование домов',
-			'text'  => 'Архитектурный раздел целиком: планировки этажей, фасады, разрезы, узлы и посадка здания на участке.',
-		),
-		array(
-			'icon'  => 'melo-i-site-plan',
-			'title' => 'Планирование участка и ситуационный план',
-			'text'  => 'Генплан участка: расположение дома и построек, подъезды, дорожки, зоны и трассировка инженерных сетей.',
-		),
-		array(
-			'icon'  => 'melo-i-structure',
-			'title' => 'Конструктивные решения',
-			'text'  => 'Фундамент, несущие стены, перекрытия и кровля с расчётом нагрузок — чтобы дом простоял столько, сколько нарисован.',
-		),
-		array(
-			'icon'  => 'melo-i-permit',
-			'title' => 'Разрешительная документация',
-			'text'  => 'Уведомление о планируемом строительстве, ГПЗУ и согласования — собираем комплект и ведём его до положительного ответа.',
-		),
-	);
+	$service_image     = melo_field( 'melo_service_image', '' );
+	$service_image_src = melo_img_src( $service_image, $d['melo_service_image'] );
+	$service_image_alt = melo_img_alt( $service_image, melo_field( 'melo_service_image_alt', '' ), $d['melo_service_image_alt'] );
+
+	$steps_eyebrow = melo_field( 'melo_steps_eyebrow', $d['melo_steps_eyebrow'] );
+	$steps_title   = melo_field( 'melo_steps_title', $d['melo_steps_title'] );
+	$works_eyebrow = melo_field( 'melo_works_eyebrow', $d['melo_works_eyebrow'] );
+	$works_title   = melo_field( 'melo_works_title', $d['melo_works_title'] );
+
+	$service_items = melo_fill( melo_rows( 'melo_service_items', $d['melo_service_items'] ), array( 'icon', 'title', 'text' ) );
 
 	/* ---------------------------------------------------------------
 	 * Как мы работаем
 	 * ------------------------------------------------------------- */
-	$steps = array(
-		array( 'title' => 'Замер и планировка', 'text' => 'Выезжаем на объект, снимаем размеры и готовим варианты планировочных решений.' ),
-		array( 'title' => 'Концепция', 'text' => 'Собираем стилистику, палитру и материалы — по каждому помещению и по фасаду.' ),
-		array( 'title' => 'Визуализация', 'text' => 'Показываем фотореалистичный результат до начала работ и правим, пока это бесплатно.' ),
-		array( 'title' => 'Чертежи и надзор', 'text' => 'Комплект документации для бригады, комплектация объекта и контроль до сдачи.' ),
-	);
+	$steps = melo_fill( melo_rows( 'melo_steps', $d['melo_steps'] ), array( 'title', 'text' ) );
 
 	/* ---------------------------------------------------------------
 	 * Примеры реализации
@@ -234,8 +216,8 @@ while ( have_posts() ) :
 				   CSS. Порядок чтения при этом не меняется. */
 				?>
 				<div class="melo-service__media" data-reveal>
-					<img src="<?php echo esc_url( $melo_dir . $service_image['img'] ); ?>"
-						alt="<?php echo esc_attr( $service_image['alt'] ); ?>"
+					<img src="<?php echo esc_url( $service_image_src ); ?>"
+						alt="<?php echo esc_attr( $service_image_alt ); ?>"
 						width="590" height="409" loading="lazy">
 				</div>
 			</div>
@@ -246,8 +228,8 @@ while ( have_posts() ) :
 	<section class="melo-section melo-section--gray" id="melo-steps">
 		<div class="melo-container">
 			<div class="melo-section__head melo-section__head--center" data-reveal>
-				<span class="melo-eyebrow">Процесс</span>
-				<h2>Как мы работаем</h2>
+				<span class="melo-eyebrow"><?php echo esc_html( $steps_eyebrow ); ?></span>
+				<h2><?php echo esc_html( $steps_title ); ?></h2>
 			</div>
 
 			<ol class="melo-flow">
@@ -266,8 +248,8 @@ while ( have_posts() ) :
 	<section class="melo-section melo-section--gray" id="melo-works">
 		<div class="melo-container">
 			<div class="melo-section__head melo-section__head--center" data-reveal>
-				<span class="melo-eyebrow">Проекты</span>
-				<h2>Примеры реализации</h2>
+				<span class="melo-eyebrow"><?php echo esc_html( $works_eyebrow ); ?></span>
+				<h2><?php echo esc_html( $works_title ); ?></h2>
 			</div>
 
 			<div class="melo-works-grid">

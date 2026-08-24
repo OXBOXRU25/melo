@@ -58,66 +58,17 @@ if ( ! $hero_lead ) {
 }
 
 /* Карточки перенесены из шаблона «MELO — направление деятельности». */
-$cards_title = 'Направления деятельности';
+$d = melo_defaults( 'home' );
 
-/* Куда ведёт карточка. Пока страница услуги одна, поэтому адрес общий;
-   когда появятся остальные, достаточно проставить свой url в массиве
-   $cards. Ищем по слагу, чтобы не зависеть от идентификатора записи. */
+$cards_title = melo_field( 'melo_cards_title', $d['melo_cards_title'] );
+
+/* Куда ведёт карточка. У каждой карточки есть своё поле «Ссылка»; пока
+   оно пустое, все ведут на единственную готовую страницу услуги. Ищем её
+   по слагу, чтобы не зависеть от идентификатора записи. */
 $melo_service_page = get_page_by_path( 'melo-arhitekturnoe-proektirovanie' );
 $melo_service_url  = $melo_service_page ? get_permalink( $melo_service_page ) : home_url( '/' );
-$cards = array(
-    array(
-        'img'   => 'dir-1.jpg',
-        'alt'   => 'Архитектурный макет и рабочие чертежи здания',
-        'title' => 'Архитектурное проектирование<br>и планирование',
-        'lead'  => 'Сюда входят услуги по:',
-        'items' => array(
-            'Консультация дизайнера по подбору недвижимости (помощь в выборе правильного «исходника» участка).',
-            'Проектирование домов (архитектурный раздел).',
-            'Планирование участка и ситуационный план.',
-        ),
-    ),
-    array(
-        'img'   => 'dir-3.jpg',
-        'alt'   => 'Фасад современного загородного дома',
-        'title' => 'Дизайн интерьера и экстерьера',
-        'lead'  => 'Всё, что касается визуального облика и стиля самого здания.',
-        'items' => array(
-            'Дизайн-проект интерьера дома.',
-            'Дизайн экстерьера (фасады, заборы, входные группы).',
-        ),
-    ),
-    array(
-        'img'   => 'dir-2.jpg',
-        'alt'   => 'Благоустроенная территория вокруг загородного дома',
-        'title' => 'Ландшафт и малые архитектурные<br>формы (МАФ)',
-        'lead'  => 'Благоустройство территории вокруг дома.',
-        'items' => array(
-            'Ландшафтная архитектура (генплан, зонирование).',
-            'Проектирование малых сооружений (бани, беседки, навесы, бассейны, зоны отдыха).',
-        ),
-    ),
-    array(
-        'img'   => 'project-6.jpg',
-        'alt'   => 'Готовая кухня-гостиная после реализации проекта',
-        'title' => 'Реализация и строительство',
-        'lead'  => 'Переход от чертежей к физическому воплощению.',
-        'items' => array(
-            'Строительство и ремонт (реализация объекта под ключ).',
-            'Комплектация объектов (подбор мебели, материалов, оборудования).',
-        ),
-    ),
-    array(
-        'img'   => 'project-2.jpg',
-        'alt'   => 'Интерьер гостиной, сданной под ключ',
-        'title' => 'Сопровождение и управление',
-        'lead'  => 'Сервис, который снимает головную боль с заказчика.',
-        'items' => array(
-            'Управление объектом (комплексное сопровождение всех процессов).',
-            'Авторский надзор (обычно идёт в связке с управлением).',
-        ),
-    ),
-);
+
+$cards = melo_fill( melo_rows( 'melo_cards', $d['melo_cards'] ), array( 'img', 'alt', 'title', 'lead', 'items', 'url' ) );
 
 $allow_br = array( 'br' => array() );
 
@@ -165,19 +116,19 @@ get_header();
                                 <?php /* картинка ведёт туда же, что и заголовок, но скрыта
                                    от скринридера и табуляции: иначе одна и та же ссылка
                                    читалась бы дважды подряд */ ?>
-                                <a class="melo-card__media-link" href="<?php echo esc_url( isset( $card['url'] ) ? $card['url'] : $melo_service_url ); ?>" tabindex="-1" aria-hidden="true">
-                                    <img src="<?php echo esc_url( $melo_dir . $card['img'] ); ?>"
-                                        alt="<?php echo esc_attr( $card['alt'] ); ?>"
+                                <a class="melo-card__media-link" href="<?php echo esc_url( $card['url'] ? $card['url'] : $melo_service_url ); ?>" tabindex="-1" aria-hidden="true">
+                                    <img src="<?php echo esc_url( melo_img_src( $card['img'] ) ); ?>"
+                                        alt="<?php echo esc_attr( melo_img_alt( $card['img'], $card['alt'] ) ); ?>"
                                         width="590" height="409" loading="lazy">
                                 </a>
                             </div>
                             <div class="melo-card__head">
                                 <span class="melo-card__num"><?php echo esc_html( sprintf( '%02d', $i + 1 ) ); ?></span>
-                                <h3><a class="melo-card__link" href="<?php echo esc_url( isset( $card['url'] ) ? $card['url'] : $melo_service_url ); ?>"><?php echo wp_kses( $card['title'], $allow_br ); ?></a></h3>
+                                <h3><a class="melo-card__link" href="<?php echo esc_url( $card['url'] ? $card['url'] : $melo_service_url ); ?>"><?php echo wp_kses( $card['title'], $allow_br ); ?></a></h3>
                             </div>
                             <p class="melo-card__lead"><?php echo esc_html( $card['lead'] ); ?></p>
                             <ul class="melo-dash-list">
-                                <?php foreach ( $card['items'] as $item ) : ?>
+                                <?php foreach ( melo_lines( $card['items'] ) as $item ) : ?>
                                     <li><?php echo esc_html( $item ); ?></li>
                                 <?php endforeach; ?>
                             </ul>
