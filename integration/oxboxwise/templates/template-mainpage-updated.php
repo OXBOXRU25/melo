@@ -77,11 +77,7 @@ get_header();
 
 
 <div class="melo-page melo-home-intro">
-    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-        <symbol id="melo-i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 12h15M13 6l6 6-6 6"/>
-        </symbol>
-    </svg>
+    <?php get_template_part( 'template-parts/melo-icons' ); ?>
 
     <!-- ============ 1. Интро ============ -->
     <section class="melo-hero">

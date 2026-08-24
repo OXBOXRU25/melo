@@ -332,6 +332,157 @@ function melo_defaults( $group ) {
 	return isset( $all[ $group ] ) ? $all[ $group ] : array();
 }
 
+/**
+ * Какая группа полей отвечает за какой шаблон страницы.
+ *
+ * @return array Шаблон => array( ключ melo_defaults(), ключ группы ACF ).
+ */
+function melo_template_groups() {
+	return array(
+		'templates/template-melo-contacts.php'     => array( 'contacts', 'group_melo_contacts' ),
+		'templates/template-melo-service.php'      => array( 'service', 'group_melo_service' ),
+		'templates/template-melo-direction.php'    => array( 'direction', 'group_melo_direction' ),
+		'templates/template-mainpage-updated.php'  => array( 'home', 'group_melo_home' ),
+	);
+}
+
+/**
+ * Заполнить пустые поля страницы значениями по умолчанию.
+ *
+ * Нужно в двух местах: разовым скриптом при переносе и хуком при создании
+ * страницы из админки. Поэтому логика здесь, а не в скрипте: разойтись
+ * этим двум дорогам нельзя.
+ *
+ * Пишем по КЛЮЧУ поля, а не по имени: имя melo_lead есть в трёх группах
+ * с разными ключами, и запись по имени легла бы не туда — молча.
+ *
+ * @param int      $post_id    Страница.
+ * @param string   $group      Ключ melo_defaults().
+ * @param string   $group_key  Ключ группы ACF.
+ * @param bool     $force      Перезаписывать заполненные поля.
+ * @param callable $image_cb   Как превратить имя файла в id вложения.
+ *                             Не задан — поля с картинками пропускаются,
+ *                             и шаблон подставит файл из папки темы.
+ * @return array Строки отчёта.
+ */
+function melo_seed_page( $post_id, $group, $group_key, $force = false, $image_cb = null ) {
+	$log = array();
+
+	if ( ! function_exists( 'acf_get_field_group' ) ) {
+		return array( 'ACF не найден' );
+	}
+
+	$acf_group = acf_get_field_group( $group_key );
+	if ( ! $acf_group ) {
+		return array( 'группа ' . $group_key . ' не зарегистрирована' );
+	}
+
+	$keys = array();
+	foreach ( acf_get_fields( $acf_group ) as $f ) {
+		if ( ! empty( $f['name'] ) ) {
+			$keys[ $f['name'] ] = $f['key'];
+		}
+	}
+
+	/* Поля, чьё значение — вложение медиатеки, а не текст. */
+	$images = array( 'melo_service_image', 'img' );
+
+	foreach ( melo_defaults( $group ) as $name => $value ) {
+		if ( ! isset( $keys[ $name ] ) ) {
+			continue;
+		}
+
+		$current = get_field( $keys[ $name ], $post_id );
+		$filled  = ! ( null === $current || false === $current || '' === $current || array() === $current );
+		if ( $filled && ! $force ) {
+			continue;
+		}
+
+		if ( is_array( $value ) && isset( $value[0] ) && is_array( $value[0] ) ) {
+			$rows = array();
+			foreach ( $value as $row ) {
+				$out = array();
+				$alt = isset( $row['alt'] ) ? $row['alt'] : '';
+				foreach ( $row as $sub => $sub_value ) {
+					if ( in_array( $sub, $images, true ) ) {
+						if ( ! is_callable( $image_cb ) ) {
+							continue;
+						}
+						$out[ $sub ] = call_user_func( $image_cb, $sub_value, $alt );
+						continue;
+					}
+					$out[ $sub ] = ( 'items' === $sub && is_array( $sub_value ) )
+						? implode( chr( 10 ), $sub_value )
+						: $sub_value;
+				}
+				$rows[] = $out;
+			}
+			$prepared = $rows;
+			$note     = count( $rows ) . ' строк';
+		} elseif ( in_array( $name, $images, true ) ) {
+			if ( ! is_callable( $image_cb ) ) {
+				continue;
+			}
+			$prepared = call_user_func( $image_cb, $value, '' );
+			$note     = $prepared;
+		} else {
+			$prepared = $value;
+			$note     = is_string( $value ) ? '«' . mb_substr( $value, 0, 48 ) . '»' : $value;
+		}
+
+		if ( '' === $prepared || array() === $prepared || 0 === $prepared ) {
+			continue;
+		}
+
+		update_field( $keys[ $name ], $prepared, $post_id );
+		$log[] = $name . ' <- ' . $note;
+	}
+
+	return $log;
+}
+
+/**
+ * Новая страница на шаблоне MELO приходит с готовым содержимым.
+ *
+ * Иначе заказчик, создав страницу и выбрав шаблон, получает пустые формы
+ * и не понимает, что именно туда класть. Заполняем ОДИН раз, отмечая
+ * страницу метой: дальше это его текст, и переписывать его мы не вправе.
+ *
+ * Поля с картинками не трогаем — шаблон подставит файл из папки темы, а
+ * настоящую фотографию заказчик выберет сам.
+ */
+/* Приоритет 20 — строго после ACF: она пишет присланные значения на
+   save_post с приоритетом 10, и заполни мы поля раньше, она бы тут же
+   затёрла их пустыми. Не acf/save_post: тот хук срабатывает только когда
+   в запросе есть поля, а страницу можно создать и не трогая их. */
+add_action( 'save_post', 'melo_prefill_new_page', 20 );
+
+function melo_prefill_new_page( $post_id ) {
+	if ( ! is_numeric( $post_id ) || 'page' !== get_post_type( $post_id ) ) {
+		return;
+	}
+	if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
+		return;
+	}
+	/* Пустая заготовка, которую WordPress заводит при нажатии «Добавить»:
+	   шаблон там ещё не выбран, заполнять нечего. */
+	if ( 'auto-draft' === get_post_status( $post_id ) ) {
+		return;
+	}
+	if ( get_post_meta( $post_id, '_melo_prefilled', true ) ) {
+		return;
+	}
+
+	$groups = melo_template_groups();
+	$tpl    = get_post_meta( $post_id, '_wp_page_template', true );
+	if ( ! isset( $groups[ $tpl ] ) ) {
+		return;
+	}
+
+	melo_seed_page( $post_id, $groups[ $tpl ][0], $groups[ $tpl ][1] );
+	update_post_meta( $post_id, '_melo_prefilled', 1 );
+}
+
 /* =====================================================================
  * 3. Заготовки групп полей
  *
@@ -481,6 +632,38 @@ function melo_f_cards( $p, $with_url = false ) {
 		'layout'       => 'block',
 		'button_label' => 'Добавить карточку',
 		'sub_fields'   => $sub,
+	);
+}
+
+/**
+ * Значки, доступные пунктам услуги.
+ *
+ * Ключ — id символа из template-parts/melo-icons.php, значение — то, что
+ * видит заказчик. Добавил значок в спрайт — впиши сюда, иначе выбрать его
+ * будет нельзя.
+ *
+ * @return array
+ */
+function melo_icon_choices() {
+	return array(
+		'melo-i-plot-search'  => 'Поиск участка',
+		'melo-i-house-plan'   => 'План дома',
+		'melo-i-site-plan'    => 'План участка',
+		'melo-i-structure'    => 'Конструкции',
+		'melo-i-permit'       => 'Документы',
+		'melo-i-ruler'        => 'Замер',
+		'melo-i-palette'      => 'Палитра и материалы',
+		'melo-i-view'         => 'Визуализация',
+		'melo-i-facade'       => 'Фасад',
+		'melo-i-sofa'         => 'Мебель и комплектация',
+		'melo-i-tree'         => 'Озеленение',
+		'melo-i-gazebo'       => 'Беседка и малые формы',
+		'melo-i-lamp'         => 'Освещение',
+		'melo-i-roller'       => 'Отделка',
+		'melo-i-wallet'       => 'Смета и бюджет',
+		'melo-i-calendar'     => 'Сроки и график',
+		'melo-i-shield-check' => 'Контроль и приёмка',
+		'melo-i-key'          => 'Сдача под ключ',
 	);
 }
 
@@ -670,13 +853,7 @@ function melo_register_fields() {
 					'layout'       => 'block',
 					'button_label' => 'Добавить пункт',
 					'sub_fields'   => array(
-						melo_f_icon( 'field_ms_item_icon', array(
-							'melo-i-plot-search' => 'Поиск участка',
-							'melo-i-house-plan'  => 'План дома',
-							'melo-i-site-plan'   => 'План участка',
-							'melo-i-structure'   => 'Конструкции',
-							'melo-i-permit'      => 'Документы',
-						) ),
+						melo_f_icon( 'field_ms_item_icon', melo_icon_choices() ),
 						array(
 							'key'     => 'field_ms_item_title',
 							'label'   => 'Заголовок',

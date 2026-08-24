@@ -143,7 +143,7 @@ $total = 0;
 foreach ( $map as $tpl => $pair ) {
 	list( $group_slug, $group_key ) = $pair;
 
-	$pages = get_posts( array(
+	$melo_pages = get_posts( array(
 		'post_type'   => 'page',
 		'post_status' => 'any',
 		'numberposts' => -1,
@@ -152,7 +152,7 @@ foreach ( $map as $tpl => $pair ) {
 		'fields'      => 'ids',
 	) );
 
-	if ( ! $pages ) {
+	if ( ! $melo_pages ) {
 		echo '— страниц на шаблоне ' . $tpl . ' нет' . PHP_EOL . PHP_EOL;
 		continue;
 	}
@@ -174,7 +174,7 @@ foreach ( $map as $tpl => $pair ) {
 
 	$defaults = melo_defaults( $group_slug );
 
-	foreach ( $pages as $pid ) {
+	foreach ( $melo_pages as $pid ) {
 		echo get_the_title( $pid ) . ' (id ' . $pid . ', ' . $tpl . ')' . PHP_EOL;
 
 		foreach ( $defaults as $name => $value ) {

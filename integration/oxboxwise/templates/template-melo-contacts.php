@@ -96,20 +96,7 @@ while ( have_posts() ) :
 
 	<?php /* Спрайт иконок: symbol вместо отдельных файлов — цвет
 	         наследуется от текста, запросов ноль. */ ?>
-	<svg class="melo-visually-hidden" aria-hidden="true" focusable="false">
-		<symbol id="melo-i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 0 0 6 6l1.5-2 4 1.5v3a1.5 1.5 0 0 1-1.6 1.5C11.6 19.5 4.5 12.4 4 5.1A1.5 1.5 0 0 1 5.5 3.5z"/>
-		</symbol>
-		<symbol id="melo-i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 6.5 12 13l8.5-6.5"/>
-		</symbol>
-		<symbol id="melo-i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/>
-		</symbol>
-		<symbol id="melo-i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-			<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3.4 2"/>
-		</symbol>
-	</svg>
+	<?php get_template_part( 'template-parts/melo-icons' ); ?>
 
 	<!-- ============ 1. Интро ============ -->
 	<section class="melo-hero">
