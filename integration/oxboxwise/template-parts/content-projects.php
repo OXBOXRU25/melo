@@ -28,13 +28,13 @@ else
 								<a href="<? echo get_permalink(); ?>">
 								  <picture class="project__item-picture">
 									<? if($class=="project__item_size-big"): ?>
-									<img src="<? echo get_the_post_thumbnail_url( get_the_ID(), 'project_front_big' ); ?>" alt="<? the_title(); ?>" loading="lazy" decoding="async">
+									<img src="<? echo esc_url( melo_project_image( get_the_ID(), 'project_front_big' ) ); ?>" alt="<? the_title(); ?>" loading="lazy" decoding="async">
 									<? endif; ?>
 									<? if($class=="project__item_size-middle"): ?>
-									<img src="<? echo get_the_post_thumbnail_url( get_the_ID(), 'project_front_middle' ); ?>" alt="<? the_title(); ?>" loading="lazy" decoding="async">
+									<img src="<? echo esc_url( melo_project_image( get_the_ID(), 'project_front_middle' ) ); ?>" alt="<? the_title(); ?>" loading="lazy" decoding="async">
 									<? endif; ?>
 									<? if($class==""): ?>
-									<img src="<? echo get_the_post_thumbnail_url( get_the_ID(), 'project_front_small' ); ?>" alt="<? the_title(); ?>" loading="lazy" decoding="async">
+									<img src="<? echo esc_url( melo_project_image( get_the_ID(), 'project_front_small' ) ); ?>" alt="<? the_title(); ?>" loading="lazy" decoding="async">
 									<? endif; ?>
 									  
 								  </picture>

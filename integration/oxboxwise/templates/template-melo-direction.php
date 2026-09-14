@@ -93,10 +93,7 @@ while ( have_posts() ) :
 	if ( $melo_works ) {
 		$projects = array();
 		foreach ( $melo_works as $melo_work ) {
-			$melo_img = get_the_post_thumbnail_url( $melo_work->ID, 'project_front_big' );
-			if ( ! $melo_img ) {
-				$melo_img = get_the_post_thumbnail_url( $melo_work->ID, 'full' );
-			}
+			$melo_img = melo_project_image( $melo_work->ID, 'project_front_big' );
 
 			$projects[] = array(
 				/* Полный адрес, а не имя файла: картинка приходит из медиатеки,
