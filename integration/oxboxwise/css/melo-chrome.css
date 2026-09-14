@@ -463,7 +463,9 @@ body.melo-menu-open { overflow: hidden; }
               color var(--melo-dur) var(--melo-ease);
 }
 
-.melo-social svg { width: 18px; height: 18px; }
+/* 20, а не 18: у знака MAX внутри вырез, и на 18px кольцо с пузырём
+   слипались в пятно. */
+.melo-social svg { width: 20px; height: 20px; }
 
 .melo-social:hover {
   border-color: var(--melo-gold);
