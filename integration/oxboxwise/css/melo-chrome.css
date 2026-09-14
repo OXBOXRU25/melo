@@ -127,11 +127,14 @@ body.is-open .melo-site-header.header { z-index: 1; }
   transition: height var(--melo-dur) var(--melo-ease);
 }
 
+/* Меню прижато к логотипу, а не отцентровано: справа теперь три группы
+   — телефон, мессенджеры и кнопка, — и при центровке они переставали
+   помещаться в строку. Весь свободный зазор уходит в margin-right. */
 .melo-nav {
   display: flex;
   align-items: center;
-  gap: clamp(18px, 2.1vw, 40px);
-  margin-inline: auto;
+  gap: clamp(18px, 1.7vw, 32px);
+  margin-right: auto;
 }
 
 .melo-nav__link {
@@ -403,6 +406,99 @@ body.is-open .melo-site-header.header { z-index: 1; }
 /* пока меню открыто, страница под ним не прокручивается */
 body.melo-menu-open { overflow: hidden; }
 
+/* ---------- Кнопка и мессенджеры в шапке и подвале -----------
+
+   Золотая кнопка уже описана в melo-page.css, но там она заперта под
+   .melo-page — а шапка и подвал стоят на ВСЕХ страницах сайта, включая
+   те, что собраны не нами. Поэтому здесь своя, самостоятельная.
+   ------------------------------------------------------------- */
+
+.melo-chrome-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding-inline: clamp(20px, 1.6vw, 32px);
+  border: 0;
+  border-radius: 999px;
+  background: var(--melo-gold);
+  color: #fff;
+  font-family: inherit;
+  font-size: var(--melo-fs-nav);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--melo-dur) var(--melo-ease);
+}
+
+.melo-chrome-btn:hover { background: #c39a58; }
+.melo-chrome-btn:active { transform: translateY(1px); }
+
+.melo-site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, .9vw, 16px);
+  flex: none;
+}
+
+.melo-socials {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Кружок 44px — палец попадает, при том что рисунок внутри 18px.
+   Меньше делать нельзя: это нижняя граница удобной цели нажатия. */
+.melo-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--melo-line-on-navy);
+  border-radius: 50%;
+  color: var(--melo-on-navy);
+  flex: none;
+  transition: border-color var(--melo-dur) var(--melo-ease),
+              color var(--melo-dur) var(--melo-ease);
+}
+
+.melo-social svg { width: 18px; height: 18px; }
+
+.melo-social:hover {
+  border-color: var(--melo-gold);
+  color: var(--melo-gold);
+}
+
+/* ---------- Левая колонка подвала ---------------------------- */
+
+.melo-footer-lead {
+  display: grid;
+  justify-items: start;
+  gap: clamp(20px, 1.8vw, 32px);
+  align-content: start;
+}
+
+/* Оговорка про оферту. Ширину не ограничиваем по 22ch, как заявление
+   выше: это сплошной юридический текст, и в узкой колонке он
+   превратился бы в лесенку из одиночных слов. */
+/* На ступень мельче micro: это оговорка, её читают один раз и по делу,
+   а рядом стоит заявление в 24px — разница в кегле и делает её припиской,
+   а не вторым абзацем. */
+.melo-footer-note {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(12px, .72vw, 14px);
+  line-height: 1.45;
+  color: var(--melo-on-navy-dim);
+}
+
+/* ---------- Кнопка и мессенджеры в полноэкранном меню --------- */
+
+.melo-menu__cta { margin-top: 8px; }
+
+.melo-menu__socials { margin-top: 4px; }
+
 /* ============================================================
    Адаптив
    ============================================================ */
@@ -417,6 +513,16 @@ body.melo-menu-open { overflow: hidden; }
   .melo-footer-top-link { grid-column: 2; justify-self: end; }
 }
 
+/* В полосе между планшетом и бургером пять групп в строку уже не лезут:
+   меню, телефон, два кружка и кнопка дают переполнение около сотни
+   пикселей. Убираем кружки — они остаются в подвале и в полноэкранном
+   меню, а телефон и кнопка важнее: это два действия, ради которых в
+   шапку и смотрят. */
+@media (max-width: 1120px) {
+  .melo-site-header__actions .melo-socials { display: none; }
+  .melo-site-header__inner { gap: clamp(16px, 2vw, 32px); }
+}
+
 @media (min-width: 861px) {
   /* на широких экранах меню-слой не нужен: пункты стоят в шапке */
   .melo-menu { display: none !important; }
@@ -424,6 +530,7 @@ body.melo-menu-open { overflow: hidden; }
 
 @media (max-width: 860px) {
   .melo-nav,
+  .melo-site-header__actions,
   .melo-site-header__phone { display: none; }
 
   .melo-burger { display: grid; }

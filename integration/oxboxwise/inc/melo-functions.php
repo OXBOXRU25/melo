@@ -232,6 +232,10 @@ function melo_contact( $key ) {
 				   а решётка сделала бы вид рабочей ссылки в никуда. */
 				'max'        => $opt( 'opt_soc_max' ),
 				'policy'     => $opt( 'opt_link_personal', home_url( '/politika-konfidentsialnosti/' ) ),
+				/* Оговорка про оферту в подвале. Лежит здесь, а не в
+				   разметке: текст юридический, менять его будут целиком и
+				   сразу везде, где он появится. */
+				'offer'      => $opt( 'opt_offer_note', 'Все цены, описания и перечни услуг, указанные на данном сайте, носят исключительно информационный характер и не являются публичной офертой, определяемой положениями Статьи 437 Гражданского кодекса РФ' ),
 			)
 		);
 	}
@@ -345,6 +349,56 @@ function melo_nav( $location, $link_class = '', $fallback = array() ) {
 function melo_asset_ver( $rel ) {
 	$file = get_template_directory() . $rel;
 	return file_exists( $file ) ? (string) filemtime( $file ) : '1';
+}
+
+/**
+ * Кружки мессенджеров.
+ *
+ * Рисунки вставляются прямо сюда, а не берутся из спрайта
+ * template-parts/melo-icons.php: спрайт печатают только шаблоны MELO, а
+ * шапка и подвал стоят на всех страницах сайта — на чужой странице
+ * ссылка на символ вела бы в пустоту, и кружки оказались бы пустыми.
+ *
+ * Мессенджер без адреса пропускается: пустой кружок выглядит рабочим и
+ * никуда не ведёт, а это читается как поломка.
+ *
+ * @param string $class Класс обёртки.
+ */
+function melo_socials( $class = 'melo-socials' ) {
+	$telegram = '<path d="M21.5 4.2 2.9 11.1a.5.5 0 0 0 0 .9l4.6 1.6 1.7 5.3a.5.5 0 0 0 .9.2l2.5-2.9 4.6 3.4a.5.5 0 0 0 .8-.3l3.2-14.4a.5.5 0 0 0-.7-.7z"/><path d="M9.2 13.6 19 7.2l-8.6 8.5"/>';
+
+	/* Собственный знак MAX не рисуем: подставить похожий, но не тот —
+	   хуже, чем нейтральный значок. Заменяется одной строкой, когда
+	   заказчик пришлёт svg. */
+	$max = '<path d="M12 3.5c-4.8 0-8.5 3.2-8.5 7.2 0 2.3 1.2 4.3 3.1 5.6l-.8 3.7 4-2.1c.7.1 1.4.2 2.2.2 4.8 0 8.5-3.2 8.5-7.4S16.8 3.5 12 3.5z"/><path d="M8.6 12.6l1.6-3.2 1.8 3.2 1.8-3.2 1.6 3.2"/>';
+
+	$list = array(
+		'Telegram' => array( melo_contact( 'telegram' ), $telegram ),
+		'MAX'      => array( melo_contact( 'max' ), $max ),
+	);
+
+	$shown = array();
+	foreach ( $list as $label => $item ) {
+		if ( '' === $item[0] || '#' === $item[0] ) {
+			continue;
+		}
+		$shown[ $label ] = $item;
+	}
+
+	if ( ! $shown ) {
+		return;
+	}
+
+	echo '<div class="' . esc_attr( $class ) . '">';
+	foreach ( $shown as $label => $item ) {
+		printf(
+			'<a class="melo-social" href="%1$s" target="_blank" rel="noopener" aria-label="%2$s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%3$s</svg></a>',
+			esc_url( $item[0] ),
+			esc_attr( $label ),
+			$item[1]
+		);
+	}
+	echo '</div>';
 }
 
 /**

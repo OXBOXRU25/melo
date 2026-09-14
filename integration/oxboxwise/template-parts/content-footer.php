@@ -40,7 +40,17 @@ $melo_addr   = $melo_opt( 'opt_address_site', melo_contact( 'address' ) );
 	<footer class="melo-site-footer" id="contacts" data-anc_id="#contacts">
 		<div class="melo-container">
 			<div class="melo-site-footer__grid">
-				<p class="melo-site-footer__claim"><?php echo esc_html( melo_contact( 'claim' ) ); ?></p>
+				<?php /* Заявление, кнопка и оговорка — одна ячейка сетки.
+				         Положи их соседями, и каждый занял бы свою колонку,
+				         развалив подвал на семь столбцов. */ ?>
+				<div class="melo-footer-lead">
+					<p class="melo-site-footer__claim"><?php echo esc_html( melo_contact( 'claim' ) ); ?></p>
+
+					<button class="melo-chrome-btn open-modal-os" type="button"
+						data-title="Обратная связь из подвала">Обратная связь</button>
+
+					<p class="melo-footer-note"><?php echo esc_html( melo_contact( 'offer' ) ); ?></p>
+				</div>
 
 				<div class="melo-footer-contacts">
 					<a class="melo-footer-contacts__major" href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $melo_phone2 ) ); ?>"><?php echo esc_html( $melo_phone2 ); ?></a>

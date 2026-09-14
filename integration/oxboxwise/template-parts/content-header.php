@@ -78,9 +78,24 @@ $melo_home = ( is_front_page() || is_home() ) ? 'javascript:void(0);' : get_home
 			?>
 		</nav>
 
-		<?php if ( $melo_phone ) : ?>
-			<a class="melo-site-header__phone" href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $melo_phone ) ); ?>"><?php echo esc_html( $melo_phone ); ?></a>
-		<?php endif; ?>
+		<?php /* Правая группа: телефон, мессенджеры, кнопка. Меню при этом
+		         прижато к логотипу — иначе пять групп в одной строке не
+		         помещаются, и телефон уезжал за край экрана.
+
+		         На узких экранах группа скрыта вместе с меню: там всё это
+		         повторено внутри полноэкранного меню, иначе на телефоне до
+		         формы можно было бы добраться только прокрутив страницу до
+		         подвала. */ ?>
+		<div class="melo-site-header__actions">
+			<?php if ( $melo_phone ) : ?>
+				<a class="melo-site-header__phone" href="tel:<?php echo esc_attr( preg_replace( '/[^0-9+]/', '', $melo_phone ) ); ?>"><?php echo esc_html( $melo_phone ); ?></a>
+			<?php endif; ?>
+
+			<?php melo_socials( 'melo-socials' ); ?>
+
+			<button class="melo-chrome-btn open-modal-os" type="button"
+				data-title="Обратная связь из шапки">Обратная связь</button>
+		</div>
 
 		<button class="melo-burger header__btn-burger" type="button" aria-expanded="false" aria-label="Меню">
 			<svg class="melo-burger__open" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -136,6 +151,13 @@ $melo_home = ( is_front_page() || is_home() ) ? 'javascript:void(0);' : get_home
 			<?php if ( $melo_email ) : ?>
 				<a class="melo-menu__email" href="mailto:<?php echo esc_attr( $melo_email ); ?>"><?php echo esc_html( $melo_email ); ?></a>
 			<?php endif; ?>
+
+			<?php /* То же, что в шапке: на узких экранах шапка свёрнута в
+			         бургер, и без этого кнопка и мессенджеры на телефоне
+			         пропадали бы совсем. */ ?>
+			<button class="melo-chrome-btn melo-menu__cta open-modal-os" type="button"
+				data-title="Обратная связь из меню">Обратная связь</button>
+			<?php melo_socials( 'melo-socials melo-menu__socials' ); ?>
 		</div>
 	</div>
 </div>
