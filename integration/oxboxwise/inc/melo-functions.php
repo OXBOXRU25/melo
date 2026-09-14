@@ -393,7 +393,11 @@ function melo_socials( $class = 'melo-socials' ) {
 	echo '<div class="' . esc_attr( $class ) . '">';
 	foreach ( $shown as $label => $item ) {
 		printf(
-			'<a class="melo-social" href="%1$s" target="_blank" rel="noopener" aria-label="%2$s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">%3$s</svg></a>',
+			/* Никаких stroke на обёртке: знаки рисуются заливкой, и оставшаяся
+			   от прежних контурных значков обводка в 1.3 ложилась поверх
+			   заливки — знак толстел и мылился. Заказчик увидел это раньше
+			   меня, сказал «размытые и жирные». */
+			'<a class="melo-social" href="%1$s" target="_blank" rel="noopener" aria-label="%2$s"><svg viewBox="0 0 24 24" aria-hidden="true">%3$s</svg></a>',
 			esc_url( $item[0] ),
 			esc_attr( $label ),
 			$item[1]

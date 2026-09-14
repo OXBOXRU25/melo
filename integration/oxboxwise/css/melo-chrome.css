@@ -463,9 +463,11 @@ body.melo-menu-open { overflow: hidden; }
               color var(--melo-dur) var(--melo-ease);
 }
 
-/* 20, а не 18: у знака MAX внутри вырез, и на 18px кольцо с пузырём
-   слипались в пятно. */
-.melo-social svg { width: 20px; height: 20px; }
+/* 17px — на 15% меньше прежних 20 по решению заказчика 14.09.2026.
+   До этого знаки выглядели жирными по другой причине: у обёртки svg
+   оставалась обводка от прежних контурных значков и ложилась поверх
+   заливки. Обводку сняли, после чего размер и стал избыточным. */
+.melo-social svg { width: 17px; height: 17px; }
 
 .melo-social:hover {
   border-color: var(--melo-gold);
