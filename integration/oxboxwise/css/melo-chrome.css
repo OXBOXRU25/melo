@@ -472,11 +472,15 @@ body.melo-menu-open { overflow: hidden; }
 
 /* ---------- Левая колонка подвала ---------------------------- */
 
+/* Колонка растянута на всю высоту строки сетки, чтобы оговорку можно
+   было прижать к низу: тогда её последняя строка встаёт на одну линию с
+   адресом в соседней колонке. */
 .melo-footer-lead {
-  display: grid;
-  justify-items: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: clamp(20px, 1.8vw, 32px);
-  align-content: start;
+  height: 100%;
 }
 
 /* Оговорка про оферту. Ширину не ограничиваем по 22ch, как заявление
@@ -486,7 +490,8 @@ body.melo-menu-open { overflow: hidden; }
    а рядом стоит заявление в 24px — разница в кегле и делает её припиской,
    а не вторым абзацем. */
 .melo-footer-note {
-  margin: 0;
+  /* auto сверху прижимает оговорку к низу колонки */
+  margin: auto 0 0;
   max-width: 46ch;
   font-size: clamp(12px, .72vw, 14px);
   line-height: 1.45;
