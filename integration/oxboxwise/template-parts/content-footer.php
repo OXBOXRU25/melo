@@ -204,7 +204,11 @@ $melo_addr   = $melo_opt( 'opt_address_site', melo_contact( 'address' ) );
               <div class="form__description-decor"></div>
               <p>
                 Нажимая кнопку «Отправить», Вы соглашается с
-                нашей политикой <a href="/privacy-policy/">Обработки персональных данных</a>
+                <?php /* Адрес берём из тех же настроек, что и ссылка в подвале.
+                         Здесь был зашит /privacy-policy/ — страницы с таким
+                         ярлыком на сайте нет, и человек, дойдя до галочки
+                         согласия, упирался в 404 прямо перед отправкой. */ ?>
+                нашей политикой <a href="<?php echo esc_url( melo_contact( 'policy' ) ); ?>">Обработки персональных данных</a>
               </p>
             </label>
 			  <input type="hidden" name="action" value="sendform">
