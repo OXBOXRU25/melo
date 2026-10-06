@@ -786,7 +786,7 @@ function melo_register_fields() {
 						'label'        => 'Ссылка',
 						'name'         => 'href',
 						'type'         => 'text',
-						'instructions' => 'Например tel:+74951234567 или mailto:mail@site.ru. Пусто — значение будет просто текстом.',
+						'instructions' => 'Для телефона и почты оставьте пустым — ссылка соберётся из значения слева сама. Заполняйте только если нужен другой адрес.',
 						'wrapper'      => array( 'width' => '50' ),
 					),
 					array(

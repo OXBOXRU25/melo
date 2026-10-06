@@ -74,11 +74,19 @@ while ( have_posts() ) :
 			}
 		}
 
+		/* Ссылку собираем из того, что ПОКАЗАНО на экране, а не из общих
+		   настроек. Раньше брали настройки, и стоило заказчику поправить
+		   «Значение» в карточке, как номер на экране менялся, а под ним
+		   по-прежнему лежал tel: со старым — клик набирал не тот номер, а
+		   mailto: слал письмо на заглушку info@name.ru. Показанное и
+		   набираемое обязаны быть одним и тем же. */
 		if ( empty( $melo_way['href'] ) ) {
+			$melo_shown = isset( $ways[ $melo_i ]['value'] ) ? trim( (string) $ways[ $melo_i ]['value'] ) : '';
+
 			if ( 'melo-i-phone' === $melo_icon ) {
-				$ways[ $melo_i ]['href'] = 'tel:' . melo_contact( 'phone_raw' );
-			} elseif ( 'melo-i-mail' === $melo_icon ) {
-				$ways[ $melo_i ]['href'] = 'mailto:' . melo_contact( 'email' );
+				$ways[ $melo_i ]['href'] = melo_tel_href( $melo_shown );
+			} elseif ( 'melo-i-mail' === $melo_icon && false !== strpos( $melo_shown, '@' ) ) {
+				$ways[ $melo_i ]['href'] = 'mailto:' . $melo_shown;
 			}
 		}
 	}
