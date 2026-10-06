@@ -76,7 +76,7 @@ get_header();
 							<? if(get_field('square')): ?>
                             <li class="new-project__content-item">
                                 <p class="new-project__content-item-name">Площадь</p>
-                                <p class="new-project__content-item-info"><? echo get_field('square'); ?> м²</p>
+                                <p class="new-project__content-item-info"><?php echo esc_html( function_exists( 'melo_area_number' ) ? melo_area_number( get_field( 'square' ) ) : get_field( 'square' ) ); ?> м²</p>
                             </li>							
 							<? endif; ?>
 							<? if(get_field('price')): ?>

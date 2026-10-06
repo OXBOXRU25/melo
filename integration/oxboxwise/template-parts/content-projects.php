@@ -39,17 +39,25 @@ else
 									  
 								  </picture>
 								  <div class="project__item-content">
-									<div class="project__item-box">
-									  <p class="project__item-name">
-										<sup><? if($args['counter']<10): ?>00<? elseif($args['counter']<100): ?>0<? endif; ?><? echo $args['counter']; ?>. </sup><? the_title(); ?>
-									  </p>
-									  <p class="project__item-description"><? echo get_field('type'); ?></p>
-									</div>
-									<p class="project__item-size">
-									  <? echo get_field('square'); ?> <sup>м2</sup>
-									</p>
-								  </div>
-								</a>
+										<div class="project__item-box">
+										  <?php /* Номер «001.» перед названием убран по решению заказчика
+										           14.10.2026: на телефоне он съедал ширину и тянул заголовок
+										           на лишнюю строку. Счётчик $args['counter'] остаётся нужен
+										           выше — по нему выбирается размер карточки. */ ?>
+										  <p class="project__item-name"><? the_title(); ?></p>
+										  <p class="project__item-description"><? echo get_field('type'); ?></p>
+										</div>
+										<?php
+										$melo_area = function_exists( 'melo_area_number' ) ? melo_area_number( get_field( 'square' ) ) : trim( (string) get_field( 'square' ) );
+										/* Нет площади — нет и подписи: раньше на её месте оставалось
+										   голое «м2» без числа. Единицу ставим сами и неразрывным
+										   пробелом, чтобы она не отрывалась от числа на новую строку. */
+										if ( '' !== $melo_area ) :
+											?>
+										<p class="project__item-size"><span class="project__item-size-num"><?php echo esc_html( $melo_area ); ?></span>&nbsp;<span class="project__item-size-unit">м²</span></p>
+										<?php endif; ?>
+									  </div>
+</a>
 							  </li>
 
 

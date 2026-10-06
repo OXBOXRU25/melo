@@ -842,3 +842,79 @@ video,
   font-size: clamp(15px, 1.1vw, 17px);
   line-height: 1.45;
 }
+
+/* ---------- Подпись карточки проекта (каталог и главная) --------
+
+   Тема раскладывает подпись строкой: слева название с аннотацией, справа
+   площадь. На телефоне правая колонка сжималась до ширины слова, «м2»
+   падало под число, а длинная аннотация шла сплошным абзацем под
+   двухстрочным заголовком (замечание заказчика 14.10.2026).
+
+   Решение: на широком экране строка остаётся как есть, ниже 860px подпись
+   идёт столбиком — название, площадь, аннотация. Каждая строка своего
+   размера, и ни одна не зависит от ширины соседней.
+
+   Цвет аннотации не светлим: заказчик уже возвращал её из бледно-серого
+   в тёмный, иерархию держим размером и весом.
+   ------------------------------------------------------------- */
+
+/* Площадь — один неразрывный кусок «число м²». У самой карточки её
+   ширина тоже не сжимается: иначе flex отдаёт место названию. */
+.project__item-content .project__item-size {
+  flex: none;
+  white-space: nowrap;
+  margin-left: clamp(12px, 1.5vw, 24px);
+}
+
+/* Единица обычного размера, не sup: «м²» с настоящей степенью. */
+.project__item-size-unit { font-size: inherit; }
+
+/* Название без висячих слов в конце строки там, где браузер умеет. */
+.project__item-content .project__item-name { text-wrap: balance; }
+.project__item-content .project__item-description { text-wrap: pretty; }
+
+@media (max-width: 860px) {
+  .project__list .project__item-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+    align-items: start;
+  }
+
+  /* Название и аннотация лежали в общей обёртке — «растворяем» её,
+     чтобы расставить их по строкам сетки независимо от площади. */
+  .project__list .project__item-box { display: contents; }
+
+  .project__list .project__item-name {
+    order: 1;
+    margin: 0;
+    font-size: clamp(19px, 5.3vw, 25px);
+    line-height: 1.22;
+  }
+
+  .project__list .project__item-content .project__item-size {
+    order: 2;
+    margin: 0;
+    font-size: clamp(15px, 4vw, 17px);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .project__list .project__item-description {
+    order: 3;
+    margin: 2px 0 0;
+    font-size: clamp(14.5px, 3.9vw, 17px);
+    line-height: 1.42;
+  }
+}
+
+/* Нижний предел кеглей подписи. У темы они в долях ширины окна, и на
+   900-1100px название выходило 13-15px — мельче, чем на телефоне. Пол
+   действует только там, где доля ниже него: на больших экранах размер
+   прежний. Только от 861px: ниже кегли заданы блоком выше явно, и пол,
+   стоящий позже в файле при той же специфичности, перекрыл бы их. */
+@media (min-width: 861px) {
+  .project__item-content .project__item-name        { font-size: max(var(--s-24), 17px); }
+  .project__item-content .project__item-description { font-size: max(var(--s-16), 14.5px); line-height: 1.4; }
+  .project__item-content .project__item-size        { font-size: max(1.09vw, 15px); }
+}
